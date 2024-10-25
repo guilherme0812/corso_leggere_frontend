@@ -3,16 +3,12 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-geist-mono);
+  font-family: var(--font-poppins);
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-
-  .geist-mono {
-    font-family: var(--font-geist-mono);
   }
 }
 
