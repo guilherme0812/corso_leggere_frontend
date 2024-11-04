@@ -11,7 +11,7 @@ function Dashboard() {
       <div className="mt-6 bg-white rounded-md p-4 shadow-custom mb-6">
         <h3 className="font-medium mb-4">Resumo do meu mês</h3>
 
-        <div className="grid grid-cols-4 gap-8">
+        <div className="grid grid-col-span-1 md:grid-cols-4 gap-8">
           <div className="border rounded-md p-2 px-4 flex gap-4 items-center">
             <div>
               <MdOutlineBalance className="text-3xl text-yellow-600" />
@@ -62,31 +62,35 @@ function Dashboard() {
         <h3 className="font-semibold text-gray-500 text-sm mb-4">INDICADORES DE DESEMPENHO</h3>
 
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-9 bg-white rounded-md min-h-64 shadow-custom p-4">
+          <div className="col-span-12 md:col-span-4 bg-white rounded-md min-h-64 shadow-custom p-4">
             <ProcessChart />
           </div>
-          <div className="col-span-3 rounded-md min-h-64 flex gap-4 flex-col">
-            <div className="flex gap-2 items-end bg-white shadow-custom flex-grow p-4 rounded-md">
-              <div className="text-3xl font-semibold">80</div>
-              <div className="">
-                <div className="text-sm">Clientes</div>
-              </div>
-            </div>
 
-            <div className="flex gap-2 items-end bg-white shadow-custom flex-grow p-4 rounded-md">
-              <div className="text-3xl font-semibold">180</div>
-              <div className="">
-                <div className="font-semibold">Dias</div>
-                <div className="text-xs">Média tempo dos processos</div>
-              </div>
-            </div>
-
+          <div className="col-span-12 md:col-span-2 rounded-md min-h-64 flex gap-4 flex-col">
             <div className="flex gap-2 items-center bg-white shadow-custom flex-grow p-4 rounded-md">
-              <div className="text-3xl font-semibold">104</div>
+              <div className="text-2xl font-semibold">104</div>
               <div className="">
                 <div className="text-sm">processos ao total</div>
               </div>
             </div>
+
+            <div className="flex gap-2 items-center bg-white shadow-custom flex-grow p-4 rounded-md">
+              <div className="text-2xl font-semibold">80</div>
+              <div className="">
+                <div className="text-sm">Finzalizados</div>
+              </div>
+            </div>
+
+            <div className="flex gap-2 items-center bg-white shadow-custom flex-grow p-4 rounded-md">
+              <div className="text-2xl font-semibold">24</div>
+              <div className="">
+                <div className="text-sm">Ativos</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-12 md:col-span-6 bg-white rounded-md min-h-64 shadow-custom p-4">
+            <ProcessChart />
           </div>
         </div>
       </div>
@@ -95,10 +99,10 @@ function Dashboard() {
         <h3 className="font-semibold text-gray-500 text-sm mb-4">ATIVIDADES</h3>
 
         <div className="flex flex-col gap-4">
-          <div className="rounded-md bg-white h-14 p-4 border shadow-sm hover:shadow-lg transition duration-300">
+          <div className="rounded-md bg-white h-14 p-4 border shadow-custom hover:shadow-lg transition duration-300">
             <div>Atividade 01</div>
           </div>
-          <div className="rounded-md bg-white h-14 p-4 border shadow-sm hover:shadow-lg transition duration-300">
+          <div className="rounded-md bg-white h-14 p-4 border shadow-custom hover:shadow-lg transition duration-300">
             <div>Atividade 02</div>
           </div>
         </div>
