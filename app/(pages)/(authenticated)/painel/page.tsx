@@ -2,6 +2,8 @@ import Header from "@/app/_components/patterns/Header";
 import { LuAlarmClock, LuCalendarDays, LuClipboardList } from "react-icons/lu";
 import { MdOutlineBalance } from "react-icons/md";
 import ProcessChart from "./compoenents/ProcessChart";
+import TaskCard from "./compoenents/TaskCard";
+import FinanceChart from "./compoenents/FinanceChart";
 
 function Dashboard() {
   return (
@@ -59,14 +61,18 @@ function Dashboard() {
       </div>
 
       <div className="mb-6">
-        <h3 className="font-semibold text-gray-500 text-sm mb-4">INDICADORES DE DESEMPENHO</h3>
-
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-12 md:col-span-4 bg-white rounded-md min-h-64 shadow-custom p-4">
-            <ProcessChart />
+          <div className="col-span-12 md:col-span-4  min-h-64 flex flex-col">
+            <h3 className="font-semibold text-gray-500 text-sm mb-4">INDICADORES DE DESEMPENHO</h3>
+
+            <div className="flex-grow bg-white rounded-md  shadow-custom p-4">
+              <ProcessChart />
+            </div>
           </div>
 
           <div className="col-span-12 md:col-span-2 rounded-md min-h-64 flex gap-4 flex-col">
+            <div className="h-5"></div>
+
             <div className="flex gap-2 items-center bg-white shadow-custom flex-grow p-4 rounded-md">
               <div className="text-2xl font-semibold">104</div>
               <div className="">
@@ -89,8 +95,12 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="col-span-12 md:col-span-6 bg-white rounded-md min-h-64 shadow-custom p-4">
-            <ProcessChart />
+          <div className="col-span-12 md:col-span-6  min-h-64 flex flex-col">
+            <h3 className="font-semibold text-gray-500 text-sm mb-4">RESUMO FINANCEIRO</h3>
+
+            <div className="flex-grow bg-white rounded-md  shadow-custom p-4">
+              <FinanceChart />
+            </div>
           </div>
         </div>
       </div>
@@ -99,12 +109,8 @@ function Dashboard() {
         <h3 className="font-semibold text-gray-500 text-sm mb-4">ATIVIDADES</h3>
 
         <div className="flex flex-col gap-4">
-          <div className="rounded-md bg-white h-14 p-4 border shadow-custom hover:shadow-lg transition duration-300">
-            <div>Atividade 01</div>
-          </div>
-          <div className="rounded-md bg-white h-14 p-4 border shadow-custom hover:shadow-lg transition duration-300">
-            <div>Atividade 02</div>
-          </div>
+          <TaskCard />
+          <TaskCard />
         </div>
       </div>
     </div>
