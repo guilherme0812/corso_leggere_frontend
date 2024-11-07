@@ -1,13 +1,13 @@
 import Header from "@/app/_components/patterns/Header";
 import { LuAlarmClock, LuCalendarDays, LuClipboardList } from "react-icons/lu";
 import { MdOutlineBalance } from "react-icons/md";
-import ProcessChart from "./compoenents/ProcessChart";
-import TaskCard from "./compoenents/TaskCard";
-import FinanceChart from "./compoenents/FinanceChart";
+import ProcessChart from "./_compoenents/ProcessChart";
+import TaskCard from "./_compoenents/TaskCard";
+import FinanceChart from "./_compoenents/FinanceChart";
 
 function Dashboard() {
   return (
-    <div>
+    <div className="max-w-[1700px] m-auto">
       <Header title="Painel" />
 
       <div className="mt-6 bg-white rounded-md p-4 shadow-custom mb-6">

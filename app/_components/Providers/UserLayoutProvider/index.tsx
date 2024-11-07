@@ -26,7 +26,7 @@ function UserLayoutProvider({ children }: { children: ReactNode }) {
         {
           icon: <LuUsers />,
           label: "Clientes",
-          link: "/",
+          link: "/clientes",
           selected: pathname == "/clientes",
         },
         {
