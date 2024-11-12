@@ -1,5 +1,7 @@
+import Content from "./_components/Content";
+
 function Page() {
-  return <></>;
+  return <Content />;
 }
 
 export default Page;

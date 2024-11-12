@@ -39,7 +39,7 @@ function UserLayoutProvider({ children }: { children: ReactNode }) {
           icon: <LuCalendar />,
           label: "Calendario",
           link: "/calendario",
-          selected: pathname == "/financeiro",
+          selected: pathname == "/calendario",
         },
       ]}
     >
