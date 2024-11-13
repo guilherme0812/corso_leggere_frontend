@@ -3,6 +3,9 @@
 import { Input } from "@/app/_components/ui/Input";
 import { Label } from "@/app/_components/ui/Label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
+import TableClients from "../TableClients";
+import { Button } from "@/app/_components/ui/Button";
+import { LuSearch } from "react-icons/lu";
 
 function Content() {
   return (
@@ -17,7 +20,7 @@ function Content() {
           <Label>Status</Label>
 
           <Select>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full" variant="filled">
               <SelectValue placeholder="Selecione o status" />
             </SelectTrigger>
 
@@ -27,8 +30,23 @@ function Content() {
             </SelectContent>
           </Select>
         </div>
+
+        <div className="col-span-12 md:col-span-7 flex flex-col items-end justify-end gap-2">
+          <div className="p-1 px-4 h-8 rounded-3xl bg-yellow-300 text-xs font-semibold flex items-center justify-center">
+            50 clientes encontrados
+          </div>
+          <div>
+            <Button>
+              <LuSearch />
+              Buscar clientes
+            </Button>
+          </div>
+        </div>
       </div>
-      <div className="h-full"></div>
+
+      <div className="h-full">
+        <TableClients />
+      </div>
     </div>
   );
 }
