@@ -1,4 +1,6 @@
+import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
+import { LuPencil, LuTrash } from "react-icons/lu";
 
 const data = [
   {
@@ -114,6 +116,7 @@ export default function TableClients() {
               <TableHead>Local</TableHead>
               <TableHead>Telefone</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead className="w-[60px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -125,6 +128,14 @@ export default function TableClients() {
                 </TableCell>
                 <TableCell>{client.telefone}</TableCell>
                 <TableCell>{client.email}</TableCell>
+                <TableCell className="flex gap-4">
+                  <Button variant="outline" size="sm">
+                    <LuPencil />
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <LuTrash />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
