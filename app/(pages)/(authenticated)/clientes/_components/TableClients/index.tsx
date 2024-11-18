@@ -105,7 +105,7 @@ const data = [
   },
 ];
 
-export default function TableClients() {
+export default function TableProceeding() {
   return (
     <div className="relative w-full h-full">
       <div className="absolute left-0 top-0 h-full w-full overflow-y-auto">

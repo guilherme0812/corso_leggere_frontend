@@ -15,7 +15,7 @@ const DrawerItem = ({ icon, label, selected, open, onClick }: Omit<DrawerItemTyp
     <div
       onClick={onClick}
       data-state={open ? "open" : "closed"}
-      className={`cursor-pointer  inline-flex font-medium text-sm leading-5 rounded-xl whitespace-nowrap items-center normal-case transition duration-300 w-full pr-2  ${
+      className={`cursor-pointer inline-flex font-medium text-sm leading-5 rounded-xl whitespace-nowrap items-center normal-case transition duration-300 w-full pr-2  ${
         selected ? "bg-gray-900 text-white hover:bg-gray-950" : "hover:bg-gray-950 hover:text-background"
       }`}
     >

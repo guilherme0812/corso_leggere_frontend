@@ -5,6 +5,7 @@ import DrawerItem, { DrawerItemType } from "./DrawerItem";
 import { LuMenu, LuSettings } from "react-icons/lu";
 import Link from "next/link";
 import Image from "next/image";
+import UserInfo from "./UserInfo";
 
 type PrimaryLayoutType = {
   children: ReactNode;
@@ -52,13 +53,20 @@ function PrimaryLayout({ children, itens }: PrimaryLayoutType) {
                 open ? "max-h-[9999px]" : "max-h-[0px]"
               } md:max-h-[none] overflow-hidden pt-4 md:pt-0 border-current md:border-b-0`}
             >
-              <ul className="mb-4 p-0 flex flex-col gap-2">
-                {itens.map((item, index) => (
-                  <Link href={item.link} key={index}>
-                    <DrawerItem {...item} key={index} />
-                  </Link>
-                ))}
-              </ul>
+              <div>
+                <div className="mb-8">
+                  <UserInfo {...{ open }} />
+                </div>
+
+                <ul className="mb-4 p-0 flex flex-col gap-2">
+                  {itens.map((item, index) => (
+                    <Link href={item.link} key={index}>
+                      <DrawerItem {...item} key={index} />
+                    </Link>
+                  ))}
+                </ul>
+              </div>
+
               <ul className="mb-4 p-0 flex flex-col gap-2">
                 <DrawerItem icon={<LuSettings />} label="Configurações" />
               </ul>

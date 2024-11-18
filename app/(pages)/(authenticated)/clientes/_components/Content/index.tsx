@@ -5,7 +5,7 @@ import { Label } from "@/app/_components/ui/Label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import TableClients from "../TableClients";
 import { Button } from "@/app/_components/ui/Button";
-import { LuSearch } from "react-icons/lu";
+import { LuPlus, LuSearch } from "react-icons/lu";
 
 function Content() {
   return (
@@ -35,10 +35,14 @@ function Content() {
           <div className="p-1 px-4 h-8 rounded-3xl bg-yellow-300 text-xs font-semibold flex items-center justify-center">
             50 clientes encontrados
           </div>
-          <div>
+          <div className="flex gap-4 items-center">
             <Button>
               <LuSearch />
               Buscar clientes
+            </Button>
+            <Button variant={"outline"}>
+              <LuPlus />
+              Adicionar clientes
             </Button>
           </div>
         </div>
