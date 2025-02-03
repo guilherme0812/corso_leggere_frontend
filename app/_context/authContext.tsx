@@ -1,4 +1,4 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { destroyCookie, setCookie } from "nookies";
 import { useRouter } from "next/navigation";
 import { LoginDataType } from "../_types";
@@ -28,6 +28,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const router = useRouter();
 
+  const saveDataInLocalStorage = (data: LoginDataType) => {
+    localStorage.setItem("LEGGERE_USER", JSON.stringify({ ...data, token: undefined }));
+  };
+
+  const getDataInLocalStorage = () => {
+    const data = localStorage.getItem("LEGGERE_USER");
+
+    if (data) {
+      console.log(JSON.parse(data));
+    }
+  };
+
   const sign = (data: LoginDataType) => {
     //  60 * 60 * 1 = 1 HORA
     setCookie(undefined, LEGGERE_TOKEN_KEY, data.token, {
@@ -45,6 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     console.log(data);
     setLoginData(data);
+    saveDataInLocalStorage(data);
     router.push("/painel");
   };
 
@@ -53,6 +66,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     router.push("/login");
   };
+
+  useEffect(() => {
+    if (!loginData) {
+      console.log("teste");
+      getDataInLocalStorage();
+    }
+  }, []);
 
   return <authContext.Provider value={{ loginData, setLoginData, sign, signOut }}>{children}</authContext.Provider>;
 };

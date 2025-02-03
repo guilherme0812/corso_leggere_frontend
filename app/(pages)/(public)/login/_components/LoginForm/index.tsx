@@ -5,26 +5,29 @@ import ErrorMessage from "@/app/_components/ui/ErrorMessage";
 import { Input } from "@/app/_components/ui/Input";
 import { Label } from "@/app/_components/ui/Label";
 import Skeleton from "@/app/_components/ui/Skeleton";
-import { authContext } from "@/app/_context/authContext";
-import { useCustomRequest } from "@/app/_hooks/api/useCustomApi";
-import { LoginDataType } from "@/app/_types";
+// import { authContext } from "@/app/_context/authContext";
+// import { useCustomRequest } from "@/app/_hooks/api/useCustomApi";
 import { Form, Formik } from "formik";
-import { useContext, useState } from "react";
+// import { useContext, useState } from "react";
 import * as Yup from "yup";
+import { useTransition } from "react";
+import { signIn } from "next-auth/react";
 
 const initialValues = { email: "", password: "" };
+
 type Schema = typeof initialValues;
 
 function LoginForm() {
-  const { sign } = useContext(authContext);
-  const [loading, setLoading] = useState(false);
-  const { mutateAsync: loginRequest, isPending } = useCustomRequest<Schema>([], "POST");
+  const [isPending, startTransition] = useTransition();
+  // const { sign } = useContext(authContext);
+  // const [loading, setLoading] = useState(false);
+  // const { mutateAsync: loginRequest, isPending } = useCustomRequest<Schema>([], "POST");
 
-  const login = async (body: Schema) =>
-    await loginRequest({
-      params: { url: "/login" },
-      body,
-    });
+  // const login = async (body: Schema) =>
+  //   await loginRequest({
+  //     params: { url: "/login" },
+  //     body,
+  //   });
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Por favor, insira um e-mail válido.").required("O campo e-mail é obrigatório."),
@@ -32,17 +35,31 @@ function LoginForm() {
   });
 
   const handleSubmit = async (values: Schema) => {
-    setLoading(true);
-    try {
-      console.log("chegou aqui");
-      const { data } = await login(values);
-      console.log("fez req");
-      sign(data as unknown as LoginDataType);
-    } catch (err: any) {
-      console.log(err);
-    }
+    startTransition(async () => {
+      const result = await signIn("credentials", {
+        redirect: false, // Evita redirecionamento automático
+        email: values.email,
+        password: values.password,
+      });
 
-    setLoading(false);
+      if (result?.error) {
+        console.error("Erro ao autenticar:", result.error);
+      } else {
+        console.log("Login bem-sucedido!", result);
+      }
+    });
+    // login
+    // setLoading(true);
+    // try {
+    //   console.log("chegou aqui");
+    //   const { data } = await login(values);
+    //   console.log("fez req");
+    //   sign(data as unknown as LoginDataType);
+    // } catch (err: any) {
+    //   console.log(err);
+    // }
+
+    // setLoading(false);
   };
 
   return (
@@ -53,7 +70,7 @@ function LoginForm() {
             <Form className="flex flex-col gap-4">
               <div>
                 <Label className="mb-2">Email</Label>
-                {!(isPending || loading) ? (
+                {!isPending ? (
                   <Input
                     variant="filled"
                     type="email"
@@ -70,7 +87,7 @@ function LoginForm() {
 
               <div>
                 <Label className="mb-2">Senha</Label>
-                {!(isPending || loading) ? (
+                {!isPending ? (
                   <Input
                     variant="filled"
                     type="password"
@@ -86,7 +103,7 @@ function LoginForm() {
                 <ErrorMessage>{errors.password}</ErrorMessage>
               </div>
 
-              {!(isPending || loading) ? (
+              {!isPending ? (
                 <Button type="submit" className="w-full">
                   Acessar
                 </Button>
