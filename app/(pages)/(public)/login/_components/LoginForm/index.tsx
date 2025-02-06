@@ -19,15 +19,6 @@ type Schema = typeof initialValues;
 
 function LoginForm() {
   const [isPending, startTransition] = useTransition();
-  // const { sign } = useContext(authContext);
-  // const [loading, setLoading] = useState(false);
-  // const { mutateAsync: loginRequest, isPending } = useCustomRequest<Schema>([], "POST");
-
-  // const login = async (body: Schema) =>
-  //   await loginRequest({
-  //     params: { url: "/login" },
-  //     body,
-  //   });
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Por favor, insira um e-mail válido.").required("O campo e-mail é obrigatório."),
@@ -48,23 +39,16 @@ function LoginForm() {
         console.log("Login bem-sucedido!", result);
       }
     });
-    // login
-    // setLoading(true);
-    // try {
-    //   console.log("chegou aqui");
-    //   const { data } = await login(values);
-    //   console.log("fez req");
-    //   sign(data as unknown as LoginDataType);
-    // } catch (err: any) {
-    //   console.log(err);
-    // }
-
-    // setLoading(false);
   };
 
   return (
     <div className="flex flex-col gap-4">
-      <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        validateOnChange={false}
+      >
         {({ values, handleChange, errors }) => {
           return (
             <Form className="flex flex-col gap-4">

@@ -16,18 +16,15 @@ export const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("credentials", credentials);
         const user = await login({
           email: credentials?.email || "",
           password: credentials?.password || "",
         });
 
-        console.log("user", user);
         if (!user) {
           return null;
         }
 
-        // Add logic here to look up the user from the credentials supplied
         return user;
       },
     }),
@@ -47,5 +44,6 @@ export const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
+    newUser: "/register",
   },
 });

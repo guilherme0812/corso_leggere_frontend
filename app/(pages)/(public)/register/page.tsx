@@ -1,9 +1,10 @@
 import { LogoIcon } from "@/app/_components/ui/icons/LogoIcon";
 import Image from "next/image";
-import LoginForm from "./_components/LoginForm";
 import Link from "next/link";
+import RegisterForm from "./_components/RegisterForm";
+// import LoginForm from "./_components/LoginForm";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const backgroundImg =
     "https://images.pexels.com/photos/8112199/pexels-photo-8112199.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
   return (
@@ -21,11 +22,11 @@ export default function LoginPage() {
 
         <div className="flex flex-col gap-4 min-w-[300px] max-w-[350px] w-full">
           <div className="mb-4">
-            <h2 className="text-2xl font-medium">Seja bem-vindo</h2>
-            <p>Preencha os dados abaixo para entrar no sistema</p>
+            <h2 className="text-2xl font-medium">Crie sua conta</h2>
+            <p>Preencha os dados abaixo para criar sua conta</p>
           </div>
 
-          <LoginForm />
+          <RegisterForm />
 
           <div>
             <div className="relative w-full my-4">
@@ -33,12 +34,12 @@ export default function LoginPage() {
               <span className="absolute top-[-10px] inset-x-0 text-sm text-center bg-white px-2 w-max mx-auto">ou</span>
             </div>
 
-            <Link href="/register" className="block">
+            <Link href={"/login"} className="block">
               <button
                 type="button"
                 className="mt-4 w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-100"
               >
-                Criar minha conta
+                Voltar para tela de login
               </button>
             </Link>
           </div>
