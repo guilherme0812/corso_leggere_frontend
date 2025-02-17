@@ -1,6 +1,7 @@
 import { login } from "@/app/_services/api/login";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GithubProvider from "next-auth/providers/github";
 
 export const handler = NextAuth({
   providers: [
@@ -28,6 +29,10 @@ export const handler = NextAuth({
         return user;
       },
     }),
+    GithubProvider({
+      clientId: process.env.GITHUB_ID || "",
+      clientSecret: process.env.GITHUB_SECRET || "",
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -43,7 +48,7 @@ export const handler = NextAuth({
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/login",
+    // signIn: "/login",
     newUser: "/register",
   },
 });

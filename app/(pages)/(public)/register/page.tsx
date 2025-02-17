@@ -1,4 +1,4 @@
-import { LogoIcon } from "@/app/_components/ui/icons/LogoIcon";
+// import { LogoIcon } from "@/app/_components/ui/icons/LogoIcon";
 import Image from "next/image";
 import Link from "next/link";
 import RegisterForm from "./_components/RegisterForm";
@@ -10,20 +10,19 @@ export default function RegisterPage() {
   return (
     <div className="h-[100dvh] grid grid-cols-12">
       {/* Left section */}
-      <div className="h-full min-h-[100vh] rounded-md col-span-12 lg:col-span-4 p-8 flex flex-col items-center justify-between">
-        <header className="min-w-[300px] max-w-[350px] w-full">
+      <div className="h-full min-h-[100vh] rounded-md col-span-12 lg:col-span-4 p-8 flex flex-col items-center justify-center gap-4">
+        {/* <header className="min-w-[300px] max-w-[350px] w-full">
           <div className="flex gap-4 items-center justify-center">
             <div className="relative">
               <LogoIcon className="text-xl" />
             </div>
             <h1 className="text-xl text-center font-medium">Leggere</h1>
           </div>
-        </header>
+        </header> */}
 
         <div className="flex flex-col gap-4 min-w-[300px] max-w-[350px] w-full">
           <div className="mb-4">
             <h2 className="text-2xl font-medium">Crie sua conta</h2>
-            <p>Preencha os dados abaixo para criar sua conta</p>
           </div>
 
           <RegisterForm />
@@ -45,7 +44,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div></div>
+        {/* <div></div> */}
       </div>
 
       {/* Right section */}

@@ -5,7 +5,7 @@ import { Schema } from "../_components/RegisterForm";
 import { apiLeggere } from "@/app/_services/api";
 
 export async function createUser(body: Schema) {
-  const response = await apiLeggere({
+  const request = await apiLeggere({
     method: "POST",
     url: "/register",
     data: {
@@ -21,11 +21,13 @@ export async function createUser(body: Schema) {
       isActive: true,
     },
     validateStatus: (status) => status >= 200 && status < 300, // Permite 200-299
+  }).catch((error: any) => {
+    return error.response;
   });
 
-  console.log("Success:", response.status, response.data);
-
-  if (response.status == 201) {
+  if (request.status == 201) {
     redirect("/login");
+  } else {
+    return request?.data || { message: "Erro ao criar conta." };
   }
 }

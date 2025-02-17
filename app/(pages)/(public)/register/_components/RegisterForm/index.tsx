@@ -9,6 +9,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { createUser } from "../../_actions/register";
 import { useFormStatus } from "react-dom";
+import { useState } from "react";
 
 const initialValues = { email: "", password: "", confirmPassword: "", firstName: "", lastName: "" };
 
@@ -16,6 +17,7 @@ export type Schema = typeof initialValues;
 
 function RegisterForm() {
   const { pending: isPending } = useFormStatus();
+  const [errorMessage, setErrorMessage] = useState("");
   // const [showPassword, setShowPassword] = useState(false);
 
   const validationSchema = Yup.object({
@@ -29,7 +31,10 @@ function RegisterForm() {
   });
 
   const handleSubmit = async (values: Schema) => {
-    createUser(values);
+    const res = (await createUser(values)) as unknown as { message: string };
+
+    console.log(res);
+    setErrorMessage(res.message);
   };
 
   return (
@@ -43,6 +48,9 @@ function RegisterForm() {
         {({ values, handleChange, errors }) => {
           return (
             <Form className="flex flex-col gap-4">
+              {errorMessage && (
+                <div className="p-1 bg-red-100 border rounded-md text-center text-sm">*{errorMessage}*</div>
+              )}
               <div>
                 <Label className="mb-2">Nome</Label>
                 {!isPending ? (

@@ -12,6 +12,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useTransition } from "react";
 import { signIn } from "next-auth/react";
+import { IoLogoGithub } from "react-icons/io5";
 
 const initialValues = { email: "", password: "" };
 
@@ -39,6 +40,10 @@ function LoginForm() {
         console.log("Login bem-sucedido!", result);
       }
     });
+  };
+
+  const handleSigninGithub = () => {
+    signIn("github");
   };
 
   return (
@@ -94,6 +99,18 @@ function LoginForm() {
               ) : (
                 <Skeleton className="h-10 w-full bg-gray-200" />
               )}
+
+              <div className="relative w-full my-4">
+                <hr className="border-t border-gray-300" />
+                <span className="absolute top-[-10px] inset-x-0 text-sm text-center bg-white px-2 w-max mx-auto">
+                  Acese de outra forma
+                </span>
+              </div>
+
+              <Button type="button" className="w-full bg-gray-700" onClick={handleSigninGithub}>
+                <IoLogoGithub className="text-lg" />
+                Login com Github
+              </Button>
             </Form>
           );
         }}
