@@ -29,9 +29,10 @@ function LoginForm() {
   const handleSubmit = async (values: Schema) => {
     startTransition(async () => {
       const result = await signIn("credentials", {
-        redirect: false, // Evita redirecionamento automático
+        redirect: true, // Evita redirecionamento automático
         email: values.email,
         password: values.password,
+        callbackUrl: "/painel",
       });
 
       if (result?.error) {

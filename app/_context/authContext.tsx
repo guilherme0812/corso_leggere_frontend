@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!loginData) {
-      console.log("teste");
       getDataInLocalStorage();
     }
   }, []);
