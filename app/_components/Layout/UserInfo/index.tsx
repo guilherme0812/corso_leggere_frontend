@@ -1,3 +1,5 @@
+import { LoginDataType } from "@/app/_types";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { MdMoreVert } from "react-icons/md";
 
@@ -6,9 +8,12 @@ type UserInfoType = {
 };
 
 function UserInfo({ open }: UserInfoType) {
+  const { data } = useSession();
+
+  const user = data?.user as LoginDataType;
+
   return (
     <div
-      // onClick={onClick}
       data-state={open ? "open" : "closed"}
       className={`cursor-pointer inline-flex font-medium text-sm leading-5 rounded-xl whitespace-nowrap items-center normal-case transition duration-300 w-full pr-2 hover:bg-gray-100`}
     >
@@ -30,8 +35,8 @@ function UserInfo({ open }: UserInfoType) {
         data-name="carbonfair-ui-drawer-item-label"
         className={`text-ellipsis overflow-hidden pl-1 font-semibold flex-grow`}
       >
-        <div className="leading-3">Escritório 1</div>
-        <div className="text-sm font-normal">Steve</div>
+        <div className="leading-3">{user?.company?.name}</div>
+        <div className="text-sm font-normal">{user?.firstName}</div>
       </div>
 
       <div className="h-12 pt-2">

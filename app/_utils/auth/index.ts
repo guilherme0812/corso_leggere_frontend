@@ -1,3 +1,4 @@
+import { apiLeggere } from "@/app/_services/api";
 import { login } from "@/app/_services/api/login";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -32,11 +33,57 @@ export const handler = NextAuth({
     GithubProvider({
       clientId: process.env.GITHUB_ID || "",
       clientSecret: process.env.GITHUB_SECRET || "",
+      profile(profile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.name || profile.login,
+          email: profile.email,
+          image: profile.avatar_url,
+          username: profile.login,
+        } as any;
+      },
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "github") {
+        try {
+          const res = await apiLeggere({
+            url: "/login-social",
+            method: "POST",
+            data: {
+              email: user.email,
+              firstName: user.name?.split(" ")[0] || "",
+              lastName: user.name?.split(" ")[1] || "",
+              companyId: null,
+              role: "employee",
+              phone: null,
+              hasWhatsapp: false,
+              profilePicture: null,
+              isActive: true,
+            },
+          });
+
+          if (!res.data) {
+            throw new Error("Falha ao autenticar usuário via GitHub");
+          }
+
+          (user as any).socialLogin = res.data;
+          return true;
+        } catch (error) {
+          console.error("Erro no login social:", error);
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
-      return { ...token, ...user };
+      if ((user as any)?.socialLogin) {
+        // github
+        return { ...token, ...(user as any)?.socialLogin };
+      } else {
+        return { ...token, ...user };
+      }
     },
     async session({ session, token }) {
       session.user = { ...session.user, ...token };
@@ -44,7 +91,6 @@ export const handler = NextAuth({
       return session;
     },
   },
-
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

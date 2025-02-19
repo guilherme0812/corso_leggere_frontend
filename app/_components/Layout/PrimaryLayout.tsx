@@ -2,10 +2,11 @@
 
 import { ReactNode, useState } from "react";
 import DrawerItem, { DrawerItemType } from "./DrawerItem";
-import { LuMenu, LuSettings } from "react-icons/lu";
+import { LuLogOut, LuMenu, LuSettings } from "react-icons/lu";
 import Link from "next/link";
 import Image from "next/image";
 import UserInfo from "./UserInfo";
+import { signOut } from "next-auth/react";
 
 type PrimaryLayoutType = {
   children: ReactNode;
@@ -67,9 +68,10 @@ function PrimaryLayout({ children, itens }: PrimaryLayoutType) {
                 </ul>
               </div>
 
-              <ul className="mb-4 p-0 flex flex-col gap-2">
+              <div className="mb-4 p-0 flex flex-col gap-2">
                 <DrawerItem icon={<LuSettings />} label="Configurações" />
-              </ul>
+                <DrawerItem icon={<LuLogOut />} label="Signout" onClick={signOut} />
+              </div>
             </div>
           </div>
         </div>
