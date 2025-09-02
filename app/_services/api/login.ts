@@ -1,5 +1,5 @@
 import { UserDataType } from "@/app/_types/login";
-import { apiLeggere } from "../api";
+import axios from "axios";
 
 export type LoginParam = {
   email: string;
@@ -8,9 +8,9 @@ export type LoginParam = {
 
 export async function login({ email, password }: LoginParam) {
   try {
-    const req = await apiLeggere<UserDataType>({
+    const req = await axios<UserDataType>({
       method: "POST",
-      url: "/login",
+      url: "http://localhost:3001/api/login",
       data: {
         email,
         password,
@@ -19,6 +19,6 @@ export async function login({ email, password }: LoginParam) {
 
     return req.data;
   } catch (error: any) {
-    console.log(error);
+    console.log("meu erro:", error);
   }
 }
