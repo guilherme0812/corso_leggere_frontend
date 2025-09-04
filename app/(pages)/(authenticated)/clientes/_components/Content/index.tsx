@@ -9,6 +9,7 @@ import { LuPlus, LuSearch } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import ClientModal from "../ClientModal";
 import { apiLeggere } from "@/app/_services/api";
+import { deleteClient } from "@/app/_services/client";
 
 export type IClient = {
   document: string;
@@ -28,8 +29,8 @@ export type IClient = {
 
 function Content() {
   const [openModal, setOpenModal] = useState(false);
-
   const [data, setData] = useState<IClient[]>([]);
+  const [editData, setEditData] = useState<IClient>();
 
   const getClients = async () => {
     try {
@@ -43,6 +44,15 @@ function Content() {
     } catch (error: any) {
       console.log(error);
     }
+  };
+
+  const handleEdit = (client: IClient) => {
+    setEditData(client);
+    setOpenModal(true);
+  };
+
+  const handleDelete = async (document: string) => {
+    await deleteClient(document);
   };
 
   useEffect(() => {
@@ -88,11 +98,11 @@ function Content() {
           </div>
         </div>
 
-        {openModal && <ClientModal handleClose={setOpenModal as any} />}
+        {openModal && <ClientModal handleClose={setOpenModal as any} editData={editData} />}
       </div>
 
       <div className="h-full">
-        <TableClients data={data} />
+        <TableClients data={data} handleEdit={handleEdit} handleDelete={handleDelete} />
       </div>
     </div>
   );

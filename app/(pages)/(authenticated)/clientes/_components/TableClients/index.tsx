@@ -3,7 +3,14 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { LuPencil, LuTrash } from "react-icons/lu";
 import { IClient } from "../Content";
 
-export default function TableProceeding({ data }: { data: IClient[] }) {
+type ITableProceeding = {
+  data: IClient[];
+  handleEdit(client: IClient): void;
+
+  handleDelete: (document: string) => Promise<void>;
+};
+
+export default function TableProceeding({ data, handleEdit, handleDelete }: ITableProceeding) {
   return (
     <div className="relative w-full h-full">
       <div className="absolute left-0 top-0 h-full w-full overflow-y-auto">
@@ -27,10 +34,10 @@ export default function TableProceeding({ data }: { data: IClient[] }) {
                 <TableCell>{client.phone}</TableCell>
                 <TableCell>{client.email}</TableCell>
                 <TableCell className="flex gap-4">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => handleEdit(client)}>
                     <LuPencil />
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => handleDelete(client.document)}>
                     <LuTrash />
                   </Button>
                 </TableCell>
