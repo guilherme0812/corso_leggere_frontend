@@ -1,7 +1,7 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
-import { handler as authOptions } from "@/app/_utils/auth";
 
 async function PublicLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
