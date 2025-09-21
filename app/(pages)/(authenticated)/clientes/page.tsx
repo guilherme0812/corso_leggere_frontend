@@ -1,14 +1,13 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+export const revalidate = 0;
+
 import Content from "./_components/Content";
-import { getServerSession } from "next-auth";
 import { getClients } from "@/app/_services/client";
 
 async function Page() {
-  const data = await getServerSession(authOptions);
-
   const clients = await getClients();
-  console.log("teste 1234:", clients);
-  return <Content />;
+
+  console.log("clients: ", clients?.length);
+  return <Content clients={clients || []} />;
 }
 
 export default Page;

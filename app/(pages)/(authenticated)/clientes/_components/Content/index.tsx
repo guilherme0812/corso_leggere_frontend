@@ -8,43 +8,20 @@ import { Button } from "@/app/_components/ui/Button";
 import { LuPlus, LuSearch } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import ClientModal from "../ClientModal";
-import { apiLeggere } from "@/app/_services/api";
-import { deleteClient } from "@/app/_services/client";
+import { IClient } from "@/app/_services/client";
+import { deleteClient } from "@/app/actions/client";
+import { useRouter } from "next/navigation";
 
-export type IClient = {
-  document: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  hasWhatsapp: boolean;
-  address: string;
-  cityId: string;
-  stateId: string;
-  countryId: string;
-  birthDate: string;
-  notes: string;
-  companyId: string;
+type ContentType = {
+  clients: IClient[];
 };
 
-function Content() {
+function Content({ clients }: ContentType) {
   const [openModal, setOpenModal] = useState(false);
-  const [data, setData] = useState<IClient[]>([]);
+  const [data, setData] = useState<IClient[]>(clients);
   const [editData, setEditData] = useState<IClient>();
 
-  const getClients = async () => {
-    try {
-      const res = await apiLeggere.get<IClient[]>("/clients");
-
-      const { data } = res;
-
-      if (res.status == 200) {
-        setData(data || []);
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
+  const router = useRouter();
 
   const handleEdit = (client: IClient) => {
     setEditData(client);
@@ -52,12 +29,20 @@ function Content() {
   };
 
   const handleDelete = async (document: string) => {
-    await deleteClient(document);
+    const formData = new FormData();
+
+    formData.append("document", document);
+
+    const res = await deleteClient(formData);
+
+    if (typeof res == "object") {
+      router.refresh();
+    }
   };
 
   useEffect(() => {
-    getClients();
-  }, []);
+    setData(() => clients);
+  }, [clients]);
 
   return (
     <div className="max-w-[1700px] m-auto grid grid-rows-[auto_1fr] h-full gap-4">

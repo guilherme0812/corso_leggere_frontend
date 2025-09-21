@@ -1,7 +1,7 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
+import { IClient } from "@/app/_services/client";
 import { LuPencil, LuTrash } from "react-icons/lu";
-import { IClient } from "../Content";
 
 type ITableProceeding = {
   data: IClient[];

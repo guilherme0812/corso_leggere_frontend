@@ -8,8 +8,10 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/app/_components/ui/Button";
 import { LoginDataType } from "@/app/_types";
-import { apiLeggere } from "@/app/_services/api";
-import { IClient } from "../Content";
+import { IClient } from "@/app/_services/client";
+import { useTransition } from "react";
+import { createClient, updateClient } from "@/app/actions/client";
+import { useRouter } from "next/navigation";
 
 type ClientModalType = {
   handleClose(): void;
@@ -30,56 +32,72 @@ const ClientSchema = Yup.object().shape({
 });
 
 function ClientModal({ editData, handleClose }: ClientModalType) {
+  const [isPending, startTransition] = useTransition();
   const { data } = useSession();
+  const router = useRouter();
   const user = data?.user as LoginDataType;
 
   async function handleSubmit(values: any) {
-    if (editData) {
-      console.log("values", values);
-      try {
-        const res = await apiLeggere({
-          method: "PUT",
-          url: "/client",
-          data: values,
+    startTransition(async () => {
+      if (editData) {
+        const formData = new FormData();
+        Object.entries(values).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
         });
 
-        if (res.status == 201) {
-          handleClose();
-        }
-      } catch (error: any) {
-        console.log(error);
-      }
-    } else {
-      const payload = {
-        document: values.document,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        phone: values.phone,
-        email: values.email,
-        hasWhatsapp: true,
-        address: values.address,
-        cityId: "cidade-abc",
-        stateId: "estado-xyz",
-        countryId: "pais-br",
-        birthDate: "1990-05-15T00:00:00.000Z",
-        notes: "Cliente regular",
-        companyId: user?.companyId,
-      };
+        try {
+          const res = await updateClient(formData);
 
-      try {
-        const res = await apiLeggere({
-          method: "POST",
-          url: "/client",
-          data: payload,
+          if (typeof res == "object") {
+            router.refresh();
+            handleClose();
+          }
+          console.log("res", res);
+          // aqui se quiser pode disparar um toast de sucesso
+        } catch (err) {
+          console.error(err);
+          // aqui vc pode mostrar toast de erro
+        }
+      } else {
+        const payload = {
+          document: values.document,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phone: values.phone,
+          email: values.email,
+          hasWhatsapp: true,
+          address: values.address,
+          cityId: "cidade-abc",
+          stateId: "estado-xyz",
+          countryId: "pais-br",
+          birthDate: "1990-05-15T00:00:00.000Z",
+          notes: "Cliente regular",
+          companyId: user?.companyId,
+        };
+        const formData = new FormData();
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
         });
 
-        if (res.status == 201) {
-          handleClose();
+        try {
+          const res = await createClient(formData);
+
+          if (typeof res == "object") {
+            router.refresh();
+            handleClose();
+          }
+          console.log("res", res);
+          // aqui se quiser pode disparar um toast de sucesso
+        } catch (err) {
+          console.error(err);
+          // aqui vc pode mostrar toast de erro
         }
-      } catch (error: any) {
-        console.log(error);
       }
-    }
+    });
   }
 
   const initialValues = editData
@@ -145,7 +163,9 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
               </div>
 
               <div className="col-span-12 flex justify-end">
-                <Button type="submit">{editData ? "Salvar mudanças" : "Salvar"}</Button>
+                <Button disabled={isPending} type="submit">
+                  {isPending ? <>Carregando...</> : editData ? "Salvar mudanças" : "Salvar"}
+                </Button>
               </div>
             </Form>
           )}
