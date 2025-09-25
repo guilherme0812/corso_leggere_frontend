@@ -7,7 +7,7 @@ type ITableProceeding = {
   data: IClient[];
   handleEdit(client: IClient): void;
 
-  handleDelete: (document: string) => Promise<void>;
+  handleDelete: (document: string) => void;
 };
 
 export default function TableProceeding({ data, handleEdit, handleDelete }: ITableProceeding) {

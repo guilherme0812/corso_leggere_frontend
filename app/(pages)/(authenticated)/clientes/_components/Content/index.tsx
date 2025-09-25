@@ -6,6 +6,7 @@ import { IClient } from "@/app/_services/client";
 import { deleteClient } from "@/app/actions/client";
 import { useRouter } from "next/navigation";
 import ClientHeader from "../ClientHeader";
+import ConfirmDialog from "@/app/_components/ui/ConfirmDialog";
 
 type ContentType = {
   clients: IClient[];
@@ -15,6 +16,7 @@ function Content({ clients }: ContentType) {
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState<IClient[]>(clients);
   const [editData, setEditData] = useState<IClient>();
+  const [idToDelete, setIdDelete] = useState<string>();
 
   const router = useRouter();
 
@@ -32,6 +34,7 @@ function Content({ clients }: ContentType) {
 
     if (typeof res == "object") {
       router.refresh();
+      setIdDelete(undefined);
     }
   };
 
@@ -40,13 +43,23 @@ function Content({ clients }: ContentType) {
   }, [clients]);
 
   return (
-    <div className="max-w-[1700px] m-auto grid grid-rows-[auto_1fr] h-full gap-4">
-      <ClientHeader {...{ data, editData, openModal, setOpenModal }} />
+    <>
+      <div className="max-w-[1700px] m-auto grid grid-rows-[auto_1fr] h-full gap-4">
+        <ClientHeader {...{ data, editData, openModal, setOpenModal }} />
 
-      <div className="h-full">
-        <TableClients data={data} handleEdit={handleEdit} handleDelete={handleDelete} />
+        <div className="h-full">
+          <TableClients data={data} handleEdit={handleEdit} handleDelete={(document) => setIdDelete(document)} />
+        </div>
       </div>
-    </div>
+
+      <ConfirmDialog
+        open={idToDelete ? true : false}
+        handleClose={() => {}}
+        title="Deseja remover esse cliente?"
+        description="Apòs confirmar nao serà possivel desfazer o processo."
+        handleConfirm={() => handleDelete(idToDelete as string)}
+      />
+    </>
   );
 }
 
