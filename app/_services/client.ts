@@ -28,11 +28,12 @@ export const deleteClient = async (document: string) => {
   }
 };
 
-export const getClients = async () => {
+export const getClients = async ({ name }: { name?: string | null }) => {
   try {
     const res = await apiServerLeggere<IClient[]>({
       url: "/clients",
       method: "GET",
+      params: { name },
     });
 
     const { data } = res;

@@ -5,10 +5,10 @@ import { Label } from "@/app/_components/ui/Label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { Button } from "@/app/_components/ui/Button";
 import { LuPlus, LuSearch } from "react-icons/lu";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState, KeyboardEvent } from "react";
 import ClientModal from "../ClientModal";
 import { IClient } from "@/app/_services/client";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function ClientHeader({
   data,
@@ -21,11 +21,34 @@ function ClientHeader({
   setOpenModal: Dispatch<SetStateAction<boolean>>;
   editData: IClient | undefined;
 }) {
+  const [clientName, setClientName] = useState("");
+  const router = useRouter();
+
+  const handleSearch = () => {
+    if (clientName.trim()) {
+      router.push(`/clientes?name=${encodeURIComponent(clientName.trim())}`);
+    } else {
+      router.push("/clientes");
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <header className="h-full grid grid-cols-12 gap-4 shadow-md bg-white p-4">
       <div className="col-span-12 md:col-span-3">
         <Label>Nome do cliente</Label>
-        <Input placeholder="Digite o nome do cliente" variant="filled" />
+        <Input
+          placeholder="Digite o nome do cliente"
+          variant="filled"
+          value={clientName}
+          onChange={(e) => setClientName(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
       </div>
 
       <div className="col-span-12 md:col-span-2">
@@ -48,7 +71,7 @@ function ClientHeader({
           {data.length} clientes encontrados
         </div>
         <div className="flex gap-4 items-center">
-          <Button>
+          <Button onClick={handleSearch}>
             <LuSearch />
             Buscar clientes
           </Button>
