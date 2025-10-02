@@ -108,7 +108,7 @@ function LoginForm() {
               <div className="relative w-full my-4">
                 <hr className="border-t border-gray-300" />
                 <span className="absolute top-[-10px] inset-x-0 text-sm text-center bg-white px-2 w-max mx-auto">
-                  Acese de outra forma
+                  Acesse de outra forma
                 </span>
               </div>
 

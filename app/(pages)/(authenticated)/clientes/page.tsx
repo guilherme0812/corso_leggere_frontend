@@ -8,7 +8,6 @@ async function Page({ searchParams }: { searchParams: { [key: string]: string } 
 
   const clients = await getClients({ name });
 
-  console.log("clients: ", clients?.length);
   return <Content clients={clients || []} />;
 }
 
