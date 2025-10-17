@@ -19,6 +19,10 @@ export const internalApiAxios = axios.create({
   baseURL: "/api",
 });
 
+export const apiIBGE = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_IBGE_API,
+});
+
 apiLeggere.interceptors.request.use(async (config) => {
   const session = (await getSession()) as any;
   if (session?.user?.token) {

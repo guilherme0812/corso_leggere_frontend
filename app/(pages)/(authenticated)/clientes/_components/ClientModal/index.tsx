@@ -9,9 +9,14 @@ import * as Yup from "yup";
 import { Button } from "@/app/_components/ui/Button";
 import { LoginDataType } from "@/app/_types";
 import { IClient } from "@/app/_services/client";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { createClient, updateClient } from "@/app/actions/client";
 import { useRouter } from "next/navigation";
+import { getCountries } from "@/app/_services/country";
+import { useQuery } from "@tanstack/react-query";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
+import { getStates } from "@/app/_services/states";
+import { getCities } from "@/app/_services/cities";
 
 type ClientModalType = {
   handleClose(): void;
@@ -36,6 +41,8 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
   const { data } = useSession();
   const router = useRouter();
   const user = data?.user as LoginDataType;
+
+  const [state, setState] = useState<string>(editData?.stateId || "");
 
   async function handleSubmit(values: any) {
     startTransition(async () => {
@@ -69,9 +76,9 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
           email: values.email,
           hasWhatsapp: true,
           address: values.address,
-          cityId: "cidade-abc",
-          stateId: "estado-xyz",
-          countryId: "pais-br",
+          cityId: values.cityId,
+          stateId: values.stateId,
+          countryId: values.countryId,
           birthDate: "1990-05-15T00:00:00.000Z",
           notes: "Cliente regular",
           companyId: user?.companyId,
@@ -109,7 +116,24 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
         phone: "",
         email: "",
         address: "",
+        cityId: "",
+        stateId: "",
+        countryId: "BR",
       };
+
+  const { isPending: countriesIsPending, data: countries } = useQuery({
+    queryKey: ["countries"],
+    queryFn: getCountries,
+  });
+  const { isPending: statesIsPending, data: states } = useQuery({
+    queryKey: ["states"],
+    queryFn: getStates,
+  });
+  const { isPending: citiesIsPending, data: cities } = useQuery({
+    queryKey: ["cities", state.toString()],
+    queryFn: () => getCities(state),
+    enabled: !!state,
+  });
 
   return (
     <Dialog open onOpenChange={handleClose}>
@@ -122,7 +146,7 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
         </DialogHeader>
 
         <Formik initialValues={initialValues} validationSchema={ClientSchema} onSubmit={handleSubmit}>
-          {({ errors, touched }) => (
+          {({ errors, touched, values, setFieldValue }) => (
             <Form className="grid grid-cols-12 gap-4">
               <div className="col-span-12 md:col-span-6">
                 <Label>Nome</Label>
@@ -159,6 +183,83 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
               <div className="col-span-12 md:col-span-6">
                 <Label>Endereço</Label>
                 <Field as={Input} name="address" placeholder="Digite o endereço" variant="filled" />
+                {errors.address && touched.address && <div className="text-red-500 text-sm">{errors.address}</div>}
+              </div>
+
+              <div className="col-span-12 md:col-span-6">
+                <Label>País de origem</Label>
+
+                <Select value={values.countryId} onValueChange={(value) => setFieldValue("countryId", value)}>
+                  <SelectTrigger className="w-full" variant="filled">
+                    <SelectValue placeholder="Selecione o país" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {countriesIsPending && <div>Carregando países...</div>}
+                    {countries &&
+                      countries.map((country) => (
+                        <SelectItem key={country.id} value={country.id}>
+                          {country.nome}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+
+                {errors.address && touched.address && <div className="text-red-500 text-sm">{errors.address}</div>}
+              </div>
+
+              <div className="col-span-12 md:col-span-6">
+                <Label>Estado</Label>
+
+                <Select
+                  value={values.stateId}
+                  onValueChange={(value) => {
+                    setFieldValue("stateId", value);
+                    setState(value);
+                  }}
+                >
+                  <SelectTrigger className="w-full" variant="filled">
+                    <SelectValue placeholder="Selecione o estado" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {statesIsPending && <div>Carregando estados...</div>}
+                    {states &&
+                      states?.map((country) => (
+                        <SelectItem key={country.id} value={country.id.toString()}>
+                          {country.nome}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+
+                {errors.address && touched.address && <div className="text-red-500 text-sm">{errors.address}</div>}
+              </div>
+
+              <div className="col-span-12 md:col-span-6">
+                <Label>Cidade</Label>
+
+                <Select
+                  value={values.cityId}
+                  onValueChange={(value) => {
+                    setFieldValue("cityId", value);
+                  }}
+                >
+                  <SelectTrigger className="w-full" variant="filled">
+                    <SelectValue placeholder="Selecione a cidade" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {citiesIsPending && <div>Selecione a cidade...</div>}
+                    {cities &&
+                      cities?.map((country) => (
+                        <SelectItem key={country.id} value={country.id.toString()}>
+                          {country.nome}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+
                 {errors.address && touched.address && <div className="text-red-500 text-sm">{errors.address}</div>}
               </div>
 
