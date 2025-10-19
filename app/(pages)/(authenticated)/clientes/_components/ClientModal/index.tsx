@@ -3,11 +3,11 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Input } from "@/app/_components/ui/Input";
 import { Label } from "@/app/_components/ui/Label";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/app/_components/ui/Button";
-import { LoginDataType } from "@/app/_types";
+// import { LoginDataType } from "@/app/_types";
 import { IClient } from "@/app/_services/client";
 import { useState, useTransition } from "react";
 import { createClient, updateClient } from "@/app/actions/client";
@@ -17,6 +17,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { getStates } from "@/app/_services/states";
 import { getCities } from "@/app/_services/cities";
+import { Switch } from "@/app/_components/ui/switch";
+import { Textarea } from "@/app/_components/ui/textarea";
 
 type ClientModalType = {
   handleClose(): void;
@@ -33,14 +35,14 @@ const ClientSchema = Yup.object().shape({
     .matches(/^\d{10,11}$/, "Telefone deve ter 10 ou 11 dígitos numéricos")
     .required("Telefone é obrigatório"),
   email: Yup.string().email("Formato de email inválido").required("Email é obrigatório"),
-  address: Yup.string().min(5, "Endereço muito curto").required("Endereço é obrigatório"),
+  addressStreet: Yup.string().min(5, "Endereço muito curto").required("Endereço é obrigatório"),
 });
 
 function ClientModal({ editData, handleClose }: ClientModalType) {
   const [isPending, startTransition] = useTransition();
-  const { data } = useSession();
+  // const { data } = useSession();
   const router = useRouter();
-  const user = data?.user as LoginDataType;
+  // const user = data?.user as LoginDataType;
 
   const [state, setState] = useState<string>(editData?.stateId || "");
 
@@ -70,19 +72,24 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
       } else {
         const payload = {
           document: values.document,
+          nacionality: "",
           firstName: values.firstName,
           lastName: values.lastName,
           phone: values.phone,
           email: values.email,
           hasWhatsapp: true,
-          address: values.address,
+          addressStreet: values.address,
+          addressNumber: "",
+          addressComplement: "",
+          addressZipCode: "",
+          zone: "",
           cityId: values.cityId,
           stateId: values.stateId,
           countryId: values.countryId,
           birthDate: "1990-05-15T00:00:00.000Z",
-          notes: "Cliente regular",
-          companyId: user?.companyId,
+          notes: "",
         };
+
         const formData = new FormData();
         Object.entries(payload).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
@@ -115,10 +122,15 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
         document: "",
         phone: "",
         email: "",
-        address: "",
         cityId: "",
         stateId: "",
         countryId: "BR",
+        hasWhatsapp: true,
+        addressStreet: "",
+        addressNumber: "",
+        addressComplement: "",
+        addressZipCode: "",
+        zone: "",
       };
 
   const { isPending: countriesIsPending, data: countries } = useQuery({
@@ -137,7 +149,7 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
 
   return (
     <Dialog open onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{editData ? "Alterar" : "Adicionar"} cliente</DialogTitle>
           <DialogDescription>
@@ -146,130 +158,167 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
         </DialogHeader>
 
         <Formik initialValues={initialValues} validationSchema={ClientSchema} onSubmit={handleSubmit}>
-          {({ errors, touched, values, setFieldValue }) => (
-            <Form className="grid grid-cols-12 gap-4">
-              <div className="col-span-12 md:col-span-6">
-                <Label>Nome</Label>
-                <Field as={Input} name="firstName" placeholder="Digite o primeiro nome do cliente" variant="filled" />
-                {errors.firstName && touched.firstName && (
-                  <div className="text-red-500 text-sm">{errors.firstName}</div>
-                )}
-              </div>
+          {({ errors, touched, values, setFieldValue }) => {
+            console.log("errors", errors);
 
-              <div className="col-span-12 md:col-span-6">
-                <Label>Sobrenome</Label>
-                <Field as={Input} name="lastName" placeholder="Digite o sobrenome" variant="filled" />
-                {errors.lastName && touched.lastName && <div className="text-red-500 text-sm">{errors.lastName}</div>}
-              </div>
+            return (
+              <Form className="grid grid-cols-12 gap-4">
+                <div className="col-span-12 md:col-span-6">
+                  <Label>Nome</Label>
+                  <Field as={Input} name="firstName" placeholder="Digite o primeiro nome do cliente" variant="filled" />
+                  {errors.firstName && touched.firstName && (
+                    <div className="text-red-500 text-sm">{errors.firstName}</div>
+                  )}
+                </div>
+                <div className="col-span-12 md:col-span-6">
+                  <Label>Sobrenome</Label>
+                  <Field as={Input} name="lastName" placeholder="Digite o sobrenome" variant="filled" />
+                  {errors.lastName && touched.lastName && <div className="text-red-500 text-sm">{errors.lastName}</div>}
+                </div>
+                <div className="col-span-12 md:col-span-6">
+                  <Label>CPF</Label>
+                  <Field as={Input} name="document" placeholder="Digite o CPF" variant="filled" />
+                  {errors.document && touched.document && <div className="text-red-500 text-sm">{errors.document}</div>}
+                </div>
 
-              <div className="col-span-12 md:col-span-6">
-                <Label>CPF</Label>
-                <Field as={Input} name="document" placeholder="Digite o CPF" variant="filled" />
-                {errors.document && touched.document && <div className="text-red-500 text-sm">{errors.document}</div>}
-              </div>
+                <div className="col-span-12 md:col-span-6">
+                  <Label>Email</Label>
+                  <Field as={Input} name="email" placeholder="Digite o email" variant="filled" />
+                  {errors.email && touched.email && <div className="text-red-500 text-sm">{errors.email}</div>}
+                </div>
+                <div className="col-span-12 md:col-span-6">
+                  <Label>Nacionalidade</Label>
+                  <Field as={Input} name="nacionality" placeholder="Digite a nacionalidade" variant="filled" />
+                </div>
 
-              <div className="col-span-12 md:col-span-6">
-                <Label>Telefone</Label>
-                <Field as={Input} name="phone" placeholder="Digite o telefone" variant="filled" />
-                {errors.phone && touched.phone && <div className="text-red-500 text-sm">{errors.phone}</div>}
-              </div>
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Telefone</Label>
+                  <Field as={Input} name="phone" placeholder="Digite o telefone" variant="filled" />
+                  {errors.phone && touched.phone && <div className="text-red-500 text-sm">{errors.phone}</div>}
+                </div>
 
-              <div className="col-span-12 md:col-span-6">
-                <Label>Email</Label>
-                <Field as={Input} name="email" placeholder="Digite o email" variant="filled" />
-                {errors.email && touched.email && <div className="text-red-500 text-sm">{errors.email}</div>}
-              </div>
+                <div className="col-span-12 md:col-span-2 flex flex-col justify-between pt-2">
+                  <Label>Whatsapp?</Label>
 
-              <div className="col-span-12 md:col-span-6">
-                <Label>Endereço</Label>
-                <Field as={Input} name="address" placeholder="Digite o endereço" variant="filled" />
-                {errors.address && touched.address && <div className="text-red-500 text-sm">{errors.address}</div>}
-              </div>
+                  <div>
+                    <Switch checked={values.hasWhatsapp} onCheckedChange={(v) => setFieldValue("hasWhatsapp", v)} />
+                  </div>
 
-              <div className="col-span-12 md:col-span-6">
-                <Label>País de origem</Label>
+                  {errors.hasWhatsapp && touched.hasWhatsapp && (
+                    <div className="text-red-500 text-sm">{errors.hasWhatsapp}</div>
+                  )}
+                </div>
 
-                <Select value={values.countryId} onValueChange={(value) => setFieldValue("countryId", value)}>
-                  <SelectTrigger className="w-full" variant="filled">
-                    <SelectValue placeholder="Selecione o país" />
-                  </SelectTrigger>
+                <div className="col-span-12 md:col-span-6">
+                  <Label>País</Label>
 
-                  <SelectContent>
-                    {countriesIsPending && <div>Carregando países...</div>}
-                    {countries &&
-                      countries.map((country) => (
-                        <SelectItem key={country.id} value={country.id}>
-                          {country.nome}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
+                  <Select value={values.countryId} onValueChange={(value) => setFieldValue("countryId", value)}>
+                    <SelectTrigger className="w-full" variant="filled">
+                      <SelectValue placeholder="Selecione o país" />
+                    </SelectTrigger>
 
-                {errors.address && touched.address && <div className="text-red-500 text-sm">{errors.address}</div>}
-              </div>
+                    <SelectContent>
+                      {countriesIsPending && <div>Carregando países...</div>}
+                      {countries &&
+                        countries.map((country) => (
+                          <SelectItem key={country.id} value={country.id}>
+                            {country.nome}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
 
-              <div className="col-span-12 md:col-span-6">
-                <Label>Estado</Label>
+                  {errors.countryId && touched.countryId && (
+                    <div className="text-red-500 text-sm">{errors.countryId}</div>
+                  )}
+                </div>
 
-                <Select
-                  value={values.stateId}
-                  onValueChange={(value) => {
-                    setFieldValue("stateId", value);
-                    setState(value);
-                  }}
-                >
-                  <SelectTrigger className="w-full" variant="filled">
-                    <SelectValue placeholder="Selecione o estado" />
-                  </SelectTrigger>
+                <div className="col-span-12 md:col-span-6">
+                  <Label>Estado</Label>
 
-                  <SelectContent>
-                    {statesIsPending && <div>Carregando estados...</div>}
-                    {states &&
-                      states?.map((country) => (
-                        <SelectItem key={country.id} value={country.id.toString()}>
-                          {country.nome}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
+                  <Select
+                    value={values.stateId}
+                    onValueChange={(value) => {
+                      setFieldValue("stateId", value);
+                      setState(value);
+                    }}
+                  >
+                    <SelectTrigger className="w-full" variant="filled">
+                      <SelectValue placeholder="Selecione o estado" />
+                    </SelectTrigger>
 
-                {errors.address && touched.address && <div className="text-red-500 text-sm">{errors.address}</div>}
-              </div>
+                    <SelectContent>
+                      {statesIsPending && <div>Carregando estados...</div>}
+                      {states &&
+                        states?.map((country) => (
+                          <SelectItem key={country.id} value={country.id.toString()}>
+                            {country.nome}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
 
-              <div className="col-span-12 md:col-span-6">
-                <Label>Cidade</Label>
+                  {errors.stateId && touched.stateId && <div className="text-red-500 text-sm">{errors.stateId}</div>}
+                </div>
 
-                <Select
-                  value={values.cityId}
-                  onValueChange={(value) => {
-                    setFieldValue("cityId", value);
-                  }}
-                >
-                  <SelectTrigger className="w-full" variant="filled">
-                    <SelectValue placeholder="Selecione a cidade" />
-                  </SelectTrigger>
+                <div className="col-span-12 md:col-span-6">
+                  <Label>Cidade</Label>
 
-                  <SelectContent>
-                    {citiesIsPending && <div>Selecione a cidade...</div>}
-                    {cities &&
-                      cities?.map((country) => (
-                        <SelectItem key={country.id} value={country.id.toString()}>
-                          {country.nome}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
+                  <Select
+                    value={values.cityId}
+                    onValueChange={(value) => {
+                      setFieldValue("cityId", value);
+                    }}
+                  >
+                    <SelectTrigger className="w-full" variant="filled">
+                      <SelectValue placeholder="Selecione a cidade" />
+                    </SelectTrigger>
 
-                {errors.address && touched.address && <div className="text-red-500 text-sm">{errors.address}</div>}
-              </div>
+                    <SelectContent>
+                      {citiesIsPending && <div>Selecione a cidade...</div>}
+                      {cities &&
+                        cities?.map((country) => (
+                          <SelectItem key={country.id} value={country.id.toString()}>
+                            {country.nome}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="col-span-12 flex justify-end">
-                <Button disabled={isPending} type="submit">
-                  {isPending ? <>Carregando...</> : editData ? "Salvar mudanças" : "Salvar"}
-                </Button>
-              </div>
-            </Form>
-          )}
+                <div className="col-span-12 md:col-span-6">
+                  <Label>CEP</Label>
+                  <Field as={Input} name="addressZipCode" placeholder="Digite o CEP" variant="filled" />
+                </div>
+
+                <div className="col-span-12">
+                  <Label>Endereço</Label>
+                  <Field as={Input} name="addressStreet" placeholder="Digite o endereço" variant="filled" />
+                  {errors.addressStreet && touched.addressStreet && (
+                    <div className="text-red-500 text-sm">{errors.addressStreet}</div>
+                  )}
+                </div>
+
+                <div className="col-span-12">
+                  <Label>Observaçao do cliente</Label>
+
+                  <Field
+                    as={Textarea}
+                    name="notes"
+                    placeholder="Adicione uma observaçao"
+                    variant="filled"
+                    className="bg-gray-200"
+                  />
+                </div>
+
+                <div className="col-span-12 flex justify-end">
+                  <Button disabled={isPending} type="submit">
+                    {isPending ? <>Carregando...</> : editData ? "Salvar mudanças" : "Salvar"}
+                  </Button>
+                </div>
+              </Form>
+            );
+          }}
         </Formik>
       </DialogContent>
     </Dialog>

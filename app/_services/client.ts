@@ -7,13 +7,18 @@ export type IClient = {
   phone: string;
   email: string;
   hasWhatsapp: boolean;
-  address: string;
+  addressStreet: string | null;
+  addressNumber: string | null;
+  addressComplement: string | null;
+  addressZipCode: string | null;
+  zone: string | null;
   cityId: string;
   stateId: string;
   countryId: string;
   birthDate: string;
   notes: string;
   companyId: string;
+  nacionality: string | null;
 };
 
 export const deleteClient = async (document: string) => {
