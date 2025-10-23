@@ -1,16 +1,16 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
-import { IClient } from "@/app/_services/client";
+import { IAttorney } from "@/app/_services/attorney";
 import { LuPencil, LuTrash } from "react-icons/lu";
 
-type ITableProceeding = {
-  data: IClient[];
-  handleEdit(client: IClient): void;
+type IAttorneyTable = {
+  data: IAttorney[];
+  handleEdit(data: IAttorney): void;
 
-  handleDelete: (document: string) => void;
+  handleDelete: (id: string) => void;
 };
 
-export default function TableProceeding({ data, handleEdit, handleDelete }: ITableProceeding) {
+export default function AttorneyTable({ data = [], handleEdit, handleDelete }: IAttorneyTable) {
   return (
     <div className="relative w-full h-full">
       <div className="absolute left-0 top-0 h-full w-full overflow-y-auto">
@@ -18,26 +18,28 @@ export default function TableProceeding({ data, handleEdit, handleDelete }: ITab
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
-              <TableHead>Local</TableHead>
+              <TableHead>Licença</TableHead>
+              <TableHead>Jurisdição</TableHead>
               <TableHead>Telefone</TableHead>
               <TableHead>Email</TableHead>
               <TableHead className="w-[60px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((client, index) => (
+            {data.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">
-                  {client?.firstName} {client?.lastName}
+                  {item?.firstName} {item?.lastName}
                 </TableCell>
-                <TableCell>{}</TableCell>
-                <TableCell>{client.phone}</TableCell>
-                <TableCell>{client.email}</TableCell>
+                <TableCell>{item?.licenceNumber}</TableCell>
+                <TableCell>{item?.licenceJurisdiction}</TableCell>
+                <TableCell>{item.phone}</TableCell>
+                <TableCell>{item.email}</TableCell>
                 <TableCell className="flex gap-4">
-                  <Button variant="outline" size="sm" onClick={() => handleEdit(client)}>
+                  <Button variant="outline" size="sm" onClick={() => handleEdit(item)}>
                     <LuPencil />
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleDelete(client.document)}>
+                  <Button variant="outline" size="sm" onClick={() => handleDelete(item.id)}>
                     <LuTrash />
                   </Button>
                 </TableCell>

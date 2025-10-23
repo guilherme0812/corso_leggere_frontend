@@ -1,6 +1,6 @@
 "use client";
 
-import { LuCalendar, LuCircleDollarSign, LuFileText, LuNewspaper, LuPieChart, LuUsers } from "react-icons/lu";
+import { LuNewspaper, LuPieChart, LuUsers } from "react-icons/lu";
 import PrimaryLayout from "../../Layout/PrimaryLayout";
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";

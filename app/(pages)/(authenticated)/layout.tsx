@@ -1,5 +1,5 @@
 import UserLayoutProvider from "@/app/_components/Providers/UserLayoutProvider";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";

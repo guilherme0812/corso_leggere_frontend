@@ -8,10 +8,10 @@ import { LuPlus, LuSearch } from "react-icons/lu";
 
 export default function Header({
   data,
-  openModal,
-  setOpenModal,
-  editData,
-}: {
+}: // openModal,
+// setOpenModal,
+// editData,
+{
   data: ICase[];
   openModal: boolean;
   setOpenModal: Dispatch<SetStateAction<boolean>>;

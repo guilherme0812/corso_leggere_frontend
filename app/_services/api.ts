@@ -2,7 +2,7 @@ import axios from "axios";
 import { getServerSession } from "next-auth";
 import { getSession } from "next-auth/react";
 import { parseCookies } from "nookies";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 
 const cookies = parseCookies();
 export const LEGGERE_TOKEN_KEY = "LEGGERE-TOKEN";
