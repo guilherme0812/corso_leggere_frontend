@@ -120,6 +120,11 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
         firstName: "",
         lastName: "",
         document: "",
+        officialId: "",
+        officialIdIssuingBody: "SSP",
+        officialIdissuingState: "SC",
+        maritalStatus: "",
+        profession: "",
         phone: "",
         email: "",
         cityId: "",
@@ -149,7 +154,7 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
 
   return (
     <Dialog open onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl max-h-[95vh] overflow-y-auto">
+      <DialogContent className="max-w-screen-xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{editData ? "Alterar" : "Adicionar"} cliente</DialogTitle>
           <DialogDescription>
@@ -159,45 +164,90 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
 
         <Formik initialValues={initialValues} validationSchema={ClientSchema} onSubmit={handleSubmit}>
           {({ errors, touched, values, setFieldValue }) => {
-            console.log("errors", errors);
-
             return (
               <Form className="grid grid-cols-12 gap-4">
-                <div className="col-span-12 md:col-span-6">
+                <div className="col-span-12 md:col-span-4">
                   <Label>Nome</Label>
                   <Field as={Input} name="firstName" placeholder="Digite o primeiro nome do cliente" variant="filled" />
                   {errors.firstName && touched.firstName && (
                     <div className="text-red-500 text-sm">{errors.firstName}</div>
                   )}
                 </div>
-                <div className="col-span-12 md:col-span-6">
+
+                <div className="col-span-12 md:col-span-4">
                   <Label>Sobrenome</Label>
                   <Field as={Input} name="lastName" placeholder="Digite o sobrenome" variant="filled" />
                   {errors.lastName && touched.lastName && <div className="text-red-500 text-sm">{errors.lastName}</div>}
                 </div>
-                <div className="col-span-12 md:col-span-6">
+
+                <div className="col-span-12 md:col-span-4">
                   <Label>CPF</Label>
                   <Field as={Input} name="document" placeholder="Digite o CPF" variant="filled" />
                   {errors.document && touched.document && <div className="text-red-500 text-sm">{errors.document}</div>}
                 </div>
 
-                <div className="col-span-12 md:col-span-6">
+                <div className="col-span-12 md:col-span-4">
+                  <Label>RG</Label>
+                  <Field as={Input} name="officialId" placeholder="Digite o RG" variant="filled" />
+                  {errors.officialId && touched.officialId && (
+                    <div className="text-red-500 text-sm">{errors.document}</div>
+                  )}
+                </div>
+
+                <div className="col-span-12 md:col-span-4">
+                  <Label>órgão emissor</Label>
+                  <Field as={Input} name="officialIdIssuingBody" placeholder="Digite o RG" variant="filled" />
+                  {errors.officialIdIssuingBody && touched.officialIdIssuingBody && (
+                    <div className="text-red-500 text-sm">{errors.officialIdIssuingBody}</div>
+                  )}
+                </div>
+
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Estado de emissão</Label>
+
+                  <Select
+                    value={values.officialIdissuingState || ""}
+                    onValueChange={(value) => {
+                      setFieldValue("officialIdissuingState", value);
+                    }}
+                  >
+                    <SelectTrigger className="w-full" variant="filled">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {statesIsPending && <div>Carregando estados...</div>}
+                      {states &&
+                        states?.map((country) => (
+                          <SelectItem key={country.sigla} value={country.sigla.toString()}>
+                            {country.nome}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Profissão</Label>
+                  <Field as={Input} name="profession" placeholder="Digite o RG" variant="filled" />
+                  {errors.profession && touched.profession && (
+                    <div className="text-red-500 text-sm">{errors.profession}</div>
+                  )}
+                </div>
+
+                <div className="col-span-12 md:col-span-4">
                   <Label>Email</Label>
                   <Field as={Input} name="email" placeholder="Digite o email" variant="filled" />
                   {errors.email && touched.email && <div className="text-red-500 text-sm">{errors.email}</div>}
                 </div>
-                <div className="col-span-12 md:col-span-6">
-                  <Label>Nacionalidade</Label>
-                  <Field as={Input} name="nacionality" placeholder="Digite a nacionalidade" variant="filled" />
-                </div>
 
-                <div className="col-span-12 md:col-span-4">
+                <div className="col-span-12 md:col-span-3">
                   <Label>Telefone</Label>
                   <Field as={Input} name="phone" placeholder="Digite o telefone" variant="filled" />
                   {errors.phone && touched.phone && <div className="text-red-500 text-sm">{errors.phone}</div>}
                 </div>
 
-                <div className="col-span-12 md:col-span-2 flex flex-col justify-between pt-2">
+                <div className="col-span-12 md:col-span-1 flex flex-col justify-between pt-2">
                   <Label>Whatsapp?</Label>
 
                   <div>
@@ -209,7 +259,12 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
                   )}
                 </div>
 
-                <div className="col-span-12 md:col-span-6">
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Nacionalidade</Label>
+                  <Field as={Input} name="nacionality" placeholder="Digite a nacionalidade" variant="filled" />
+                </div>
+
+                <div className="col-span-12 md:col-span-4">
                   <Label>País</Label>
 
                   <Select value={values.countryId} onValueChange={(value) => setFieldValue("countryId", value)}>
@@ -233,7 +288,7 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
                   )}
                 </div>
 
-                <div className="col-span-12 md:col-span-6">
+                <div className="col-span-12 md:col-span-4">
                   <Label>Estado</Label>
 
                   <Select
@@ -251,7 +306,7 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
                       {statesIsPending && <div>Carregando estados...</div>}
                       {states &&
                         states?.map((country) => (
-                          <SelectItem key={country.id} value={country.id.toString()}>
+                          <SelectItem key={country.sigla} value={country.sigla.toString()}>
                             {country.nome}
                           </SelectItem>
                         ))}
@@ -261,7 +316,7 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
                   {errors.stateId && touched.stateId && <div className="text-red-500 text-sm">{errors.stateId}</div>}
                 </div>
 
-                <div className="col-span-12 md:col-span-6">
+                <div className="col-span-12 md:col-span-4">
                   <Label>Cidade</Label>
 
                   <Select
@@ -286,12 +341,12 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
                   </Select>
                 </div>
 
-                <div className="col-span-12 md:col-span-6">
+                <div className="col-span-12 md:col-span-4">
                   <Label>CEP</Label>
                   <Field as={Input} name="addressZipCode" placeholder="Digite o CEP" variant="filled" />
                 </div>
 
-                <div className="col-span-12">
+                <div className="col-span-12 md:col-span-4">
                   <Label>Endereço</Label>
                   <Field as={Input} name="addressStreet" placeholder="Digite o endereço" variant="filled" />
                   {errors.addressStreet && touched.addressStreet && (

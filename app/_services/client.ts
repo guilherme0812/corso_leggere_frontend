@@ -2,6 +2,9 @@ import { apiLeggere, apiServerLeggere } from "./api";
 
 export type IClient = {
   document: string;
+  officialId: string | null;
+  officialIdIssuingBody: string | null;
+  officialIdissuingState: string | null;
   firstName: string;
   lastName: string;
   phone: string;
@@ -18,6 +21,8 @@ export type IClient = {
   birthDate: string;
   notes: string;
   companyId: string;
+  maritalStatus: string | null;
+  profession: string | null;
   nacionality: string | null;
 };
 
