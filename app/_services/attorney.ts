@@ -1,4 +1,4 @@
-import { apiLeggere, apiServerLeggere } from "./api";
+import { apiServerLeggere } from "./api";
 
 export type IAttorney = {
   id: string;

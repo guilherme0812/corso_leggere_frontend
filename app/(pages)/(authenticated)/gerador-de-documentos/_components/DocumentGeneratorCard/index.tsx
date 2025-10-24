@@ -48,7 +48,7 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
   const [file, setFile] = useState<File | null>(null);
   const [buildedDocument, setBuildedDocument] = useState(false);
 
-  const { isPending: citiesIsPending, data: cities } = useQuery({
+  const { data: cities } = useQuery({
     queryKey: ["cities", client?.cityId],
     queryFn: () => getCities(client?.stateId as string),
     enabled: !!client?.cityId,
