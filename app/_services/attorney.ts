@@ -17,18 +17,6 @@ export type IAttorney = {
   updatedAt: string;
 };
 
-export const deleteClient = async (document: string) => {
-  try {
-    apiLeggere({
-      method: "delete",
-      url: `/client`,
-      params: { document },
-    });
-  } catch (error: any) {
-    console.log(error);
-  }
-};
-
 export const getAttorneys = async ({ name }: { name?: string | null }) => {
   try {
     const res = await apiServerLeggere<IAttorney[]>({

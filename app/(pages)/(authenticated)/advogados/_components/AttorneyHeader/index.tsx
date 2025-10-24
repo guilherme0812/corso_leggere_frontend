@@ -5,11 +5,22 @@ import { Label } from "@/app/_components/ui/Label";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { Button } from "@/app/_components/ui/Button";
 import { LuPlus, LuSearch } from "react-icons/lu";
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/navigation";
 import { IAttorney } from "@/app/_services/attorney";
+import AttorneyModal from "../AttorneyModal";
 
-function AttorneyHeader({ data }: { data: IAttorney[] }) {
+function AttorneyHeader({
+  data,
+  editData,
+  openModal,
+  setOpenModal,
+}: {
+  data: IAttorney[];
+  openModal: boolean;
+  setOpenModal: Dispatch<SetStateAction<boolean>>;
+  editData: IAttorney | undefined;
+}) {
   const [name, setName] = useState("");
   const router = useRouter();
 
@@ -64,14 +75,14 @@ function AttorneyHeader({ data }: { data: IAttorney[] }) {
             <LuSearch />
             Buscar advogados
           </Button>
-          <Button variant={"outline"}>
+          <Button variant={"outline"} onClick={() => setOpenModal(true)}>
             <LuPlus />
             Adicionar advogado
           </Button>
         </div>
       </div>
 
-      {/* {openModal && <ClientModal handleClose={setOpenModal as any} editData={editData} />} */}
+      {openModal && <AttorneyModal handleClose={setOpenModal as any} editData={editData} />}
     </header>
   );
 }
