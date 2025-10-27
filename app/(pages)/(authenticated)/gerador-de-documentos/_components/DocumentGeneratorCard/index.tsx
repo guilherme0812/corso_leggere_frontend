@@ -11,6 +11,7 @@ import { Label } from "@/app/_components/ui/Label";
 import { IClient } from "@/app/_services/client";
 import { useQuery } from "@tanstack/react-query";
 import { getCities } from "@/app/_services/cities";
+import { GenerateDocumentBodyType } from "@/app/_services/document";
 
 type ContentType = {
   attorneys: IAttorney[];
@@ -60,15 +61,42 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const grantor = clients.find((item) => item.document == selectedClient);
-    const grantee = attorneys.find((item) => item.id == selectedAttorney);
-    const data = {
+    const grantor = clients.find((item) => item.document == selectedClient) as IClient;
+    const grantee = attorneys.find((item) => item.id == selectedAttorney) as IAttorney;
+    const data: GenerateDocumentBodyType = {
       grantor: {
-        ...grantor,
+        document: grantor?.document,
+        officialId: grantor.officialId,
+        officialIdIssuingBody: grantor.officialIdIssuingBody,
+        officialIdissuingState: grantor.officialIdissuingState,
+        phone: grantor?.phone,
+        email: grantor?.email,
+        addressStreet: grantor?.addressStreet,
+        addressNumber: grantor?.addressNumber,
+        addressComplement: grantor?.addressComplement,
+        addressZipCode: grantor?.addressZipCode,
+        zone: grantor?.zone,
+        birthDate: grantor?.birthDate,
+        nacionality: grantor?.nacionality,
+        maritalStatus: grantor?.maritalStatus,
+        profession: grantor?.profession,
+        cityId: grantor?.cityId,
+        stateId: grantor?.stateId,
+        countryId: grantor?.countryId,
         name: grantor?.firstName + " " + grantor?.lastName,
-        city: cities?.find((item) => item.id == (client?.cityId as any)),
+        city: cities?.find((item) => item.id == (client?.cityId as any))?.nome || "",
       },
-      grantee: { ...grantee, name: grantee?.firstName + " " + grantee?.lastName },
+      grantee: {
+        name: grantee?.firstName + " " + grantee?.lastName,
+        licenceNumber: grantee?.licenceNumber,
+        licenceJurisdiction: grantee?.licenceJurisdiction,
+        licenceCountryCode: grantee?.licenceCountryCode,
+        phone: grantee?.phone,
+        email: grantee?.email,
+        nationality: grantee?.nationality,
+        maritalStatus: grantee?.maritalStatus,
+        professionalAddress: grantee?.professionalAddress,
+      },
     };
 
     formData.append("data", JSON.stringify(data));
