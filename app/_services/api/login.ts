@@ -1,5 +1,5 @@
 import { UserDataType } from "@/app/_types/login";
-import axios from "axios";
+import { apiServerLeggere } from "../api";
 
 export type LoginParam = {
   email: string;
@@ -8,9 +8,9 @@ export type LoginParam = {
 
 export async function login({ email, password }: LoginParam) {
   try {
-    const req = await axios<UserDataType>({
+    const req = await apiServerLeggere<UserDataType>({
       method: "POST",
-      url: "http://localhost:3001/api/login",
+      url: "/login",
       data: {
         email,
         password,
