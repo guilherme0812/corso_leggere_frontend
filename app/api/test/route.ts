@@ -1,9 +1,9 @@
 import { apiLeggere } from "@/app/_services/api";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const revalidate = 0;
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const externalReq = await apiLeggere({
     method: "POST",
     url: `/login`,
