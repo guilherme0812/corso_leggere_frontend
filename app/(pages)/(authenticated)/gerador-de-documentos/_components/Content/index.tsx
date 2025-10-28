@@ -41,7 +41,7 @@ function Content({ attorneys, clients }: ContentType) {
         defaultValue="1"
         className="max-w-[1700px] m-auto grid grid-rows-[auto_1fr] h-[calc(100vh-1.5rem)] max-h-full"
       >
-        <div className="bg-background shadow-md p-4 mb-4">
+        <div className="bg-background shadow-custom p-4 mb-4">
           <div className="mb-2 font-medium">Gerador de documentos</div>
           <TabsList>
             <TabsTrigger value="1">Configurações</TabsTrigger>
@@ -53,7 +53,7 @@ function Content({ attorneys, clients }: ContentType) {
           <TabsContent value="1">
             <DocumentSettings />
           </TabsContent>
-          <TabsContent value="2" className="w-full overflow-y-auto">
+          <TabsContent value="2" className="w-full overflow-y-auto ">
             <DocumentGeneratorCard {...{ attorneys, clients }} />
           </TabsContent>
         </div>

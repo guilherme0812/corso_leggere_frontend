@@ -4,7 +4,7 @@ import { Button } from "@/app/_components/ui/Button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { IAttorney } from "@/app/_services/attorney";
 import { useEffect, useState } from "react";
-import { IoCheckmarkOutline } from "react-icons/io5";
+import { IoCheckmarkCircleSharp, IoCheckmarkOutline } from "react-icons/io5";
 
 import { apiLeggere, apiServerLeggere } from "@/app/_services/api";
 import { Label } from "@/app/_components/ui/Label";
@@ -80,7 +80,6 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
         nacionality: grantor?.nacionality,
         maritalStatus: grantor?.maritalStatus,
         profession: grantor?.profession,
-        cityId: grantor?.cityId,
         stateId: grantor?.stateId,
         countryId: grantor?.countryId,
         name: grantor?.firstName + " " + grantor?.lastName,
@@ -142,19 +141,19 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
   }, [selectedClient]);
 
   return (
-    <div className="max-w-screen-sm m-auto min-h-[80svh] gap-4 flex flex-col justify-between">
+    <div className="max-w-screen-sm m-auto  min-h-[400px] gap-4 flex flex-col justify-between">
       {/* header */}
       <header className="flex justify-between">
         <div className="flex-grow">
           <div className="relative flex justify-center">
             <div className="h-1 absolute w-1/2 bg-slate-400 right-0 top-[13px]"></div>
             <div className="bg-background z-10 rounded-full p-1">
-              <div className="bg-yellow-600 h-[1.5rem] w-[1.5rem] rounded-full flex justify-center items-center">
-                {selectedAttorney ? <IoCheckmarkOutline className="text-xl z-10 text-white" /> : null}
+              <div className="bg-yellow-600 h-[1.5rem] w-[1.5rem] rounded-full flex justify-center items-center text-white">
+                {selectedClient && selectedAttorney ? <IoCheckmarkOutline className="text-xl z-10" /> : 1}
               </div>
             </div>
           </div>
-          <div className="text-sm text-center">Informaçoes</div>
+          <div className="text-sm text-center">Informações</div>
         </div>
 
         <div className="flex-grow">
@@ -162,8 +161,8 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
             <div className="h-1 absolute w-1/2 bg-slate-400 left-0 top-[13px]"></div>
             <div className="h-1 absolute w-1/2 bg-slate-400 right-0 top-[13px]"></div>
             <div className="bg-background z-10 rounded-full p-1">
-              <div className="bg-yellow-600 h-[1.5rem] w-[1.5rem] rounded-full flex justify-center items-center">
-                {file ? <IoCheckmarkOutline className="text-xl z-10 text-white" /> : null}{" "}
+              <div className="bg-yellow-600 h-[1.5rem] w-[1.5rem] rounded-full flex justify-center items-center text-white">
+                {file?.name ? <IoCheckmarkOutline className="text-xl z-10" /> : 2}{" "}
               </div>
             </div>
           </div>
@@ -174,8 +173,8 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
           <div className="relative flex justify-center">
             <div className="h-1 absolute w-1/2 bg-slate-400 left-0 top-[13px]"></div>
             <div className="bg-background z-10 rounded-full p-1">
-              <div className="bg-yellow-600 h-[1.5rem] w-[1.5rem] rounded-full flex justify-center items-center">
-                {buildedDocument ? <IoCheckmarkOutline className="text-xl z-10 text-white" /> : null}{" "}
+              <div className="bg-yellow-600 h-[1.5rem] w-[1.5rem] rounded-full flex justify-center items-center text-white">
+                {buildedDocument ? <IoCheckmarkOutline className="text-xl z-10" /> : 3}{" "}
               </div>
             </div>
           </div>
@@ -183,7 +182,7 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
         </div>
       </header>
 
-      <div className="p-6 bg-white rounded-2xl shadow-md w-ful">
+      <div className="p-6 bg-white rounded-2xl shadow-custom">
         {step == 0 ? (
           <div>
             <div className="mb-4">
@@ -237,7 +236,11 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
             <div className="text-sm ">{file?.name}</div>
           </div>
         ) : (
-          <div className="text-center">Documento baixado</div>
+          <div className="flex justify-center item-center gap-2">
+            <IoCheckmarkCircleSharp className="text-2xl text-gray-500" />
+
+            <div className="text-center">Documento baixado</div>
+          </div>
         )}
       </div>
 

@@ -15,7 +15,6 @@ export type GenerateDocumentBodyType = {
     nacionality: string | null;
     maritalStatus: string | null;
     profession: string | null;
-    cityId: string | null;
     stateId: string | null;
     countryId: string | null;
     name: string | null;
@@ -51,7 +50,6 @@ export const generateDocumentBodyType: GenerateDocumentBodyType = {
     nacionality: "nacionality",
     maritalStatus: "maritalStatus",
     profession: "profession",
-    cityId: "cityId",
     stateId: "stateId",
     countryId: "countryId",
     name: "name",

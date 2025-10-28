@@ -37,8 +37,8 @@ function DocumentSettings() {
               <div
                 key={index}
                 className={`w-full px-2 py-1 border-l-4 border-transparent border-solid text-sm hover:cursor-pointer hover:border-slate-500 ${
-                  selectedTab[0] == item[0] ? "border-slate-950" : ""
-                }  transition-all duration-300 `}
+                  selectedTab[0] == item[0] ? "border-slate-800" : ""
+                }  transition-all duration-300`}
                 onClick={() => setSelectedTab(item)}
               >
                 {tranlateName(item[0])}
@@ -46,7 +46,7 @@ function DocumentSettings() {
             </>
           ))}
       </div>
-      <div className="col-span-6 h-full bg-background p-4 rounded-md shadow-xl overflow-y-auto">
+      <div className="col-span-6 h-full bg-background p-4 rounded-md shadow-custom overflow-y-auto">
         {selectedTab && <DocumentsSettingsForm node={selectedTab[0]} data={selectedTab[1]} />}
       </div>
     </div>
