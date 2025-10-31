@@ -14,6 +14,7 @@ import { getCities } from "@/app/_services/cities";
 import { GenerateDocumentBodyType, ReplacePlaceholdersBody } from "@/app/_services/customDocumentMapping";
 import { formatDocument, formatPhone, formatZipCode } from "@/app/_utils/stringFomatters";
 import { numberFormat } from "@/app/_utils";
+import { ImSpinner9 } from "react-icons/im";
 
 type ContentType = {
   attorneys: IAttorney[];
@@ -44,6 +45,7 @@ export async function downloadDocument(formData: FormData) {
 }
 
 function DocumentGeneratorCard({ attorneys, clients, customMappingJson }: ContentType) {
+  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(0);
   const [selectedAttorney, setSelectedAttorney] = useState<string>();
   const [selectedClient, setSelectedClient] = useState<string>();
@@ -60,7 +62,7 @@ function DocumentGeneratorCard({ attorneys, clients, customMappingJson }: Conten
 
   const handleDownload = async () => {
     if (!file) return;
-
+    setLoading(true);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -131,7 +133,7 @@ function DocumentGeneratorCard({ attorneys, clients, customMappingJson }: Conten
     } catch (err) {
       console.error("Erro ao baixar documento:", err);
     }
-    console.log("data", data);
+    setLoading(false);
   };
 
   const handleClick = () => {
@@ -268,7 +270,14 @@ function DocumentGeneratorCard({ attorneys, clients, customMappingJson }: Conten
           }
           onClick={handleClick}
         >
-          Avançar
+          {loading ? (
+            <>
+              <ImSpinner9 className="animate-spin" />
+              Carregando...
+            </>
+          ) : (
+            "Avançar"
+          )}
         </Button>
       </div>
     </div>
