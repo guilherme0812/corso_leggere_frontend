@@ -1,12 +1,18 @@
 export type DefaultResponseType = {
   message: string;
 };
+
+export enum UserRole {
+  employee = "employee",
+  owner = "owner",
+  admin = "admin",
+}
 export type LoginDataType = {
   token: string;
   id: string;
   email: string;
   password: string;
-  role: string;
+  role: UserRole;
   firstName: string;
   lastName: string;
   phone: any;

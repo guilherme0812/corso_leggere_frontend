@@ -5,6 +5,7 @@ import { updateCustomDocumentMapping } from "@/app/actions/customDocumentMapping
 import { enqueueSnackbar } from "notistack";
 import cloneDeep from "lodash/cloneDeep";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 function DocumentSettings({ customDocumentMapping }: { customDocumentMapping: ICustomDocumentMapping }) {
   const [selectedTab, setSelectedTab] = useState<string>();
@@ -63,9 +64,10 @@ function DocumentSettings({ customDocumentMapping }: { customDocumentMapping: IC
             <>
               <div
                 key={index}
-                className={`w-full px-2 py-1 border-l-4 border-transparent border-solid text-sm hover:cursor-pointer hover:border-slate-500 ${
-                  selectedTab[0] == item[0] ? "border-slate-800" : ""
-                }  transition-all duration-300`}
+                className={clsx(
+                  `w-full px-2 py-1 border-l-4 border-transparent border-solid text-sm hover:cursor-pointer hover:border-slate-500  transition-all duration-300`,
+                  selectedTab == item[0] ? "border-slate-900" : ""
+                )}
                 onClick={() => setSelectedTab(item[0])}
               >
                 {tranlateName(item[0])}

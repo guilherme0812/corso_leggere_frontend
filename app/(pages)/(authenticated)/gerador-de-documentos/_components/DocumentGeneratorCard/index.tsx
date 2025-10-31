@@ -152,7 +152,7 @@ function DocumentGeneratorCard({ attorneys, clients, customMappingJson }: Conten
   }, [selectedClient]);
 
   return (
-    <div className="max-w-screen-sm m-auto  min-h-[400px] gap-4 flex flex-col justify-between">
+    <div className="max-w-screen-sm m-auto  min-h-[300px] gap-4 flex flex-col justify-between">
       {/* header */}
       <header className="flex justify-between">
         <div className="flex-grow">

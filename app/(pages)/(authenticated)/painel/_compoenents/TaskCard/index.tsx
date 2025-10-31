@@ -1,5 +1,5 @@
 import { IoChatbubbleOutline } from "react-icons/io5";
-import { LuClock, LuMoreHorizontal } from "react-icons/lu";
+import { LuClock, LuEllipsis } from "react-icons/lu";
 
 function TaskCard() {
   return (
@@ -29,7 +29,7 @@ function TaskCard() {
         </div>
 
         <div className="cursor-pointer p-4 rounded-full hover:bg-gray-100 transition">
-          <LuMoreHorizontal />
+          <LuEllipsis />
         </div>
       </div>
     </div>
