@@ -11,11 +11,14 @@ import { Label } from "@/app/_components/ui/Label";
 import { IClient } from "@/app/_services/client";
 import { useQuery } from "@tanstack/react-query";
 import { getCities } from "@/app/_services/cities";
-import { GenerateDocumentBodyType } from "@/app/_services/document";
+import { GenerateDocumentBodyType, ReplacePlaceholdersBody } from "@/app/_services/customDocumentMapping";
+import { formatDocument, formatPhone, formatZipCode } from "@/app/_utils/stringFomatters";
+import { numberFormat } from "@/app/_utils";
 
 type ContentType = {
   attorneys: IAttorney[];
   clients: IClient[];
+  customMappingJson: GenerateDocumentBodyType;
 };
 
 export async function downloadDocument(formData: FormData) {
@@ -40,7 +43,7 @@ export async function downloadDocument(formData: FormData) {
   }
 }
 
-function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
+function DocumentGeneratorCard({ attorneys, clients, customMappingJson }: ContentType) {
   const [step, setStep] = useState(0);
   const [selectedAttorney, setSelectedAttorney] = useState<string>();
   const [selectedClient, setSelectedClient] = useState<string>();
@@ -63,25 +66,26 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
 
     const grantor = clients.find((item) => item.document == selectedClient) as IClient;
     const grantee = attorneys.find((item) => item.id == selectedAttorney) as IAttorney;
-    const data: GenerateDocumentBodyType = {
+
+    const base_json: GenerateDocumentBodyType = {
       grantor: {
-        document: grantor?.document,
-        officialId: grantor.officialId,
+        document: formatDocument(grantor?.document || ""),
+        officialId: formatDocument(grantor.officialId || ""),
         officialIdIssuingBody: grantor.officialIdIssuingBody,
         officialIdissuingState: grantor.officialIdissuingState,
-        phone: grantor?.phone,
-        email: grantor?.email,
-        addressStreet: grantor?.addressStreet,
-        addressNumber: grantor?.addressNumber,
+        phone: formatPhone(grantor?.phone),
+        email: grantor?.email || "",
+        addressStreet: grantor?.addressStreet || "",
+        addressNumber: numberFormat(Number(grantor?.addressNumber) || 0),
         addressComplement: grantor?.addressComplement,
-        addressZipCode: grantor?.addressZipCode,
-        zone: grantor?.zone,
-        birthDate: grantor?.birthDate,
-        nacionality: grantor?.nacionality,
-        maritalStatus: grantor?.maritalStatus,
-        profession: grantor?.profession,
-        stateId: grantor?.stateId,
-        countryId: grantor?.countryId,
+        addressZipCode: formatZipCode(grantor?.addressZipCode || ""),
+        zone: grantor?.zone || "",
+        birthDate: grantor?.birthDate || "",
+        nacionality: grantor?.nacionality || "",
+        maritalStatus: grantor?.maritalStatus || "",
+        profession: grantor?.profession || "",
+        stateId: grantor?.stateId || "",
+        countryId: grantor?.countryId || "",
         name: grantor?.firstName + " " + grantor?.lastName,
         city: cities?.find((item) => item.id == (client?.cityId as any))?.nome || "",
       },
@@ -96,6 +100,11 @@ function DocumentGeneratorCard({ attorneys, clients }: ContentType) {
         maritalStatus: grantee?.maritalStatus,
         professionalAddress: grantee?.professionalAddress,
       },
+    };
+
+    const data: ReplacePlaceholdersBody = {
+      base_json,
+      mapping_json: customMappingJson,
     };
 
     formData.append("data", JSON.stringify(data));

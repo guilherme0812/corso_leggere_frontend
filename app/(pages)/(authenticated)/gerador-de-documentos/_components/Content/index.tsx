@@ -6,10 +6,12 @@ import { IClient } from "@/app/_services/client";
 import DocumentGeneratorCard from "../DocumentGeneratorCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/_components/ui/tabs";
 import DocumentSettings from "../DocumentSettings";
+import { ICustomDocumentMapping } from "@/app/_services/customDocumentMapping";
 
 type ContentType = {
   attorneys: IAttorney[];
   clients: IClient[];
+  customDocumentMapping: ICustomDocumentMapping;
 };
 
 export async function downloadDocument(formData: FormData) {
@@ -34,7 +36,7 @@ export async function downloadDocument(formData: FormData) {
   }
 }
 
-function Content({ attorneys, clients }: ContentType) {
+function Content({ attorneys, clients, customDocumentMapping }: ContentType) {
   return (
     <>
       <Tabs
@@ -44,17 +46,19 @@ function Content({ attorneys, clients }: ContentType) {
         <div className="bg-background shadow-custom p-4 mb-4">
           <div className="mb-2 font-medium">Gerador de documentos</div>
           <TabsList>
-            <TabsTrigger value="1">Configurações</TabsTrigger>
-            <TabsTrigger value="2">Gerar documento</TabsTrigger>
+            <TabsTrigger value="1">Gerar documento</TabsTrigger>
+            <TabsTrigger value="2">Configurações</TabsTrigger>
           </TabsList>
         </div>
 
         <div className="overflow-y-auto">
-          <TabsContent value="1">
-            <DocumentSettings />
+          <TabsContent value="1" className="w-full overflow-y-auto ">
+            <DocumentGeneratorCard
+              {...{ attorneys, clients, customMappingJson: customDocumentMapping.customMappingJson }}
+            />
           </TabsContent>
-          <TabsContent value="2" className="w-full overflow-y-auto ">
-            <DocumentGeneratorCard {...{ attorneys, clients }} />
+          <TabsContent value="2">
+            <DocumentSettings customDocumentMapping={customDocumentMapping} />
           </TabsContent>
         </div>
       </Tabs>
