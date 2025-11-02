@@ -1,3 +1,5 @@
+import { UserStatusEnum } from "./login";
+
 export type DefaultResponseType = {
   message: string;
 };
@@ -24,6 +26,7 @@ export type LoginDataType = {
   updateAt: string;
   companyId: string;
   company: CompanyDataType;
+  status: UserStatusEnum;
 };
 
 export interface CompanyDataType {

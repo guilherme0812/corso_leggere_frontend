@@ -1,3 +1,4 @@
+import { getPrefix } from ".";
 import { apiLeggere, apiServerLeggere } from "./api";
 
 export type IClient = {
@@ -38,10 +39,11 @@ export const deleteClient = async (document: string) => {
   }
 };
 
-export const getClients = async ({ name }: { name?: string | null }) => {
+export const getClients = async ({ name }: { name?: string | null }, _prefix?: string) => {
   try {
+    const prefix = _prefix != undefined ? _prefix : await getPrefix();
     const res = await apiServerLeggere<IClient[]>({
-      url: "/clients",
+      url: `${prefix}/clients`,
       method: "GET",
       params: { name },
     });

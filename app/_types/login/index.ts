@@ -1,17 +1,26 @@
+export enum UserStatusEnum {
+  PENDING = "PENDING", // Criado, mas ainda sem empresa vinculada
+  ACTIVE = "ACTIVE", // Ativo e com empresa associada
+  INACTIVE = "INACTIVE", // Inativo por escolha do usuário ou administrador
+  SUSPENDED = "SUSPENDED", // Bloqueado temporariamente
+  DELETED = "DELETED", // Conta removida (opcional)
+}
+
 export interface UserDataType {
   id: string;
   email: string;
   password: string;
   role: any;
+  status: UserStatusEnum;
   firstName: string;
   lastName: string;
   phone: string | null;
   hasWhatsapp: boolean;
   profilePicture: string | null;
   isActive: boolean;
-  lastLoginAt: Date | null;
-  createAt: Date;
-  updateAt: Date;
+  lastLoginAt: string | null;
+  createAt: string;
+  updateAt: string;
   companyId: string | null;
   company: CompanyDataType;
 }

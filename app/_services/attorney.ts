@@ -1,3 +1,4 @@
+import { getPrefix } from ".";
 import { apiServerLeggere } from "./api";
 
 export type IAttorney = {
@@ -17,10 +18,11 @@ export type IAttorney = {
   updatedAt: string;
 };
 
-export const getAttorneys = async ({ name }: { name?: string | null }) => {
+export const getAttorneys = async ({ name }: { name?: string | null }, _prefix?: string) => {
   try {
+    const prefix = _prefix != undefined ? _prefix : await getPrefix();
     const res = await apiServerLeggere<IAttorney[]>({
-      url: "/attorney",
+      url: `${prefix}/attorney`,
       method: "GET",
       params: { name },
     });

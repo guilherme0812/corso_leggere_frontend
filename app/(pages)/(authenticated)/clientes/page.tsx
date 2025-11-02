@@ -6,7 +6,7 @@ import { getClients } from "@/app/_services/client";
 async function Page({ searchParams }: { searchParams: { [key: string]: string } }) {
   const name = searchParams.name || undefined;
 
-  const clients = await getClients({ name });
+  const clients = await getClients({ name }, "");
 
   return <Content clients={clients || []} />;
 }
