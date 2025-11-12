@@ -145,8 +145,8 @@ function RegisterForm() {
               </div>
 
               {!isPending ? (
-                <Button type="submit" className="w-full">
-                  Acessar
+                <Button type="submit" className="w-full" id="register-button">
+                  Me registrar
                 </Button>
               ) : (
                 <Skeleton className="h-10 w-full bg-gray-200" />

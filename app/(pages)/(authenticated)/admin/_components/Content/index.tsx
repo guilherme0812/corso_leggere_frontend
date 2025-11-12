@@ -9,7 +9,7 @@ import { MdOutlineBalance } from "react-icons/md";
 import { useState } from "react";
 import UserCard from "../UserCard";
 import UserModal from "@/app/_components/patterns/users/UserModal";
-import { UserDataType } from "@/app/_types/login";
+import { UserDataType, UserStatusEnum } from "@/app/_types/login";
 
 type ContentType = {
   companies: ICompany[];
@@ -19,7 +19,7 @@ type ContentType = {
 };
 
 function Content({ attorneys, clients, companies, users }: ContentType) {
-  const [unapprovedUsers] = useState(users.filter((item) => !item.companyId));
+  const [unapprovedUsers] = useState(users.filter((item) => item.status == UserStatusEnum.PENDING));
   const [userEditData, setUserEditData] = useState<UserDataType>();
 
   const handleCloseUserModal = () => {
