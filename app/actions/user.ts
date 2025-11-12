@@ -23,24 +23,44 @@ export const updateUser = async (formData: FormData) => {
   }
 };
 
-// export const deleteClient = async (formData: FormData) => {
-//   const params: Record<string, any> = {};
-//   formData.forEach((value, key) => {
-//     params[key] = value;
-//   });
+export const createUser = async (formData: FormData) => {
+  const data: Record<string, any> = {};
+  formData.forEach((value, key) => {
+    data[key] = value;
+  });
+  data.hasWhatsapp = data.hasWhatsapp == "true";
 
-//   try {
-//     const res = await apiServerLeggere<IClient[]>({
-//       url: "/client",
-//       method: "DELETE",
-//       params,
-//     });
+  try {
+    const res = await apiServerLeggere<UserDataType[]>({
+      url: "/register",
+      method: "POST",
+      data,
+    });
 
-//     console.log("delete params: ", params);
+    return res?.data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
 
-//     console.log("delete res :", res.data);
-//     return res?.data || [];
-//   } catch (error: any) {
-//     console.log(error);
-//   }
-// };
+export const deleteUser = async (formData: FormData) => {
+  const params: Record<string, any> = {};
+  formData.forEach((value, key) => {
+    params[key] = value;
+  });
+
+  try {
+    const res = await apiServerLeggere<UserDataType[]>({
+      url: "/users",
+      method: "DELETE",
+      params,
+    });
+
+    console.log("delete params: ", params);
+
+    console.log("delete res :", res.data);
+    return res?.data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};

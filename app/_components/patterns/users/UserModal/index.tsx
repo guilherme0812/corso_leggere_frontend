@@ -7,7 +7,6 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/app/_components/ui/Button";
 import { useTransition } from "react";
-import { createClient } from "@/app/actions/client";
 import { useRouter } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { Switch } from "@/app/_components/ui/switch";
@@ -15,7 +14,7 @@ import { UserRole } from "@/app/_types";
 import { UserDataType, UserStatusEnum } from "@/app/_types/login";
 import { useSession } from "next-auth/react";
 import { ICompany } from "@/app/_services/companies";
-import { updateUser } from "@/app/actions/user";
+import { createUser, updateUser } from "@/app/actions/user";
 
 type UserModalType = {
   handleClose(): void;
@@ -64,23 +63,16 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
         }
       } else {
         const payload = {
-          document: values.document,
-          nacionality: "",
+          email: values.email,
+          password: values.password,
           firstName: values.firstName,
           lastName: values.lastName,
+          companyId: values.companyId,
+          role: values.role,
           phone: values.phone,
-          email: values.email,
-          hasWhatsapp: true,
-          addressStreet: values.address,
-          addressNumber: "",
-          addressComplement: "",
-          addressZipCode: "",
-          zone: "",
-          cityId: values.cityId,
-          stateId: values.stateId,
-          countryId: values.countryId,
-          birthDate: "1990-05-15T00:00:00.000Z",
-          notes: "",
+          hasWhatsapp: values.hasWhatsapp,
+          profilePicture: values.profilePicture,
+          isActive: values.isActive,
         };
 
         const formData = new FormData();
@@ -91,7 +83,7 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
         });
 
         try {
-          const res = await createClient(formData);
+          const res = await createUser(formData);
 
           if (typeof res == "object") {
             router.refresh();
@@ -110,16 +102,16 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
   const initialValues = editData
     ? editData
     : {
-        companyId: undefined,
+        companyId: (data?.user as any)?.companyId || "",
         email: "",
-        password: "",
+        password: "123456",
         firstName: "",
         lastName: "",
         role: UserRole.employee,
         phone: "",
         hasWhatsapp: false,
         profilePicture: null,
-        status: UserStatusEnum.INACTIVE,
+        status: UserStatusEnum.ACTIVE,
       };
 
   const list = [
@@ -184,6 +176,16 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
                   <Field as={Input} name="email" type="email" placeholder="Digite o email" variant="filled" />
                   {errors.email && touched.email && <div className="text-red-500 text-sm">{errors.email}</div>}
                 </div>
+
+                {!editData && (
+                  <div className="col-span-12 md:col-span-4">
+                    <Label>Senha</Label>
+                    <Field as={Input} name="password" type="password" placeholder="Digite a senha" variant="filled" />
+                    {errors.password && touched.password && (
+                      <div className="text-red-500 text-sm">{errors.password}</div>
+                    )}
+                  </div>
+                )}
 
                 <div className="col-span-12 md:col-span-4">
                   <Label>Permissao</Label>
@@ -274,7 +276,7 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
                   )}
                 </div>
 
-                <div className="col-span-12 flex justify-end">
+                <div className="col-span-12 flex justify-end mt-8">
                   <Button disabled={isPending} type="submit">
                     {isPending ? <>Carregando...</> : editData ? "Salvar mudanças" : "Salvar"}
                   </Button>
