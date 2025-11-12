@@ -17,8 +17,7 @@ export async function createUser(body: Schema) {
       role: "employee",
       phone: null,
       hasWhatsapp: false,
-      profilePicture: null,
-      isActive: true,
+      profilePicture: null
     },
     validateStatus: (status) => status >= 200 && status < 300, // Permite 200-299
   }).catch((error: any) => {

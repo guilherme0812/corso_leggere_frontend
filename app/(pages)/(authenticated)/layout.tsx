@@ -1,3 +1,5 @@
+export const revalidate = 0
+
 import UserLayoutProvider from "@/app/_components/Providers/UserLayoutProvider";
 import { LoginDataType } from "@/app/_types";
 import { UserDataType, UserStatusEnum } from "@/app/_types/login";
