@@ -55,7 +55,6 @@ function DocumentSettings({ customDocumentMapping }: { customDocumentMapping: IC
     setSelectedTab(() => tab);
   }, []);
 
-  console.log(modified, customDocumentMapping?.customMappingJson?.grantee.name, mappingJson.grantee.name);
   return (
     <div className="w-full h-[80svh] grid grid-cols-12">
       <div className="col-span-3 flex flex-col gap-4">
@@ -66,11 +65,11 @@ function DocumentSettings({ customDocumentMapping }: { customDocumentMapping: IC
                 key={index}
                 className={clsx(
                   `w-full px-2 py-1 border-l-4 border-transparent border-solid text-sm hover:cursor-pointer hover:border-slate-500  transition-all duration-300`,
-                  selectedTab == item[0] ? "border-slate-900" : ""
+                  selectedTab == item[0] ? "border-slate-800" : ""
                 )}
                 onClick={() => setSelectedTab(item[0])}
               >
-                {tranlateName(item[0])}
+               {tranlateName(item[0])}
               </div>
             </>
           ))}

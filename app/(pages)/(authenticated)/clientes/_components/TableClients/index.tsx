@@ -1,6 +1,7 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { IClient } from "@/app/_services/client";
+import { formatPhone } from "@/app/_utils/stringFomatters";
 import { LuPencil, LuTrash } from "react-icons/lu";
 
 type ITableProceeding = {
@@ -18,9 +19,10 @@ export default function TableProceeding({ data, handleEdit, handleDelete }: ITab
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
-              <TableHead>Local</TableHead>
               <TableHead>Telefone</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Document</TableHead>
+              <TableHead>Estado</TableHead>
               <TableHead className="w-[60px]"></TableHead>
             </TableRow>
           </TableHeader>
@@ -30,9 +32,10 @@ export default function TableProceeding({ data, handleEdit, handleDelete }: ITab
                 <TableCell className="font-medium">
                   {client?.firstName} {client?.lastName}
                 </TableCell>
-                <TableCell>{}</TableCell>
-                <TableCell>{client.phone}</TableCell>
+                <TableCell>{formatPhone(client.phone)}</TableCell>
                 <TableCell>{client.email}</TableCell>
+                <TableCell>{client.document}</TableCell>
+                <TableCell>{client.stateId}</TableCell>
                 <TableCell className="flex gap-4">
                   <Button variant="outline" size="sm" onClick={() => handleEdit(client)}>
                     <LuPencil />

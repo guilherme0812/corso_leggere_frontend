@@ -1,6 +1,7 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { UserDataType } from "@/app/_types/login";
+import { formatPhone } from "@/app/_utils/stringFomatters";
 import { useSession } from "next-auth/react";
 import { LuPencil, LuTrash } from "react-icons/lu";
 
@@ -15,9 +16,9 @@ export default function TableUsers({ data, handleEdit, handleDelete }: ITableUse
   const { data: session } = useSession();
 
   const statusColors: { [key: string]: string } = {
-    active: "bg-green-700",
-    inactive: "bg-red-700",
-    pending: "bg-yellow-700",
+    active: "bg-green-500",
+    inactive: "bg-red-500",
+    pending: "bg-yellow-500",
   };
 
   const statusLabels: { [key: string]: string } = {
@@ -47,7 +48,7 @@ export default function TableUsers({ data, handleEdit, handleDelete }: ITableUse
                   {client?.firstName} {client?.lastName}
                 </TableCell>
                 <TableCell>{client.email}</TableCell>
-                <TableCell>{client.phone}</TableCell>
+                <TableCell>{formatPhone(client.phone || "")}</TableCell>
                 <TableCell>
                   <div className="flex gap-2 items-center">
                     <div

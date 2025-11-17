@@ -37,7 +37,7 @@ function UserLayoutProvider({ children, user }: { children: ReactNode; user: Log
     },
     {
       icon: <LuNewspaper />,
-      label: "Documentos",
+      label: "Gerador de documentos",
       link: "/gerador-de-documentos",
       selected: pathname == "/gerador-de-documentos",
     },
