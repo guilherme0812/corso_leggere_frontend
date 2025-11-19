@@ -6,6 +6,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { MdOutlineAdminPanelSettings, MdOutlineBalance } from "react-icons/md";
 import { LoginDataType, UserRole } from "@/app/_types";
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 function UserLayoutProvider({ children, user }: { children: ReactNode; user: LoginDataType }) {
   const pathname = usePathname();
@@ -16,6 +17,12 @@ function UserLayoutProvider({ children, user }: { children: ReactNode; user: Log
       label: "Painel",
       link: "/painel",
       selected: pathname == "/painel",
+    },
+    {
+      icon: <IoChatbubblesOutline />,
+      label: "Agente jurisprudência",
+      link: "/agente-jurisprudencia",
+      selected: pathname == "/agente-jurisprudencia",
     },
     // {
     //   icon: <LuFileText />,
