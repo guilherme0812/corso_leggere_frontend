@@ -75,7 +75,6 @@ function Content() {
   //       );
   //     });
   //   };
-
   const handleSendMessage = async (userMessage: string) => {
     const newListMessage = messages;
 
