@@ -5,77 +5,89 @@ import ChatInputComponent from "../ChatInputComponent";
 import { useState } from "react";
 
 type MessageDataType = {
+  id: number;
   userMessage: string;
   agentMessage: string;
 };
 function Content() {
   const [messages, setMessages] = useState<MessageDataType[]>([]);
 
-//   const renderAgentMessage = (text: string) => {
-//     if (!text) return null;
+  //   const renderAgentMessage = (text: string) => {
+  //     if (!text) return null;
 
-//     // Split into paragraph blocks separated by one or more blank lines
-//     const blocks = text.split(/\n\s*\n/);
+  //     // Split into paragraph blocks separated by one or more blank lines
+  //     const blocks = text.split(/\n\s*\n/);
 
-//     return blocks.map((block, bi) => {
-//       const trimmed = block.trim();
+  //     return blocks.map((block, bi) => {
+  //       const trimmed = block.trim();
 
-//       // Bold heading: **...** -> render as heading
-//       const headingMatch = trimmed.match(/^\*\*(.+)\*\*$/);
-//       if (headingMatch) {
-//         return (
-//           <h3 key={bi} className="font-semibold text-sm mt-2">
-//             {headingMatch[1].trim()}
-//           </h3>
-//         );
-//       }
+  //       // Bold heading: **...** -> render as heading
+  //       const headingMatch = trimmed.match(/^\*\*(.+)\*\*$/);
+  //       if (headingMatch) {
+  //         return (
+  //           <h3 key={bi} className="font-semibold text-sm mt-2">
+  //             {headingMatch[1].trim()}
+  //           </h3>
+  //         );
+  //       }
 
-//       // Bullet blocks: lines starting with '* '
-//       const lines = block.split("\n").map((l) => l.replace(/^\s+/, ""));
-//       if (lines.some((l) => l.startsWith("* "))) {
-//         // Group lines into bullet items: lines starting with '* ' begin a new item; following lines belong to same item
-//         const items: string[] = [];
-//         let current: string | null = null;
-//         for (const line of lines) {
-//           if (line.startsWith("* ")) {
-//             if (current !== null) items.push(current);
-//             current = line.slice(2).trim();
-//           } else {
-//             if (current === null) current = line.trim();
-//             else current = current + "\n" + line.trim();
-//           }
-//         }
-//         if (current !== null) items.push(current);
+  //       // Bullet blocks: lines starting with '* '
+  //       const lines = block.split("\n").map((l) => l.replace(/^\s+/, ""));
+  //       if (lines.some((l) => l.startsWith("* "))) {
+  //         // Group lines into bullet items: lines starting with '* ' begin a new item; following lines belong to same item
+  //         const items: string[] = [];
+  //         let current: string | null = null;
+  //         for (const line of lines) {
+  //           if (line.startsWith("* ")) {
+  //             if (current !== null) items.push(current);
+  //             current = line.slice(2).trim();
+  //           } else {
+  //             if (current === null) current = line.trim();
+  //             else current = current + "\n" + line.trim();
+  //           }
+  //         }
+  //         if (current !== null) items.push(current);
 
-//         return (
-//           <ul key={bi} className="list-disc pl-5 mt-1 text-sm">
-//             {items.map((it, ii) => (
-//               <li key={ii} className="mb-1">
-//                 {it.split("\n").map((ln, lli) => (
-//                   <p key={lli} className={lli === 0 ? "m-0" : "mt-1 text-sm"}>
-//                     {ln}
-//                   </p>
-//                 ))}
-//               </li>
-//             ))}
-//           </ul>
-//         );
-//       }
+  //         return (
+  //           <ul key={bi} className="list-disc pl-5 mt-1 text-sm">
+  //             {items.map((it, ii) => (
+  //               <li key={ii} className="mb-1">
+  //                 {it.split("\n").map((ln, lli) => (
+  //                   <p key={lli} className={lli === 0 ? "m-0" : "mt-1 text-sm"}>
+  //                     {ln}
+  //                   </p>
+  //                 ))}
+  //               </li>
+  //             ))}
+  //           </ul>
+  //         );
+  //       }
 
-//       // Default: paragraph with line breaks preserved
-//       return (
-//         <div key={bi} className="text-sm leading-relaxed">
-//           {block.split("\n").map((line, li) => (
-//             <p key={li} className={li === 0 ? "m-0" : "mt-2"}>
-//               {line}
-//             </p>
-//           ))}
-//         </div>
-//       );
-//     });
-//   };
+  //       // Default: paragraph with line breaks preserved
+  //       return (
+  //         <div key={bi} className="text-sm leading-relaxed">
+  //           {block.split("\n").map((line, li) => (
+  //             <p key={li} className={li === 0 ? "m-0" : "mt-2"}>
+  //               {line}
+  //             </p>
+  //           ))}
+  //         </div>
+  //       );
+  //     });
+  //   };
 
   const handleSendMessage = async (userMessage: string) => {
+    const newListMessage = messages;
+
+    newListMessage.push({
+      id: messages.length,
+      userMessage,
+      agentMessage: "Pensando...",
+    });
+
+    setMessages(newListMessage);
+    setMessages(() => [...newListMessage]);
+
     try {
       const response = await apiLeggere({
         method: "POST",
@@ -87,21 +99,13 @@ function Content() {
 
       const { data } = response;
 
-      // append new message pair (user + agent) to the conversation
-      setMessages((prev) => [
-        ...prev,
-        {
-          userMessage,
-          agentMessage: data.message,
-        },
-      ]);
-      console.log("Response from jurisprudence agent:", data);
+      newListMessage[newListMessage.length - 1].agentMessage = data.message;
+      setMessages(() => [...newListMessage]);
     } catch (error) {
       console.error("Error sending message to jurisprudence agent:", error);
     }
   };
 
-  console.log("Messages:", messages);
   return (
     <div className="h-full">
       <div className="max-w-5xl m-auto h-full grid grid-rows-[1fr_auto] gap-4">
