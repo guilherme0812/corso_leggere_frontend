@@ -117,25 +117,34 @@ function Content() {
               </div>
             ) : (
               <div className="flex flex-col gap-4">
-                {messages.map((m, idx) => (
-                  <div key={idx} className="space-y-2">
-                    {/* user message (right) */}
-                    <div className="flex w-full">
-                      <div className="flex-1" />
-                      <div className="max-w-[70%] bg-primary text-primary-foreground px-4 py-2 rounded-lg rounded-tr-none shadow-sm">
-                        {m.userMessage}
-                      </div>
-                    </div>
+                {messages.map((m, idx) => {
+                  const html = m.agentMessage.replace(
+                    /\*\*(.*?)\*\*/g,
+                    '<span class="font-semibold text-primary">$1</span>'
+                  );
 
-                    {/* agent message (left) */}
-                    <div className="flex w-full">
-                      <div className="max-w-[70%] bg-muted/80 text-foreground px-4 py-2 rounded-lg rounded-bl-none whitespace-pre-line">
-                        {m.agentMessage}
+                  return (
+                    <div key={idx} className="space-y-2">
+                      {/* user message (right) */}
+                      <div className="flex w-full">
+                        <div className="flex-1" />
+                        <div className="max-w-[70%] bg-primary text-primary-foreground px-4 py-2 rounded-lg rounded-tr-none shadow-sm">
+                          {m.userMessage}
+                        </div>
                       </div>
-                      <div className="flex-1" />
+
+                      {/* agent message (left) */}
+                      <div className="flex w-full">
+                        <div
+                          className="max-w-[70%] bg-muted/80 text-foreground px-4 py-2 rounded-lg rounded-bl-none whitespace-pre-line"
+                          dangerouslySetInnerHTML={{ __html: html }}
+                        />
+
+                        <div className="flex-1" />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
