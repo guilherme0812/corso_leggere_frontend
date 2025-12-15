@@ -64,13 +64,15 @@ export interface Category {
   updatedAt: string;
 }
 
+
+
 export interface Payment {
   id: string;
   caseId: string;
   amount: number;
   dueDate: string;
   paidAt: any;
-  status: string;
+  status: PaymentStatus;
 }
 
 export const getCashFlow = async (params: GetMonthReportParams) => {
@@ -145,6 +147,57 @@ export const getFinancialEntry = async (params: GetPaymentsParams) => {
   }
 };
 
+export type PaymentDataType = Payment & {
+  splits: SplitDataType[];
+  case: {
+    title: string;
+    processNumber: string;
+    lawyerFee: number;
+    businessFee: number;
+    indicatorFee: number;
+    indicatorId: string;
+    client: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+};
+
+enum SplitType {
+  OFFICE = "OFFICE",
+  LAWYER = "LAWYER",
+  INDICATOR = "INDICATOR",
+}
+
+type SplitDataType = {
+  id: string;
+  paymentId: string;
+  type: SplitType;
+  amount: number;
+};
+export const getFiancialSummary = async (params: GetPaymentsParams) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiServerLeggere<SummaryDataType>({
+      url: `/financial/summary`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+type GetAllPaymentsParams = {
+  startDueDate?: string | null;
+  endDueDate?: string | null;
+  status?: PaymentStatus | null;
+};
+
 type SummaryDataType = {
   received: number;
   paid: number;
@@ -153,11 +206,11 @@ type SummaryDataType = {
   currencentBalance: number;
 };
 
-export const getFiancialSummary = async (params: GetPaymentsParams) => {
+export const getPayments = async (params: GetAllPaymentsParams) => {
   try {
     // const prefix = _prefix != undefined ? _prefix : await getPrefix();
-    const res = await apiServerLeggere<SummaryDataType>({
-      url: `/financial/summary`,
+    const res = await apiServerLeggere<PaymentDataType[]>({
+      url: `/financial/payments`,
       method: "GET",
       params,
     });

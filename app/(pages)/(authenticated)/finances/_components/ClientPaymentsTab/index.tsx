@@ -1,8 +1,11 @@
+import { getPayments } from "@/app/_services/finanances";
+import Content from "./Content";
+
 async function ClientPaymentsTab() {
+  const paymentsData = await getPayments({});
+  
   return (
-    <div className="h-full">
-      <h3 className="font-semibold text-gray-500 text-sm mb-4 uppercase">Pagamentos de clientes</h3>
-    </div>
+   <Content data={paymentsData || []} />
   );
 }
 
