@@ -5,13 +5,14 @@ import { Dispatch, SetStateAction } from "react";
 // import { Label } from "@/app/_components/ui/Label";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { LuPlus, LuSearch } from "react-icons/lu";
+import CaseModal from "../CaseModal";
 
 export default function Header({
   data,
-}: // openModal,
-// setOpenModal,
-// editData,
-{
+  editData,
+  openModal,
+  setOpenModal,
+}: {
   data: ICase[];
   openModal: boolean;
   setOpenModal: Dispatch<SetStateAction<boolean>>;
@@ -48,12 +49,14 @@ export default function Header({
             <LuSearch />
             Buscar processos
           </Button>
-          <Button variant={"outline"}>
+          <Button variant={"outline"} onClick={() => setOpenModal(true)}>
             <LuPlus />
             Adicionar processo
           </Button>
         </div>
       </div>
+
+       {openModal && <CaseModal handleClose={setOpenModal as any} editData={editData} />}
     </div>
   );
 }

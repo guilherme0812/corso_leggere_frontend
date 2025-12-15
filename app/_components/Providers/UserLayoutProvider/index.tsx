@@ -1,10 +1,10 @@
 "use client";
 
-import { LuChartPie, LuCircleUser, LuNewspaper, LuUsers } from "react-icons/lu";
+import { LuChartPie, LuCircleUser, LuFileText, LuNewspaper, LuUsers } from "react-icons/lu";
 import PrimaryLayout from "../../Layout/PrimaryLayout";
 import { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { MdOutlineAdminPanelSettings, MdOutlineBalance } from "react-icons/md";
+import { MdCurrencyExchange, MdOutlineAdminPanelSettings, MdOutlineBalance } from "react-icons/md";
 import { LoginDataType, UserRole } from "@/app/_types";
 import { IoChatbubblesOutline } from "react-icons/io5";
 
@@ -24,12 +24,18 @@ function UserLayoutProvider({ children, user }: { children: ReactNode; user: Log
       link: "/agente-jurisprudencia",
       selected: pathname == "/agente-jurisprudencia",
     },
-    // {
-    //   icon: <LuFileText />,
-    //   label: "Processos",
-    //   link: "/processos",
-    //   selected: pathname == "/processos",
-    // },
+    {
+      icon: <MdCurrencyExchange />,
+      label: "Financeiro",
+      link: "/finances",
+      selected: pathname.includes("/finances"),
+    },
+    {
+      icon: <LuFileText />,
+      label: "Processos",
+      link: "/processos",
+      selected: pathname == "/processos",
+    },
     {
       icon: <LuUsers />,
       label: "Clientes",

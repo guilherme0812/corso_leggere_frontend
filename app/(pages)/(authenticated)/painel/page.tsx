@@ -4,8 +4,17 @@ import { MdOutlineBalance } from "react-icons/md";
 import ProcessChart from "./_compoenents/ProcessChart";
 import TaskCard from "./_compoenents/TaskCard";
 import FinanceChart from "./_compoenents/FinanceChart";
+import { getMonthReports } from "@/app/_services/finanances";
+import { CaseStatus, getCases } from "@/app/_services/case";
 
-function Dashboard() {
+async function Dashboard({}: { searchParams: { [key: string]: string } }) {
+  const monthReports = await getMonthReports({ startDate: "2025-01-01", endDate: "2025-12-31" });
+  
+  const cases = await getCases();
+
+  const pendingCases = cases?.filter((item) => item.status != CaseStatus.CLOSED) || [];
+  const closedCases = cases?.filter((item) => item.status === CaseStatus.CLOSED) || [];
+
   return (
     <div className="max-w-[1700px] m-auto">
       <Header title="Painel" />
@@ -20,8 +29,8 @@ function Dashboard() {
             </div>
 
             <div>
-              <div className="text-sm font-semibold">12 audiências marcadas</div>
-              <div className="text-xs text-gray-600">04 para essa semana</div>
+              <div className="text-sm font-semibold">0 audiências marcadas</div>
+              <div className="text-xs text-gray-600">0 para essa semana</div>
             </div>
           </div>
 
@@ -31,8 +40,8 @@ function Dashboard() {
             </div>
 
             <div>
-              <div className="text-sm font-semibold">30 prazos ativos</div>
-              <div className="text-xs text-gray-600">02 para essa semana</div>
+              <div className="text-sm font-semibold">0 prazos ativos</div>
+              <div className="text-xs text-gray-600">0 para essa semana</div>
             </div>
           </div>
 
@@ -42,7 +51,7 @@ function Dashboard() {
             </div>
 
             <div>
-              <div className="text-sm font-semibold">05 reuniões marcadas</div>
+              <div className="text-sm font-semibold">0 reuniões marcadas</div>
               <div className="text-xs text-gray-600">ver mais detalhes</div>
             </div>
           </div>
@@ -53,8 +62,8 @@ function Dashboard() {
             </div>
 
             <div>
-              <div className="text-sm font-semibold">58 atividades criadas</div>
-              <div className="text-xs text-gray-600">02% concluídas</div>
+              <div className="text-sm font-semibold">0 atividades criadas</div>
+              <div className="text-xs text-gray-600">0% concluídas</div>
             </div>
           </div>
         </div>
@@ -74,21 +83,21 @@ function Dashboard() {
             <div className="h-5"></div>
 
             <div className="flex gap-2 items-center bg-white shadow-custom flex-grow p-4 rounded-md">
-              <div className="text-2xl font-semibold">104</div>
+              <div className="text-2xl font-semibold">{cases?.length || 0}</div>
               <div className="">
                 <div className="text-sm">processos ao total</div>
               </div>
             </div>
 
             <div className="flex gap-2 items-center bg-white shadow-custom flex-grow p-4 rounded-md">
-              <div className="text-2xl font-semibold">80</div>
+              <div className="text-2xl font-semibold">{closedCases?.length || 0}</div>
               <div className="">
                 <div className="text-sm">Finzalizados</div>
               </div>
             </div>
 
             <div className="flex gap-2 items-center bg-white shadow-custom flex-grow p-4 rounded-md">
-              <div className="text-2xl font-semibold">24</div>
+              <div className="text-2xl font-semibold">{pendingCases?.length || 0}</div>
               <div className="">
                 <div className="text-sm">Ativos</div>
               </div>
@@ -99,7 +108,7 @@ function Dashboard() {
             <h3 className="font-semibold text-gray-500 text-sm mb-4">RESUMO FINANCEIRO</h3>
 
             <div className="flex-grow bg-white rounded-md  shadow-custom p-4">
-              <FinanceChart />
+              <FinanceChart data={monthReports || []} />
             </div>
           </div>
         </div>

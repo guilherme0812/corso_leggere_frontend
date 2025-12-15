@@ -7,14 +7,18 @@ export enum CaseStatus {
 }
 
 export type ICase = {
-  id: string;
-  caseNumber: string;
-  description: string;
+  id: string
+  title: string
+  lawyerId: string
+  indicatorId: null;
+  businessFee: number;
+  lawyerFee: number;
+  indicatorFee: null;
   status: CaseStatus;
-  openedAt: string;
-  closedAt: string;
-  clientId: string;
-  companyId: string;
+  createdAt: string
+  clientId: string
+  companyId: string
+  processNumber?: string;
 };
 
 export const getCases = async () => {

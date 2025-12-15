@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = localStorage.getItem("LEGGERE_USER");
 
     if (data) {
-      console.log(JSON.parse(data));
+      // console.log(JSON.parse(data));
     }
   };
 
