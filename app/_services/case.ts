@@ -1,4 +1,4 @@
-import { apiServerLeggere } from "./api";
+import { apiLeggere, apiServerLeggere } from "./api";
 
 export enum CaseStatus {
   PENDING = "PENDING",
@@ -24,6 +24,21 @@ export type ICase = {
 export const getCases = async () => {
   try {
     const res = await apiServerLeggere<ICase[]>({
+      url: "/cases",
+      method: "GET",
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const getCasesClientSide = async () => {
+  try {
+    const res = await apiLeggere<ICase[]>({
       url: "/cases",
       method: "GET",
     });

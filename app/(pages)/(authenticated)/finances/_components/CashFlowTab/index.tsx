@@ -1,7 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/_components/ui/tabs";
 import { getCashFlow, getProjectionFlow } from "@/app/_services/finanances";
 import moment from "moment";
-import FinancialTransitionsTable from "./FinancialTransitionsTable";
+import CashFlowContentWrapper from "./Content/CashFlowContent";
+import ProjectionFlowContentWrapper from "./Content/ProjectionFlowContent";
 
 async function CashFlowTab() {
   const start = moment().clone().startOf("month");
@@ -24,22 +25,18 @@ async function CashFlowTab() {
       >
         <div className="">
           <TabsList>
-            <TabsTrigger value="1">Fluxo de caixa</TabsTrigger>
-            <TabsTrigger value="2">Projeção</TabsTrigger>
+            <TabsTrigger value="1">Caixa Realizado</TabsTrigger>
+            <TabsTrigger value="2">Caixa Previsto</TabsTrigger>
           </TabsList>
         </div>
 
         <div className="overflow-y-auto ">
           <TabsContent value="1" className="w-full overflow-y-auto pb-4">
-            <div className="h-[70vh]">
-              <FinancialTransitionsTable data={realCashFlow || []} />
-            </div>
+            <CashFlowContentWrapper data={realCashFlow || []} />
           </TabsContent>
 
           <TabsContent value="2">
-            <div className="h-[70vh]">
-              <FinancialTransitionsTable data={projectedCashFlow || []} />
-            </div>
+            <ProjectionFlowContentWrapper data={projectedCashFlow || []} />
           </TabsContent>
         </div>
       </Tabs>

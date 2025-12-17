@@ -16,7 +16,7 @@ async function Page({}: { searchParams: { [key: string]: string } }) {
           <TabsList>
             <TabsTrigger value="1">Resumo financeiro</TabsTrigger>
             <TabsTrigger value="2">Movimentação financeira</TabsTrigger>
-            <TabsTrigger value="3">Pag. Clientes</TabsTrigger>
+            <TabsTrigger value="3">Pagamento de clientes</TabsTrigger>
           </TabsList>
         </div>
 

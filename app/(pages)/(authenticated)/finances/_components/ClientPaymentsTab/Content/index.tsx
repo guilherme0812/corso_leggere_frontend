@@ -1,18 +1,42 @@
 "use client";
 
-import { PaymentDataType } from "@/app/_services/finanances";
+import { GetAllPaymentsParams, PaymentDataType } from "@/app/_services/finanances";
 import ClientPaymentsTable from "../ClientPaymentsTable";
 import Header from "../Header";
+import { usePayments } from "@/app/_hooks/finances";
+import { useState } from "react";
+import Skeleton from "@/app/_components/ui/Skeleton";
+import PaymentModal from "@/app/_components/patterns/Payments/PaymentModal";
 
-function Content({ data }: { data: PaymentDataType[] }) {
-  console.log("data", data);
+function Content({ data: initialData }: { data: PaymentDataType[] }) {
+  const [openModal, setOpenModal] = useState(false);
+  const [filters, setFilters] = useState<GetAllPaymentsParams>({});
+  const { data, isLoading, refetch } = usePayments({
+    filters,
+    initialData: initialData,
+  });
+
   return (
     <div className="h-full md:min-h-[80vh] flex flex-col">
-      <Header  />
-      
-      <div className="flex-grow relative">
-        <ClientPaymentsTable data={data} />
+      <Header {...{ filters, setFilters, refetch }} openModal={openModal} setOpenModal={setOpenModal} />
+
+      <div className="flex-grow relative mt-4">
+        {isLoading ? (
+          <>
+            <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
+            <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
+            <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
+            <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
+            <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
+            <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
+            <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
+          </>
+        ) : (
+          <ClientPaymentsTable data={data || []} />
+        )}
       </div>
+
+      {openModal ? <PaymentModal editData={undefined} handleClose={() => setOpenModal(false)} /> : undefined}
     </div>
   );
 }

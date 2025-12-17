@@ -1,4 +1,4 @@
-import { apiServerLeggere } from "./api";
+import { apiLeggere, apiServerLeggere } from "./api";
 import { ICase } from "./case";
 
 export type MonthReport = {
@@ -7,7 +7,7 @@ export type MonthReport = {
   total_paid: number;
 };
 
-type GetMonthReportParams = {
+export type GetMonthReportParams = {
   startDate?: string | null;
   endDate?: string | null;
 };
@@ -64,8 +64,6 @@ export interface Category {
   updatedAt: string;
 }
 
-
-
 export interface Payment {
   id: string;
   caseId: string;
@@ -91,9 +89,40 @@ export const getCashFlow = async (params: GetMonthReportParams) => {
     console.log(error);
   }
 };
+export const getCashFlowClientSide = async (params: GetMonthReportParams) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<CashFlowDataType[]>({
+      url: `/financial/realizedFlow`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
 export const getProjectionFlow = async (params: GetMonthReportParams) => {
   try {
     const res = await apiServerLeggere<CashFlowDataType[]>({
+      url: `/financial/projectedFlow`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+export const getProjectionFlowClientSide = async (params: GetMonthReportParams) => {
+  try {
+    const res = await apiLeggere<CashFlowDataType[]>({
       url: `/financial/projectedFlow`,
       method: "GET",
       params,
@@ -161,6 +190,7 @@ export type PaymentDataType = Payment & {
       lastName: string;
     };
   };
+  entries: FinancialEntryDataType[]
 };
 
 enum SplitType {
@@ -192,7 +222,7 @@ export const getFiancialSummary = async (params: GetPaymentsParams) => {
   }
 };
 
-type GetAllPaymentsParams = {
+export type GetAllPaymentsParams = {
   startDueDate?: string | null;
   endDueDate?: string | null;
   status?: PaymentStatus | null;
@@ -213,6 +243,45 @@ export const getPayments = async (params: GetAllPaymentsParams) => {
       url: `/financial/payments`,
       method: "GET",
       params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const getPaymentsClientSide = async (params: GetAllPaymentsParams) => {
+  try {
+    const res = await apiLeggere<PaymentDataType[]>({
+      url: `/financial/payments`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export type PaymentBodyType = {
+  caseId: string;
+  amount: number;
+  dueDate: string;
+  status: PaymentStatus;
+};
+
+export const createPaymentClientSide = async (body: PaymentBodyType) => {
+  try {
+    const res = await apiLeggere<PaymentDataType[]>({
+      url: `/financial/createPayment`,
+      method: "POST",
+      data: body,
     });
 
     const { data } = res;

@@ -22,6 +22,22 @@ function FinancialTransitionsTable({ data }: IFinancialTransitionsTable) {
       enqueueSnackbar(`Erro ao copiar ID: ${error.message}`, { variant: "error" });
     }
   };
+
+  const statusBgColor = {
+    PENDING: "bg-yellow-200",
+    PAID: "bg-green-200",
+    PARTIAL: "bg-red-200",
+    OVERDUE: "bg-red-200",
+  } as any;
+
+  const statusTranslate = {
+    PENDING: "Pendente",
+    PAID: "Pago",
+    LATE: "Atrasado",
+    PARTIAL: "Parcial",
+    OVERDUE: "Overdue",
+  } as any;
+
   return (
     <div className="relative w-full h-full">
       <div className="absolute left-0 top-0 h-full w-full overflow-y-auto">
@@ -44,14 +60,16 @@ function FinancialTransitionsTable({ data }: IFinancialTransitionsTable) {
               <TableRow key={index}>
                 <TableCell className="font-medium text-sm">{client?.description || client.case.title}</TableCell>
                 <TableCell className="font-medium text-sm">
-                  {client?.category.name == "receives" ? "Receitas" : client?.category.name}
+                  {client?.category ? (
+                    <>{client?.category.name == "receives" ? "Receitas" : client?.category.name}</>
+                  ) : null}
                 </TableCell>
 
                 <TableCell className="max-w-[100px]">
                   <div>
                     {client.type == "RECEIVABLE" ? (
                       <div className="flex items-center justify-center gap-2 font-medium text-sm bg-green-200 p-1 min-w-8">
-                        <LuArrowDown /> recebido
+                        <LuArrowDown /> receita
                       </div>
                     ) : (
                       <div className="flex items-center justify-center gap-2 font-medium text-sm bg-red-100 p-1 min-w-8">
@@ -66,7 +84,13 @@ function FinancialTransitionsTable({ data }: IFinancialTransitionsTable) {
                 </TableCell>
 
                 <TableCell className="font-medium text-sm">
-                  {client?.status == "PAID" ? "Pago" : client.status}
+                  <div
+                    className={`${
+                      statusBgColor[client.status]
+                    } p-1 text-xs flex justify-center font-medium min-w-[50px] rounded`}
+                  >
+                    {statusTranslate[client.status]}
+                  </div>
                 </TableCell>
 
                 <TableCell className="font-medium text-sm">{moment(client?.dueDate).format("DD/MM/YYYY")}</TableCell>

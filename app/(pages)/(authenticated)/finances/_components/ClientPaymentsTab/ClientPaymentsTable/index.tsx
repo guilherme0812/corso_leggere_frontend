@@ -1,8 +1,9 @@
+import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
-import { FinancialEntryDataType, PaymentDataType } from "@/app/_services/finanances";
+import { PaymentDataType } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
-import { LuArrowDown, LuArrowUp } from "react-icons/lu";
+import { MdOutlinePayments } from "react-icons/md";
 
 type IClientPaymentsTable = {
   data: PaymentDataType[];
@@ -35,7 +36,7 @@ export default function ClientPaymentsTable({ data }: IClientPaymentsTable) {
             <TableHead>Dta. Vencimento</TableHead>
             <TableHead>Dta. Pagamento</TableHead>
             <TableHead>Valor</TableHead>
-            <TableHead className="w-[60px]"></TableHead>
+            <TableHead className="w-[60px]">Pagar</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,6 +66,11 @@ export default function ClientPaymentsTable({ data }: IClientPaymentsTable) {
               <TableCell>{moment(item.dueDate).format("DD/MM/yyyy")}</TableCell>
               <TableCell>{item.paidAt ? moment(item.paidAt).format("DD/MM/yyyy") : null}</TableCell>
               <TableCell>R$ {numberFormat(item.amount)}</TableCell>
+              <TableCell>
+                <Button variant={"ghost"} size={"sm"}>
+                  <MdOutlinePayments />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
