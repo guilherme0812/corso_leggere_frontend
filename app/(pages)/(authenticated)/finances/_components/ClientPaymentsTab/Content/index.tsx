@@ -7,9 +7,12 @@ import { usePayments } from "@/app/_hooks/finances";
 import { useState } from "react";
 import Skeleton from "@/app/_components/ui/Skeleton";
 import PaymentModal from "@/app/_components/patterns/Payments/PaymentModal";
+import PayPaymentModal from "@/app/_components/patterns/Payments/PayPaymentModal";
 
 function Content({ data: initialData }: { data: PaymentDataType[] }) {
   const [openModal, setOpenModal] = useState(false);
+  const [paymentToPay, setPaymentToPay] = useState<PaymentDataType>();
+
   const [filters, setFilters] = useState<GetAllPaymentsParams>({});
   const { data, isLoading, refetch } = usePayments({
     filters,
@@ -32,11 +35,13 @@ function Content({ data: initialData }: { data: PaymentDataType[] }) {
             <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
           </>
         ) : (
-          <ClientPaymentsTable data={data || []} />
+          <ClientPaymentsTable data={data || []} handlePay={setPaymentToPay} />
         )}
       </div>
 
       {openModal ? <PaymentModal editData={undefined} handleClose={() => setOpenModal(false)} /> : undefined}
+
+      {paymentToPay ? <PayPaymentModal editData={paymentToPay} handleClose={() => setPaymentToPay(undefined)} /> : null}
     </div>
   );
 }

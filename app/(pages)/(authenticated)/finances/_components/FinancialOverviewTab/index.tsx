@@ -37,7 +37,7 @@ async function FinancialOverviewTab() {
             <div className="w-7 h-7 rounded-full bg-green-200 text-black flex justify-center items-center">
               <LuDollarSign />
             </div>
-            <h3 className="">Saldo total</h3>
+            <h3 className="font-semibold">Saldo total</h3>
           </div>
           <div className="text-2xl font-bold">R$ {numberFormat(summary?.currencentBalance || 0)}</div>
         </div>
@@ -48,7 +48,7 @@ async function FinancialOverviewTab() {
               <LuPlus />
             </div>
             
-            <h3 className="">Criar conta</h3>
+            <h3 className="font-semibold">Criar conta</h3>
           </div>
           
           <div>

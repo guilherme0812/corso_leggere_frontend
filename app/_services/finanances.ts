@@ -190,16 +190,16 @@ export type PaymentDataType = Payment & {
       lastName: string;
     };
   };
-  entries: FinancialEntryDataType[]
+  entries: FinancialEntryDataType[];
 };
 
-enum SplitType {
+export enum SplitType {
   OFFICE = "OFFICE",
   LAWYER = "LAWYER",
   INDICATOR = "INDICATOR",
 }
 
-type SplitDataType = {
+export type SplitDataType = {
   id: string;
   paymentId: string;
   type: SplitType;
@@ -282,6 +282,24 @@ export const createPaymentClientSide = async (body: PaymentBodyType) => {
       url: `/financial/createPayment`,
       method: "POST",
       data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const payPaymentClientSide = async (id: string) => {
+  try {
+    const res = await apiLeggere<PaymentDataType[]>({
+      url: `/financial/payPayment`,
+      method: "POST",
+      params: {
+        id: id,
+      },
     });
 
     const { data } = res;

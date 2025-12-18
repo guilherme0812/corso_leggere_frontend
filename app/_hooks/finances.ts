@@ -7,6 +7,7 @@ import {
   getPaymentsClientSide,
   getProjectionFlowClientSide,
   PaymentDataType,
+  payPaymentClientSide,
 } from "../_services/finanances";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -62,12 +63,24 @@ export function useCreatePayment() {
   return useMutation({
     mutationFn: createPaymentClientSide,
 
-    onSuccess: async (newPayment) => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: [PAYMENTS_QUERY_KEY],
       });
+    },
+  });
+}
 
-     
+export function usePayPayment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: payPaymentClientSide,
+
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: [PAYMENTS_QUERY_KEY, PROJECTION_FLOW_QUERY_KEY, CASH_FLOW_QUERY_KEY],
+      });
     },
   });
 }

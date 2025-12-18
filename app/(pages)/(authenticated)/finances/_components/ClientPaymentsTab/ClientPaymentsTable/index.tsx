@@ -7,11 +7,11 @@ import { MdOutlinePayments } from "react-icons/md";
 
 type IClientPaymentsTable = {
   data: PaymentDataType[];
-  //   handleEdit(client: IClient): void;
+    handlePay(data: PaymentDataType): void;
   //   handleDelete: (document: string) => void;
 };
 
-export default function ClientPaymentsTable({ data }: IClientPaymentsTable) {
+export default function ClientPaymentsTable({ data, handlePay }: IClientPaymentsTable) {
   const statusBgColor = {
     PENDING: "bg-yellow-200",
     PAID: "bg-green-200",
@@ -67,7 +67,7 @@ export default function ClientPaymentsTable({ data }: IClientPaymentsTable) {
               <TableCell>{item.paidAt ? moment(item.paidAt).format("DD/MM/yyyy") : null}</TableCell>
               <TableCell>R$ {numberFormat(item.amount)}</TableCell>
               <TableCell>
-                <Button variant={"ghost"} size={"sm"}>
+                <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
                   <MdOutlinePayments />
                 </Button>
               </TableCell>
