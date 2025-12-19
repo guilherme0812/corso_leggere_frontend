@@ -1,13 +1,13 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
-import { PaymentDataType } from "@/app/_services/finanances";
+import { PaymentDataType, PaymentStatus } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
 import { MdOutlinePayments } from "react-icons/md";
 
 type IClientPaymentsTable = {
   data: PaymentDataType[];
-    handlePay(data: PaymentDataType): void;
+  handlePay(data: PaymentDataType): void;
   //   handleDelete: (document: string) => void;
 };
 
@@ -67,9 +67,11 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
               <TableCell>{item.paidAt ? moment(item.paidAt).format("DD/MM/yyyy") : null}</TableCell>
               <TableCell>R$ {numberFormat(item.amount)}</TableCell>
               <TableCell>
-                <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
-                  <MdOutlinePayments />
-                </Button>
+                {item.status != PaymentStatus.PAID ? (
+                  <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
+                    <MdOutlinePayments />
+                  </Button>
+                ) : null}
               </TableCell>
             </TableRow>
           ))}

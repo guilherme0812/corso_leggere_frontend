@@ -45,7 +45,7 @@ function Content({ clients }: ContentType) {
   return (
     <>
       <div className="max-w-[1700px] m-auto grid grid-rows-[auto_1fr] h-full gap-4">
-        <ClientHeader {...{ data, editData, openModal, setOpenModal }} />
+        <ClientHeader {...{ data, editData, openModal, setOpenModal, setEditData }} />
 
         <div className="h-full">
           <TableClients data={data} handleEdit={handleEdit} handleDelete={(document) => setIdDelete(document)} />
@@ -54,7 +54,7 @@ function Content({ clients }: ContentType) {
 
       <ConfirmDialog
         open={idToDelete ? true : false}
-        handleClose={() => {}}
+        handleClose={() => setIdDelete(undefined)}
         title="Deseja remover esse cliente?"
         description="Apòs confirmar nao serà possivel desfazer o processo."
         handleConfirm={() => handleDelete(idToDelete as string)}

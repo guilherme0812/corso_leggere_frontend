@@ -41,6 +41,7 @@ export function DatePicker({ label, variant, placeholder = "Select date", onChan
             mode="single"
             selected={date}
             captionLayout="dropdown"
+            endMonth={new Date(2100, 11)}
             onSelect={(date) => {
               setDate(date);
               onChange?.(date);

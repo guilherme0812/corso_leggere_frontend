@@ -2,28 +2,44 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/Button";
-import { PaymentDataType } from "@/app/_services/finanances";
+import { SplitDataType } from "@/app/_services/finanances";
 import { usePayPayment } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
 import { LuDollarSign } from "react-icons/lu";
+import { ICase } from "@/app/_services/case";
 
 type ModalType = {
   handleClose(): void;
-  editData: PaymentDataType;
+  splits: SplitDataType[];
+  case?: ICase;
+  financialEntryId: string;
+  status: any;
+  description?: string;
+  dueDate?: string;
+  amount: number;
 };
 
-function PayPaymentModal({ editData, handleClose }: ModalType) {
+function PayPaymentModal({
+  splits,
+  case: caseData,
+  handleClose,
+  financialEntryId,
+  status,
+  description,
+  dueDate,
+  amount,
+}: ModalType) {
   const { mutateAsync: payPayment } = usePayPayment();
 
-  const statusBgColor = {
+  const statusBgColor: any = {
     PENDING: "bg-yellow-200",
     PAID: "bg-green-200",
     LATE: "bg-red-200",
   };
 
-  const statusTranslate = {
+  const statusTranslate: any = {
     PENDING: "Pendente",
     PAID: "Pago",
     LATE: "Atrasado",
@@ -37,9 +53,8 @@ function PayPaymentModal({ editData, handleClose }: ModalType) {
 
   const handleClickPay = async () => {
     try {
-      const entryId = editData.entries[0]?.id;
-      if (entryId) {
-        const res = await payPayment(entryId);
+      if (financialEntryId) {
+        const res = await payPayment(financialEntryId);
 
         if (res) {
           enqueueSnackbar({
@@ -63,51 +78,71 @@ function PayPaymentModal({ editData, handleClose }: ModalType) {
         </DialogHeader>
 
         <div>
-          <div className="font-semibold text-3xl text-center my-8">R${numberFormat(editData?.amount)}</div>
+          <div className="font-semibold text-3xl text-center my-8">R${numberFormat(amount)}</div>
 
           <div className="border rounded min-h-36 p-4 flex flex-col text-sm gap-2">
-            <div className="flex justify-between">
-              <div className="font-semibold">Processo</div>
-              <div>{editData.case.title}</div>
-            </div>
-
-            <div className="flex justify-between">
-              <div className="font-semibold">Data de vencimento</div>
-              <div>{moment(editData.dueDate).format("DD/MM/YYYY")}</div>
-            </div>
-
-            <div className="flex justify-between">
-              <div className="font-semibold">Responsavel pagamento</div>
-              <div>
-                {editData.case.client.firstName} {editData.case.client.lastName}
+            {caseData ? (
+              <div className="flex justify-between">
+                <div className="font-semibold">Processo</div>
+                <div>{caseData?.title}</div>
               </div>
-            </div>
+            ) : null}
+
+            {dueDate ? (
+              <div className="flex justify-between">
+                <div className="font-semibold">Data de vencimento</div>
+                <div>{dueDate ? moment(dueDate).format("DD/MM/YYYY") : null}</div>
+              </div>
+            ) : null}
+
+            {caseData?.client ? (
+              <div className="flex justify-between">
+                <div className="font-semibold">Responsavel pagamento</div>
+                <div>
+                  {caseData?.client?.firstName} {caseData?.client?.lastName}
+                </div>
+              </div>
+            ) : null}
 
             <div className="flex justify-between">
               <div className="font-semibold">Status atual</div>
+
               <div>
                 <div
-                  className={`${
-                    statusBgColor[editData.status]
-                  } p-1 text-xs flex justify-center font-medium min-w-[50px] rounded`}
+                  className={`${statusBgColor[status]} p-1 text-xs flex justify-center font-medium min-w-[50px] rounded`}
                 >
-                  {statusTranslate[editData.status]}
+                  {statusTranslate[status]}
                 </div>
               </div>
             </div>
 
-            <hr className="border-t border-gray-300" />
+            {splits?.length ? (
+              <>
+                <hr className="border-t border-gray-300" />
+                <div className="flex justify-between">
+                  <div className="font-semibold">Divisão financeira</div>
+                </div>
+              </>
+            ) : null}
 
-            <div className="flex justify-between">
-              <div className="font-semibold">Divisão financeira</div>
-            </div>
-
-            {editData?.splits?.map((item, key) => (
+            {splits?.map((item, key) => (
               <div className="flex justify-between text-xs" key={key}>
                 <div className="">{SplitTypeTranslate[item.type]}</div>
                 <div>{numberFormat(item.amount)}</div>
               </div>
             ))}
+
+            <hr className="border-t border-gray-300" />
+
+            {description ? (
+              <>
+                <div className="flex justify-between">
+                  <div className="font-semibold">Descrição</div>
+                </div>
+
+                <div>{description}</div>
+              </>
+            ) : null}
           </div>
 
           <div className="mt-4">

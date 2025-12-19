@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { IAttorney } from "@/app/_services/attorney";
 import { createAttorney, updateAttorney } from "@/app/actions/attorney";
+import { enqueueSnackbar } from "notistack";
 
 type ClientModalType = {
   handleClose(): void;
@@ -40,60 +41,67 @@ function AttorneyModal({ editData, handleClose }: ClientModalType) {
 
   async function handleSubmit(values: any) {
     startTransition(async () => {
-      if (editData) {
-        const formData = new FormData();
-        Object.entries(values).forEach(([key, value]) => {
-          if (value !== undefined && value !== null) {
-            formData.append(key, String(value));
-          }
-        });
+      try {
+        if (editData) {
+          const formData = new FormData();
+          Object.entries(values).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              formData.append(key, String(value));
+            }
+          });
 
-        try {
           const res = await updateAttorney(formData);
 
           if (typeof res == "object") {
+            enqueueSnackbar({
+              message: "Advogado alterado com sucesso",
+              variant: "success",
+            });
             router.refresh();
             handleClose();
           }
-          console.log("res", res);
-          // aqui se quiser pode disparar um toast de sucesso
-        } catch (err) {
-          console.error(err);
-          // aqui vc pode mostrar toast de erro
-        }
-      } else {
-        const payload = {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          licenceNumber: values.licenceNumber,
-          licenceJurisdiction: values.licenceJurisdiction,
-          licenceCountryCode: values.licenceCountryCode,
-          phone: values.phone,
-          email: values.email,
-          nationality: values.nationality,
-          maritalStatus: values.maritalStatus,
-          professionalAddress: values.professionalAddress,
-        };
+        } else {
+          const payload = {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            licenceNumber: values.licenceNumber,
+            licenceJurisdiction: values.licenceJurisdiction,
+            licenceCountryCode: values.licenceCountryCode,
+            phone: values.phone,
+            email: values.email,
+            nationality: values.nationality,
+            maritalStatus: values.maritalStatus,
+            professionalAddress: values.professionalAddress,
+          };
 
-        const formData = new FormData();
-        Object.entries(payload).forEach(([key, value]) => {
-          if (value !== undefined && value !== null) {
-            formData.append(key, String(value));
-          }
-        });
+          const formData = new FormData();
+          Object.entries(payload).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              formData.append(key, String(value));
+            }
+          });
 
-        try {
           const res = await createAttorney(formData);
-          console.log(res);
           if (typeof res == "object") {
+            enqueueSnackbar({
+              message: "Advogado criado com sucesso",
+              variant: "success",
+            });
             router.refresh();
             handleClose();
+          } else {
+            enqueueSnackbar({
+              message: "Erro interno, tente mais tarde",
+              variant: "error",
+            });
           }
-          // aqui se quiser pode disparar um toast de sucesso
-        } catch (err) {
-          console.error(err);
-          // aqui vc pode mostrar toast de erro
         }
+      } catch (error: any) {
+        enqueueSnackbar({
+          message: "Erro interno, tente mais tarde",
+          variant: "error",
+        });
+        console.log(error);
       }
     });
   }

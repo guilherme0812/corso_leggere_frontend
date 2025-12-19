@@ -7,25 +7,37 @@ export enum CaseStatus {
 }
 
 export type ICase = {
-  id: string
-  title: string
-  lawyerId: string
+  id: string;
+  title: string;
+  lawyerId: string;
   indicatorId: null;
   businessFee: number;
   lawyerFee: number;
   indicatorFee: null;
   status: CaseStatus;
-  createdAt: string
-  clientId: string
-  companyId: string
+  createdAt: string;
+  clientId: string;
+  companyId: string;
   processNumber?: string;
+  client?: {
+    document: string;
+    firstName: string;
+    lastName: string;
+  };
 };
 
-export const getCases = async () => {
+type GetCasesDTO = {
+  processNumber?: string | undefined;
+  title?: string | undefined;
+  clientName?: string | undefined;
+};
+
+export const getCases = async (params: GetCasesDTO) => {
   try {
     const res = await apiServerLeggere<ICase[]>({
       url: "/cases",
       method: "GET",
+      params,
     });
 
     const { data } = res;

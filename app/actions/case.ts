@@ -31,6 +31,7 @@ export const createCase = async (formData: FormData) => {
 
 export const updateCase = async (formData: FormData) => {
   const data: Record<string, any> = {};
+
   formData.forEach((value, key) => {
     data[key] = value;
   });

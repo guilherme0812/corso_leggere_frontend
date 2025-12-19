@@ -25,7 +25,9 @@ function CashFlowContentWrapper({ data: initialData }: { data: CashFlowDataType[
       <Header {...{ filters, refetch, setFilters }} />
 
       <div className="h-[55vh] w-full relative mt-4">
-        <FinancialTransitionsTable data={data || []} />
+        <FinancialTransitionsTable data={data || []} handleSelecRecord={() => {}}
+        
+        />
       </div>
     </div>
   );

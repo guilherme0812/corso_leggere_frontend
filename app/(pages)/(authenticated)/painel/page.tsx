@@ -10,7 +10,7 @@ import { CaseStatus, getCases } from "@/app/_services/case";
 async function Dashboard({}: { searchParams: { [key: string]: string } }) {
   const monthReports = await getMonthReports({ startDate: "2025-01-01", endDate: "2025-12-31" });
   
-  const cases = await getCases();
+  const cases = await getCases({});
 
   const pendingCases = cases?.filter((item) => item.status != CaseStatus.CLOSED) || [];
   const closedCases = cases?.filter((item) => item.status === CaseStatus.CLOSED) || [];

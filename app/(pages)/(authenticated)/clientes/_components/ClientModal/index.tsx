@@ -19,6 +19,7 @@ import { getStates } from "@/app/_services/states";
 import { getCities } from "@/app/_services/cities";
 import { Switch } from "@/app/_components/ui/switch";
 import { Textarea } from "@/app/_components/ui/textarea";
+import { enqueueSnackbar } from "notistack";
 
 type ClientModalType = {
   handleClose(): void;
@@ -60,6 +61,10 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
           const res = await updateClient(formData);
 
           if (typeof res == "object") {
+            enqueueSnackbar({
+              message: "Alterado com sucesso",
+              variant: "success",
+            });
             router.refresh();
             handleClose();
           }
@@ -72,24 +77,28 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
       } else {
         const payload = {
           document: values.document,
-          nacionality: "",
+          officialId: values.officialId,
+          officialIdIssuingBody: values.officialIdIssuingBody,
+          officialIdissuingState: values.officialIdissuingState,
+          nacionality: values.nacionality || "",
           firstName: values.firstName,
           lastName: values.lastName,
           phone: values.phone,
           email: values.email,
-          hasWhatsapp: true,
-          addressStreet: values.address,
-          addressNumber: "",
-          addressComplement: "",
-          addressZipCode: "",
-          zone: "",
+          hasWhatsapp: values.hasWhatsapp,
+          addressStreet: values.addressStreet,
+          addressNumber: values.addressNumber || "",
+          addressComplement: values.addressComplement || "",
+          addressZipCode: values.addressZipCode || "",
+          zone: values.zone || "",
           cityId: values.cityId,
           stateId: values.stateId,
           countryId: values.countryId,
           birthDate: "1990-05-15T00:00:00.000Z",
-          notes: "",
+          notes: values.notes || "",
+          profession: values.profession
         };
-
+        console.log(payload);
         const formData = new FormData();
         Object.entries(payload).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
@@ -101,12 +110,25 @@ function ClientModal({ editData, handleClose }: ClientModalType) {
           const res = await createClient(formData);
 
           if (typeof res == "object") {
+            enqueueSnackbar({
+              message: "Criado com sucesso",
+              variant: "success",
+            });
             router.refresh();
             handleClose();
+          } else {
+            enqueueSnackbar({
+              message: "Erro interno, tente novamente mais tarde",
+              variant: "error",
+            });
           }
-          console.log("res", res);
+
           // aqui se quiser pode disparar um toast de sucesso
         } catch (err) {
+          enqueueSnackbar({
+            message: "Erro interno, tente novamente mais tarde",
+            variant: "error",
+          });
           console.error(err);
           // aqui vc pode mostrar toast de erro
         }

@@ -34,7 +34,7 @@ export const getMonthReports = async ({ startDate, endDate }: GetMonthReportPara
 export type CashFlowDataType = {
   id: string;
   type: "RECEIVABLE" | "PAYABLE";
-  origin: string;
+  origin: FinancialEntryOriginStatus;
   status: string;
   amount: number;
   dueDate: string;
@@ -48,8 +48,8 @@ export type CashFlowDataType = {
   paymentId: string;
   splitId: any;
   companyId: string;
-  category: Category;
-  case: ICase;
+  category?: Category;
+  case?: ICase;
   payment: Payment;
   split: any;
   projectedAmount: number;
@@ -148,10 +148,17 @@ export enum PaymentStatus {
   LATE = "LATE",
 }
 
+export enum FinancialEntryOriginStatus {
+  PAYMENT = "PAYMENT",
+  SPLIT = "SPLIT",
+  MANUAL = "MANUAL",
+  CASE = "CASE",
+}
+
 export type FinancialEntryDataType = {
   id: string;
   type: "RECEIVABLE" | "PAYABLE";
-  origin: string;
+  origin: FinancialEntryOriginStatus;
   amount: number;
   dueDate: string;
   createdAt: string;
@@ -166,6 +173,33 @@ export const getFinancialEntry = async (params: GetPaymentsParams) => {
       url: `/financial`,
       method: "GET",
       params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export type CreateFinancialEntryDTO = {
+  type: "RECEIVABLE" | "PAYABLE";
+  status: PaymentStatus;
+  origin: FinancialEntryOriginStatus;
+  amount: number;
+  dueDate: string;
+  categoryId?: string | undefined;
+  description?: string;
+};
+
+export const CreateFinancialEntryClientSide = async (body: CreateFinancialEntryDTO) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<FinancialEntryDataType>({
+      url: `/financial/createEntryPayment`,
+      method: "POST",
+      data: body,
     });
 
     const { data } = res;

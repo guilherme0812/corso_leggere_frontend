@@ -2,16 +2,18 @@
 
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
-import { CashFlowDataType } from "@/app/_services/finanances";
+import { CashFlowDataType, FinancialEntryOriginStatus, PaymentStatus } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import { LuArrowDown, LuArrowUp, LuCopy, LuKeyRound } from "react-icons/lu";
+import { MdOutlinePayments } from "react-icons/md";
 
 type IFinancialTransitionsTable = {
   data: CashFlowDataType[];
+  handleSelecRecord: (record: CashFlowDataType) => void;
 };
-function FinancialTransitionsTable({ data }: IFinancialTransitionsTable) {
+function FinancialTransitionsTable({ data, handleSelecRecord }: IFinancialTransitionsTable) {
   const handleCopyId = (record: CashFlowDataType) => {
     // navigator.clipboard.writeText(id);
     try {
@@ -52,13 +54,13 @@ function FinancialTransitionsTable({ data }: IFinancialTransitionsTable) {
               <TableHead>Data de vencimento</TableHead>
               <TableHead>Data pago</TableHead>
               <TableHead>Valor</TableHead>
-              <TableHead className="w-[60px]"></TableHead>
+              <TableHead className="w-[100px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((client, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium text-sm">{client?.description || client.case.title}</TableCell>
+                <TableCell className="font-medium text-sm">{client?.description || client?.case?.title}</TableCell>
                 <TableCell className="font-medium text-sm">
                   {client?.category ? (
                     <>{client?.category.name == "receives" ? "Receitas" : client?.category.name}</>
@@ -80,7 +82,11 @@ function FinancialTransitionsTable({ data }: IFinancialTransitionsTable) {
                 </TableCell>
 
                 <TableCell className="font-medium text-sm">
-                  {client?.origin == "PAYMENT" ? "Pagamento" : client.origin}
+                  {client?.origin == "PAYMENT"
+                    ? "Pagamento"
+                    : client.origin == FinancialEntryOriginStatus.SPLIT
+                    ? `Pagamento honorários`
+                    : client.origin}
                 </TableCell>
 
                 <TableCell className="font-medium text-sm">
@@ -94,11 +100,19 @@ function FinancialTransitionsTable({ data }: IFinancialTransitionsTable) {
                 </TableCell>
 
                 <TableCell className="font-medium text-sm">{moment(client?.dueDate).format("DD/MM/YYYY")}</TableCell>
-                <TableCell className="font-medium text-sm">{moment(client?.paidAt).format("DD/MM/YYYY")}</TableCell>
+                <TableCell className="font-medium text-sm">
+                  {client?.paidAt ? moment(client?.paidAt).format("DD/MM/YYYY") : null}
+                </TableCell>
 
                 <TableCell>R$ {numberFormat(client.amount)}</TableCell>
 
-                <TableCell>
+                <TableCell className="flex justify-between items-center">
+                  {client.status != PaymentStatus.PAID ? (
+                    <Button variant={"ghost"} size={"sm"} onClick={() => handleSelecRecord(client)}>
+                      <MdOutlinePayments />
+                    </Button>
+                  ) : null}
+
                   <Button variant={"outline"} size={"sm"} onClick={() => handleCopyId(client)}>
                     <LuKeyRound className="cursor-pointer hover:text-blue-600" />
                     <LuCopy className="cursor-pointer hover:text-blue-600" />

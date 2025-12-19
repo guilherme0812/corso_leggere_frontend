@@ -1,5 +1,6 @@
 import {
   CashFlowDataType,
+  CreateFinancialEntryClientSide,
   createPaymentClientSide,
   GetAllPaymentsParams,
   getCashFlowClientSide,
@@ -66,6 +67,7 @@ export function useCreatePayment() {
     onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: [PAYMENTS_QUERY_KEY],
+        exact: false
       });
     },
   });
@@ -79,7 +81,22 @@ export function usePayPayment() {
 
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: [PAYMENTS_QUERY_KEY, PROJECTION_FLOW_QUERY_KEY, CASH_FLOW_QUERY_KEY],
+        queryKey: [PAYMENTS_QUERY_KEY],
+        exact: false
+      });
+    },
+  });
+}
+
+export function useCreateFinancialEntry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: CreateFinancialEntryClientSide,
+
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: [CASH_FLOW_QUERY_KEY, PROJECTION_FLOW_QUERY_KEY],
       });
     },
   });

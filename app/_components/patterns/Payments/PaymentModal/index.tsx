@@ -18,6 +18,7 @@ import { enqueueSnackbar } from "notistack";
 type ModalType = {
   handleClose(): void;
   editData: PaymentDataType | undefined;
+  initialCaseId?: string;
 };
 
 const schema = Yup.object().shape({
@@ -27,7 +28,7 @@ const schema = Yup.object().shape({
   status: Yup.string().required("Data de vencimento é obrigatório"),
 });
 
-function PaymentModal({ editData, handleClose }: ModalType) {
+function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
   const [isPending, startTransition] = useTransition();
 
   const { data: cases } = UseCases({});
@@ -59,7 +60,7 @@ function PaymentModal({ editData, handleClose }: ModalType) {
   const initialValues = editData
     ? editData
     : {
-        caseId: "",
+        caseId: initialCaseId,
         amount: 0,
         dueDate: undefined,
         status: "PENDING",
@@ -133,7 +134,7 @@ function PaymentModal({ editData, handleClose }: ModalType) {
                 </div>
 
                 <div className="col-span-12 md:col-span-4">
-                  <Label>Valor da cobrança</Label>
+                  <Label>Data da cobrança</Label>
                   <DatePicker placeholder="Data de vencimento" onChange={(date) => setFieldValue("dueDate", date)} />
                   {errors.dueDate && touched.dueDate && <div className="text-red-500 text-sm">{errors.dueDate}</div>}
                 </div>

@@ -71,11 +71,7 @@ const CaseSchema = Yup.object()
       .max(100, "Máximo 100")
       .required("Obrigatório"),
 
-    indicatorFee: Yup.number()
-      .typeError("Valor inválido")
-      .min(0, "Mínimo 0")
-      .max(100, "Máximo 100")
-      .optional(),
+    indicatorFee: Yup.number().typeError("Valor inválido").min(0, "Mínimo 0").max(100, "Máximo 100").optional(),
     // indicatorFee: Yup.number()
     //   .typeError("Valor inválido")
     //   .min(0, "Mínimo 0")
@@ -113,12 +109,28 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
 
       try {
         if (editData) {
-          Object.entries(values).forEach(([key, value]) => {
+          const body = {
+            id: values.id,
+            processNumber: values.processNumber,
+            title: values.title,
+            lawyerId: values.lawyerId,
+            indicatorId:values.indicatorId,
+            businessFee:values.businessFee,
+            lawyerFee: values.lawyerFee,
+            indicatorFee: values.indicatorFee || undefined,
+            status: values.status,
+            createdAt: values.createdAt,
+            clientId: values.clientId,
+            companyId: values.companyId,
+          };
+          Object.entries(body).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
               formData.append(key, value as any);
             }
           });
           const res = await updateCase(formData);
+
+          console.log("res", res);
           if (typeof res === "object") {
             router.refresh();
             handleClose();

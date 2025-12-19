@@ -15,11 +15,13 @@ function ClientHeader({
   openModal,
   setOpenModal,
   editData,
+  setEditData,
 }: {
   data: IClient[];
   openModal: boolean;
   setOpenModal: Dispatch<SetStateAction<boolean>>;
   editData: IClient | undefined;
+  setEditData: Dispatch<SetStateAction<IClient | undefined>>;
 }) {
   const [clientName, setClientName] = useState("");
   const router = useRouter();
@@ -75,7 +77,13 @@ function ClientHeader({
             <LuSearch />
             Buscar clientes
           </Button>
-          <Button variant={"outline"} onClick={() => setOpenModal(true)}>
+          <Button
+            variant={"outline"}
+            onClick={() => {
+              setEditData(undefined);
+              setOpenModal(true);
+            }}
+          >
             <LuPlus />
             Adicionar clientes
           </Button>

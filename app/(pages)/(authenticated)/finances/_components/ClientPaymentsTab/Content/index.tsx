@@ -41,7 +41,17 @@ function Content({ data: initialData }: { data: PaymentDataType[] }) {
 
       {openModal ? <PaymentModal editData={undefined} handleClose={() => setOpenModal(false)} /> : undefined}
 
-      {paymentToPay ? <PayPaymentModal editData={paymentToPay} handleClose={() => setPaymentToPay(undefined)} /> : null}
+      {paymentToPay ? (
+        <PayPaymentModal
+          financialEntryId={paymentToPay?.entries[0]?.id}
+          splits={paymentToPay.splits || []}
+          case={paymentToPay.case as any}
+          handleClose={() => setPaymentToPay(undefined)}
+          amount={paymentToPay.amount}
+          status={paymentToPay.status}
+          dueDate={paymentToPay.dueDate}
+        />
+      ) : null}
     </div>
   );
 }
