@@ -33,7 +33,7 @@ export const getCompanies = async ({}: { name?: string | null }, _prefix?: strin
   try {
     const prefix = _prefix != undefined ? _prefix : await getPrefix();
     const res = await apiServerLeggere<ICompany[]>({
-      url: `${prefix}/companies`,
+      url: `${prefix}/admin/companies`,
       method: "GET",
     });
 

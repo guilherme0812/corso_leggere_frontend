@@ -1,8 +1,8 @@
 import Header from "@/app/_components/patterns/Header";
 import { LuAlarmClock, LuCalendarDays, LuClipboardList } from "react-icons/lu";
 import { MdOutlineBalance } from "react-icons/md";
-import ProcessChart from "./_compoenents/ProcessChart";
-import TaskCard from "./_compoenents/TaskCard";
+// import ProcessChart from "./_compoenents/ProcessChart";
+// import TaskCard from "./_compoenents/TaskCard";
 import FinanceChart from "./_compoenents/FinanceChart";
 import { getMonthReports } from "@/app/_services/finanances";
 import { CaseStatus, getCases } from "@/app/_services/case";
@@ -75,7 +75,7 @@ async function Dashboard({}: { searchParams: { [key: string]: string } }) {
             <h3 className="font-semibold text-gray-500 text-sm mb-4">INDICADORES DE DESEMPENHO</h3>
 
             <div className="flex-grow bg-white rounded-md  shadow-custom p-4">
-              <ProcessChart />
+              {/* <ProcessChart /> */}
             </div>
           </div>
 
@@ -118,8 +118,8 @@ async function Dashboard({}: { searchParams: { [key: string]: string } }) {
         <h3 className="font-semibold text-gray-500 text-sm mb-4">ATIVIDADES</h3>
 
         <div className="flex flex-col gap-4">
-          <TaskCard />
-          <TaskCard />
+          {/* <TaskCard />
+          <TaskCard /> */}
         </div>
       </div>
     </div>

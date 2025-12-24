@@ -10,6 +10,7 @@ import { useState } from "react";
 import UserCard from "../UserCard";
 import UserModal from "@/app/_components/patterns/users/UserModal";
 import { UserDataType, UserStatusEnum } from "@/app/_types/login";
+import Link from "next/link";
 
 type ContentType = {
   companies: ICompany[];
@@ -41,7 +42,9 @@ function Content({ attorneys, clients, companies, users }: ContentType) {
 
             <div>
               <div className="text-sm font-semibold">{companies?.length} Empresas cadastradas</div>
-              <div className="text-xs text-gray-600">Ver mais detalhes</div>
+              <Link href={"/admin/empresas"}>
+                <div className="text-xs text-gray-600">Ver mais detalhes</div>
+              </Link>
             </div>
           </div>
 
