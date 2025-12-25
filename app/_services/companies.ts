@@ -1,5 +1,5 @@
 import { getPrefix } from ".";
-import { apiServerLeggere } from "./api";
+import { apiLeggere, apiServerLeggere } from "./api";
 
 export type ICompany = {
   id: string;
@@ -29,12 +29,85 @@ export type ICompany = {
   updateAt: string;
 };
 
-export const getCompanies = async ({}: { name?: string | null }, _prefix?: string) => {
+export type CompanyBody = Omit<
+  ICompany,
+  "id" | "createAt" | "updateAt" | "createdBy" | "lastLoginAt" | "updatedBy" | "foundedAt"
+>;
+
+export const getCompanies = async ({ name }: { name?: string | null }, _prefix?: string) => {
   try {
     const prefix = _prefix != undefined ? _prefix : await getPrefix();
     const res = await apiServerLeggere<ICompany[]>({
       url: `${prefix}/admin/companies`,
       method: "GET",
+      params: { name },
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const getCompaniesClientSide = async ({}: { name?: string | null }, _prefix?: string) => {
+  try {
+    const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<ICompany[]>({
+      url: `${prefix}/admin/companies`,
+      method: "GET",
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const CreateCompanyClientSide = async ({ body, _prefix }: { body: CompanyBody; _prefix?: string }) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<any>({
+      url: `${_prefix || ""}/company`,
+      method: "POST",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const updateCompanyClientSide = async ({ body, _prefix }: { body: CompanyBody; _prefix?: string }) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<any>({
+      url: `${_prefix || ""}/company`,
+      method: "PUT",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const deleteCompanyClientSide = async ({ id, _prefix }: { id: string; _prefix?: string }) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<any>({
+      url: `${_prefix || ""}/company`,
+      method: "DELETE",
+      params: { id: id },
     });
 
     const { data } = res;

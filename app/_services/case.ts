@@ -16,6 +16,7 @@ export type ICase = {
   indicatorFee: null;
   status: CaseStatus;
   createdAt: string;
+  closedAt?:string
   clientId: string;
   companyId: string;
   processNumber?: string;

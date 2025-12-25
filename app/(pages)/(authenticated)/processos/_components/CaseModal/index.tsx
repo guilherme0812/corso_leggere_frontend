@@ -10,12 +10,13 @@ import { Button } from "@/app/_components/ui/Button";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createCase, updateCase } from "@/app/actions/case";
-import { ICase } from "@/app/_services/case";
+import { CaseStatus, ICase } from "@/app/_services/case";
 import { useQuery } from "@tanstack/react-query";
 import { apiLeggere } from "@/app/_services/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { IClient } from "@/app/_services/client";
 import { IAttorney } from "@/app/_services/attorney";
+import { DatePicker } from "@/app/_components/ui/DatePicker";
 
 interface CaseModalProps {
   handleClose(): void;
@@ -109,20 +110,24 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
 
       try {
         if (editData) {
+          console.log("values", values)
           const body = {
             id: values.id,
             processNumber: values.processNumber,
             title: values.title,
             lawyerId: values.lawyerId,
-            indicatorId:values.indicatorId,
-            businessFee:values.businessFee,
+            indicatorId: values.indicatorId,
+            businessFee: values.businessFee,
             lawyerFee: values.lawyerFee,
             indicatorFee: values.indicatorFee || undefined,
             status: values.status,
             createdAt: values.createdAt,
+            closedAt: values?.status == CaseStatus.CLOSED ? values?.closedAt || new Date().toISOString() : null,
             clientId: values.clientId,
             companyId: values.companyId,
           };
+
+          console.log(body)
           Object.entries(body).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
               formData.append(key, value as any);
@@ -163,6 +168,18 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
       }
     });
   }
+
+  const statusOptions = [
+    {
+      id: CaseStatus.PENDING,
+    },
+    {
+      id: CaseStatus.OPEN,
+    },
+    {
+      id: CaseStatus.CLOSED,
+    },
+  ];
 
   const { isPending: clientsIsPending, data: clients } = useQuery({
     queryKey: ["clients"],
@@ -305,6 +322,43 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
                   <div className="text-red-500 text-sm">{errors.indicatorId}</div>
                 )}
               </div>
+
+              {/* STATUS */}
+              {editData ? (
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Status</Label>
+                  <Select
+                    value={(values as ICase).status || ""}
+                    onValueChange={(value) => {
+                      setFieldValue("status", value);
+                    }}
+                  >
+                    <SelectTrigger className="w-full" variant="filled">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {statusOptions?.map((opt, key) => (
+                        <SelectItem key={key} value={opt.id}>
+                          {opt.id}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : null}
+
+              {/* Close Date */}
+              {(values as ICase)?.status == CaseStatus.CLOSED ? (
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Data de fechamento</Label>
+                  <DatePicker
+                    placeholder="Data de fechamento"
+                    initialValue={new Date()}
+                    onChange={(date) => setFieldValue("closedAt", date?.toISOString())}
+                  />
+                </div>
+              ) : null}
 
               {/* SUBMIT */}
               <div className="col-span-12 flex justify-end">
