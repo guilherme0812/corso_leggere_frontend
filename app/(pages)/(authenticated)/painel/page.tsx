@@ -6,6 +6,7 @@ import { MdOutlineBalance } from "react-icons/md";
 import FinanceChart from "./_compoenents/FinanceChart";
 import { getMonthReports } from "@/app/_services/finanances";
 import { CaseStatus, getCases } from "@/app/_services/case";
+import ProcessChart from "./_compoenents/ProcessChart";
 
 async function Dashboard({}: { searchParams: { [key: string]: string } }) {
   const monthReports = await getMonthReports({ startDate: "2025-01-01", endDate: "2025-12-31" });
@@ -75,7 +76,7 @@ async function Dashboard({}: { searchParams: { [key: string]: string } }) {
             <h3 className="font-semibold text-gray-500 text-sm mb-4">INDICADORES DE DESEMPENHO</h3>
 
             <div className="flex-grow bg-white rounded-md  shadow-custom p-4">
-              {/* <ProcessChart /> */}
+              <ProcessChart />
             </div>
           </div>
 
