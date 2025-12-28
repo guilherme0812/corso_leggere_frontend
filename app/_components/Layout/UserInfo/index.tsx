@@ -1,13 +1,18 @@
+"use client";
+
 import { LoginDataType } from "@/app/_types";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useState } from "react";
 import { MdMoreVert } from "react-icons/md";
+import SimpleUserDetailModal from "../../patterns/users/SimpleUserDetailModal";
 
 type UserInfoType = {
   open: boolean;
 };
 
 function UserInfo({ open }: UserInfoType) {
+  const [openUserModal, setOpenUserModal] = useState(false);
   const { data } = useSession();
 
   const user = data?.user as LoginDataType;
@@ -40,10 +45,12 @@ function UserInfo({ open }: UserInfoType) {
       </div>
 
       <div className="h-12 pt-2">
-        <div className="p-1 hover:bg-gray-200 rounded-md">
+        <div role="button" className="p-1 hover:bg-gray-200 rounded-md" onClick={() => setOpenUserModal(true)}>
           <MdMoreVert />
         </div>
       </div>
+
+      {openUserModal ? <SimpleUserDetailModal editData={user} handleClose={() => setOpenUserModal(false)} /> : null}
     </div>
   );
 }

@@ -16,7 +16,7 @@ export type ICase = {
   indicatorFee: null;
   status: CaseStatus;
   createdAt: string;
-  closedAt?:string
+  closedAt?: string;
   clientId: string;
   companyId: string;
   processNumber?: string;
@@ -54,6 +54,30 @@ export const getCasesClientSide = async () => {
     const res = await apiLeggere<ICase[]>({
       url: "/cases",
       method: "GET",
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export type CaseTimeSerieDataType = {
+  label: string;
+  newCases: number;
+  closedCases: number;
+};
+
+export type CaseTimeSeriesPeriod = "week" | "month" | "year";
+
+export const getCasesTimeSeriesClientSide = async ({ period }: { period: CaseTimeSeriesPeriod }) => {
+  try {
+    const res = await apiLeggere<CaseTimeSerieDataType[]>({
+      url: "/case/timeseries",
+      method: "GET",
+      params: { period },
     });
 
     const { data } = res;

@@ -60,7 +60,6 @@ export const authOptions: NextAuthOptions = {
               phone: null,
               hasWhatsapp: false,
               profilePicture: null,
-              isActive: true,
             },
           });
 
@@ -77,21 +76,30 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user }) {
-      if ((user as any)?.socialLogin) {
-        // github
-        return { ...token, ...(user as any)?.socialLogin };
-      } else {
+    async jwt({ token, user, trigger, session }) {
+      // LOGIN NORMAL
+      if (user) {
+        if ((user as any)?.socialLogin) {
+          return { ...token, ...(user as any).socialLogin };
+        }
+
         return { ...token, ...user };
       }
+
+      // UPDATE VIA session.update()
+      if (trigger === "update" && session?.user) {
+        return {
+          ...token,
+          ...session.user,
+        };
+      }
+
+      return token;
     },
     async session({ session, token }) {
       (session as any).accessToken = token.accessToken as string;
       session.user = token;
 
-      //   console.log("session: ", session);
-      // console.log("session token: ", token);
-      // console.log("session: ", session);
       return session;
     },
   },

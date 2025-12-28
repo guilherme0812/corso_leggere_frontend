@@ -4,9 +4,9 @@ import { ReactNode, useState } from "react";
 import DrawerItem, { DrawerItemType } from "./DrawerItem";
 import { LuLogOut, LuMenu, LuSettings } from "react-icons/lu";
 import Link from "next/link";
-import Image from "next/image";
 import UserInfo from "./UserInfo";
 import { signOut } from "next-auth/react";
+import { MdOutlineBalance } from "react-icons/md";
 
 type PrimaryLayoutType = {
   children: ReactNode;
@@ -37,9 +37,8 @@ function PrimaryLayout({ children, itens }: PrimaryLayoutType) {
             <div className="flex justify-between items-center md:mb-8">
               <DrawerItem
                 icon={
-                  <div className="relative w-6 h-6">
-                    <Image src="/logo/balance.png" fill className="" alt="Logo" />
-                  </div>
+                    <MdOutlineBalance className="text-2xl" />
+                  
                 }
                 label="Leggere"
               />

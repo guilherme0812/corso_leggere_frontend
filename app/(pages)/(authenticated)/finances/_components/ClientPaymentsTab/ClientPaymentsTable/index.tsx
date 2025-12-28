@@ -1,5 +1,6 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
+import { Tooltip } from "@/app/_components/ui/Tooltip";
 import { PaymentDataType, PaymentStatus } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
@@ -68,9 +69,11 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
               <TableCell>R$ {numberFormat(item.amount)}</TableCell>
               <TableCell>
                 {item.status != PaymentStatus.PAID ? (
-                  <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
-                    <MdOutlinePayments />
-                  </Button>
+                  <Tooltip content="Pagar">
+                    <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
+                      <MdOutlinePayments />
+                    </Button>
+                  </Tooltip>
                 ) : null}
               </TableCell>
             </TableRow>

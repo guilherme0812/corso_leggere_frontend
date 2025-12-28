@@ -2,6 +2,7 @@
 
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
+import { Tooltip } from "@/app/_components/ui/Tooltip";
 import { CashFlowDataType, FinancialEntryOriginStatus, PaymentStatus } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
@@ -37,7 +38,7 @@ function FinancialTransitionsTable({ data, handleSelecRecord }: IFinancialTransi
     PAID: "Pago",
     LATE: "Atrasado",
     PARTIAL: "Parcial",
-    OVERDUE: "Overdue",
+    OVERDUE: "Atrasado",
   } as any;
 
   return (
@@ -108,15 +109,19 @@ function FinancialTransitionsTable({ data, handleSelecRecord }: IFinancialTransi
 
                 <TableCell className="flex justify-between items-center">
                   {client.status != PaymentStatus.PAID ? (
-                    <Button variant={"ghost"} size={"sm"} onClick={() => handleSelecRecord(client)}>
-                      <MdOutlinePayments />
-                    </Button>
+                    <Tooltip content="Pagar">
+                      <Button variant={"ghost"} size={"sm"} onClick={() => handleSelecRecord(client)}>
+                        <MdOutlinePayments />
+                      </Button>
+                    </Tooltip>
                   ) : null}
 
-                  <Button variant={"outline"} size={"sm"} onClick={() => handleCopyId(client)}>
-                    <LuKeyRound className="cursor-pointer hover:text-blue-600" />
-                    <LuCopy className="cursor-pointer hover:text-blue-600" />
-                  </Button>
+                  <Tooltip content="Copiar ID da transação financeira">
+                    <Button variant={"outline"} size={"sm"} onClick={() => handleCopyId(client)}>
+                      <LuKeyRound className="cursor-pointer hover:text-blue-600" />
+                      <LuCopy className="cursor-pointer hover:text-blue-600" />
+                    </Button>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             ))}
