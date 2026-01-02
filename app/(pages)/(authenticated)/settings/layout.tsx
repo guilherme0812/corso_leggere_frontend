@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
-import { LuBriefcaseBusiness, LuSettings } from "react-icons/lu";
+import { LuBriefcaseBusiness, LuSettings, LuUsers } from "react-icons/lu";
 
 function Layout({ children }: { children: ReactNode }) {
   const path = usePathname();
@@ -11,6 +12,11 @@ function Layout({ children }: { children: ReactNode }) {
       link: "/settings/company",
       label: "Empresa",
       icon: <LuBriefcaseBusiness className="size-4 shrink-0" />,
+    },
+    {
+      link: "/settings/users",
+      label: "Usuários",
+      icon: <LuUsers className="size-4 shrink-0" />,
     },
   ];
 
@@ -31,30 +37,32 @@ function Layout({ children }: { children: ReactNode }) {
             </div>
             <ul className="flex w-full min-w-0 flex-col gap-1">
               {pages.map((item, key) => (
-                <li key={key} className="group/menu-item relative">
-                  <button
-                    data-active={item.link == path}
-                    className="
-                        flex h-8 w-full items-center gap-2 rounded-md p-2 text-left text-sm
-                        transition-colors
+                <Link href={item.link} key={key}>
+                  <li className="group/menu-item relative">
+                    <button
+                      data-active={item.link == path}
+                      className="
+                    flex h-8 w-full items-center gap-2 rounded-md p-2 text-left text-sm
+                    transition-colors
                         hover:bg-gray-700 hover:text-white
 
                         data-[active=true]:bg-gray-800
                         data-[active=true]:text-white
                         data-[active=true]:font-medium
                     "
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </button>
-                </li>
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </button>
+                  </li>
+                </Link>
               ))}
             </ul>
           </div>
         </nav>
       </aside>
 
-      <div className="col-span-10 md:col-span-10 2xl:col-col-span-10">{children}</div>
+      <div className="col-span-10 md:col-span-9 2xl:col-col-span-10">{children}</div>
     </div>
   );
 }
