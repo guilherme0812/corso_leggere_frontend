@@ -24,6 +24,12 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
     PAID: "Pago",
     LATE: "Atrasado",
   };
+
+  const splitTranslate = {
+    LAWYER: "Advogado",
+    INDICATOR: "indicação",
+    OFFICE: "Escritorio",
+  };
   return (
     <div className="absolute left-0 top-0 h-full w-full overflow-y-auto">
       <Table>
@@ -59,9 +65,15 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <div>{item.case.businessFee}% Escritorio</div>
-                  <div>{item.case.lawyerFee}% Advogado</div>
-                  {item.case.indicatorFee ? <div>{item.case.indicatorFee}% Indicaçao</div> : null}
+                  {item.splits.map((split, index) => (
+                    <div key={index}>
+                      {splitTranslate[split.type]}{" "}
+                      {numberFormat(split.amount, "pt-br", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </div>
+                  ))}
                 </div>
               </TableCell>
               <TableCell>{moment(item.dueDate).format("DD/MM/yyyy")}</TableCell>

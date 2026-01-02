@@ -128,7 +128,12 @@ function PayPaymentModal({
             {splits?.map((item, key) => (
               <div className="flex justify-between text-xs" key={key}>
                 <div className="">{SplitTypeTranslate[item.type]}</div>
-                <div>{numberFormat(item.amount)}</div>
+                <div>
+                  {numberFormat(item.amount, "pt-br", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </div>
               </div>
             ))}
 

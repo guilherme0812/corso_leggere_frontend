@@ -60,17 +60,9 @@ const CaseSchema = Yup.object()
     lawyerId: Yup.string().required("Advogado é obrigatório"),
     title: Yup.string().min(3, "Mínimo 3 caracteres").required("Título é obrigatório"),
 
-    businessFee: Yup.number()
-      .typeError("Valor inválido")
-      .min(0, "Mínimo 0")
-      .max(100, "Máximo 100")
-      .required("Obrigatório"),
+    businessFee: Yup.number().typeError("Valor inválido").min(0, "Mínimo 0").max(100, "Máximo 100").optional(),
 
-    lawyerFee: Yup.number()
-      .typeError("Valor inválido")
-      .min(0, "Mínimo 0")
-      .max(100, "Máximo 100")
-      .required("Obrigatório"),
+    lawyerFee: Yup.number().typeError("Valor inválido").min(0, "Mínimo 0").max(100, "Máximo 100").optional(),
 
     indicatorFee: Yup.number().typeError("Valor inválido").min(0, "Mínimo 0").max(100, "Máximo 100").optional(),
     // indicatorFee: Yup.number()
@@ -97,7 +89,7 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
     clientId: "",
     lawyerId: "",
     title: "",
-    businessFee: 0,
+    businessFee: 100,
     lawyerFee: 0,
     indicatorFee: 0,
     indicatorId: 0,
@@ -110,7 +102,7 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
 
       try {
         if (editData) {
-          console.log("values", values)
+          console.log("values", values);
           const body = {
             id: values.id,
             processNumber: values.processNumber,
@@ -127,7 +119,7 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
             companyId: values.companyId,
           };
 
-          console.log(body)
+          console.log(body);
           Object.entries(body).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
               formData.append(key, value as any);

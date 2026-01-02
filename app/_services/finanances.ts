@@ -308,6 +308,7 @@ export type PaymentBodyType = {
   amount: number;
   dueDate: string;
   status: PaymentStatus;
+  splits: Omit<SplitDataType, "id" | "paymentId">[];
 };
 
 export const createPaymentClientSide = async (body: PaymentBodyType) => {
