@@ -15,11 +15,23 @@ import { Button } from "@/app/_components/ui/Button";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { updateCompany } from "@/app/actions/company";
+import * as Yup from "yup";
+import { useSession } from "next-auth/react";
 
-// import { LoginDataType } from "@/app/_types";
-// import { useSession } from "next-auth/react";
+const schema = Yup.object().shape({
+  name: Yup.string().required("Nome é obrigatório"),
+  cnpj: Yup.string().required("Campo é obrigatório"),
+  countryId: Yup.string().required("Campo é obrigatório"),
+  stateId: Yup.string().required("Campo é obrigatório"),
+  cityId: Yup.string().required("Campo é obrigatório"),
+  address: Yup.string().required("Campo é obrigatório"),
+  phone1: Yup.string().required("Campo é obrigatório"),
+  registrationNumber: Yup.string().required("Campo é obrigatório"),
+  email: Yup.string().email("Formato de email inválido").required("Email é obrigatório"),
+});
 
 function FormComponent({ data }: { data: ICompany }) {
+  const { data: session, update } = useSession();
   const router = useRouter();
   //   const { data } = useSession();
   //   const user = data?.user as LoginDataType;
@@ -40,7 +52,6 @@ function FormComponent({ data }: { data: ICompany }) {
   });
 
   const handleSubmit = async (values: ICompany) => {
-    console.log("handle submit");
     try {
       const formData = new FormData();
       Object.entries(values).forEach(([key, value]) => {
@@ -51,9 +62,13 @@ function FormComponent({ data }: { data: ICompany }) {
 
       const res = await updateCompany(formData);
 
-      console.log("res", res);
-
       if (typeof res == "object") {
+        await update({
+          user: {
+            ...session?.user,
+            company: values, // change company in token
+          },
+        });
         enqueueSnackbar({
           message: "Dados alterados  com sucesso",
           variant: "success",
@@ -70,7 +85,7 @@ function FormComponent({ data }: { data: ICompany }) {
   };
 
   return (
-    <Formik initialValues={data} onSubmit={handleSubmit}>
+    <Formik initialValues={data} onSubmit={handleSubmit} validationSchema={schema}>
       {({ values, setFieldValue, errors, touched, resetForm, dirty, handleSubmit }) => {
         console.log("err", errors);
         return (

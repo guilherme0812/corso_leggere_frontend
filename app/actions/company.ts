@@ -1,7 +1,6 @@
 "use server";
 
 import { apiServerLeggere } from "../_services/api";
-import { ICompany } from "../_services/companies";
 
 export const updateCompany = async (formData: FormData) => {
   const data: Record<string, any> = {};
@@ -14,7 +13,7 @@ export const updateCompany = async (formData: FormData) => {
   data.isActive = data.isActive == "true";
 
   try {
-    const res = await apiServerLeggere<ICompany>({
+    const res = await apiServerLeggere<{ message: string }>({
       url: "/company",
       method: "PUT",
       data,
