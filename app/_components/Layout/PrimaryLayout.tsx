@@ -7,6 +7,7 @@ import Link from "next/link";
 import UserInfo from "./UserInfo";
 import { signOut } from "next-auth/react";
 import { MdOutlineBalance } from "react-icons/md";
+import { usePathname } from "next/navigation";
 
 type PrimaryLayoutType = {
   children: ReactNode;
@@ -16,6 +17,7 @@ type PrimaryLayoutType = {
 function PrimaryLayout({ children, itens }: PrimaryLayoutType) {
   const [open, setOpen] = useState(false);
   const drawerWidth = "md:w-[280px]";
+  const pathname = usePathname();
 
   return (
     <div className="flex flex-col md:flex-row min-h-[100dvh]">
@@ -35,13 +37,7 @@ function PrimaryLayout({ children, itens }: PrimaryLayoutType) {
           {/* drawer-content */}
           <div className="h-full flex flex-col overflow-hidden justify-between rounded-sm">
             <div className="flex justify-between items-center md:mb-8">
-              <DrawerItem
-                icon={
-                    <MdOutlineBalance className="text-2xl" />
-                  
-                }
-                label="Leggere"
-              />
+              <DrawerItem icon={<MdOutlineBalance className="text-2xl" />} label="Leggere" />
 
               <div onClick={() => setOpen(!open)}>
                 <LuMenu className="text-2xl" />
@@ -69,8 +65,9 @@ function PrimaryLayout({ children, itens }: PrimaryLayoutType) {
 
               <div className="p-0 flex flex-col gap-2">
                 <hr className="border-t border-gray-300 w-full" />
-
-                <DrawerItem icon={<LuSettings />} label="Configurações" />
+                <Link href={"/settings/company"}>
+                  <DrawerItem icon={<LuSettings />} selected={pathname.startsWith("/settings")} label="Configurações" />
+                </Link>
                 <DrawerItem icon={<LuLogOut />} label="Signout" onClick={signOut} />
               </div>
             </div>

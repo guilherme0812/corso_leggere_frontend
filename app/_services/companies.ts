@@ -50,6 +50,22 @@ export const getCompanies = async ({ name }: { name?: string | null }, _prefix?:
     console.log(error);
   }
 };
+export const getCompany = async ({ id }: { id: string }, _prefix?: string) => {
+  try {
+    const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiServerLeggere<ICompany>({
+      url: `${prefix}/company`,
+      method: "GET",
+      params: { id },
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
 
 export const getCompaniesClientSide = async ({}: { name?: string | null }, _prefix?: string) => {
   try {
