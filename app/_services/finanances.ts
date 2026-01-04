@@ -233,11 +233,17 @@ export enum SplitType {
   INDICATOR = "INDICATOR",
 }
 
+export enum AmountType {
+  FIXED = "FIXED",
+  PERCENTAGE = "PERCENTAGE",
+}
+
 export type SplitDataType = {
   id: string;
   paymentId: string;
   type: SplitType;
   amount: number;
+  amountType: AmountType;
 };
 export const getFiancialSummary = async (params: GetPaymentsParams) => {
   try {

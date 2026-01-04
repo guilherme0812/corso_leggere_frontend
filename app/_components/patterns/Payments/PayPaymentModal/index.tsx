@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/Button";
-import { SplitDataType } from "@/app/_services/finanances";
+import { AmountType, SplitDataType } from "@/app/_services/finanances";
 import { usePayPayment } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
 import { numberFormat } from "@/app/_utils";
@@ -129,10 +129,15 @@ function PayPaymentModal({
               <div className="flex justify-between text-xs" key={key}>
                 <div className="">{SplitTypeTranslate[item.type]}</div>
                 <div>
-                  {numberFormat(item.amount, "pt-br", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+                  {item.amountType == AmountType.FIXED
+                    ? numberFormat(item.amount, "pt-br", {
+                        style: "currency",
+                        currency: "BRL",
+                      })
+                    : `${item.amount}% (${numberFormat(item.amount, "pt-br", {
+                        style: "currency",
+                        currency: "BRL",
+                      })})`}
                 </div>
               </div>
             ))}

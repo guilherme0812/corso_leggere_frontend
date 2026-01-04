@@ -1,7 +1,7 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { Tooltip } from "@/app/_components/ui/Tooltip";
-import { PaymentDataType, PaymentStatus } from "@/app/_services/finanances";
+import { AmountType, PaymentDataType, PaymentStatus } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
 import { MdOutlinePayments } from "react-icons/md";
@@ -68,10 +68,12 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
                   {item.splits.map((split, index) => (
                     <div key={index}>
                       {splitTranslate[split.type]}{" "}
-                      {numberFormat(split.amount, "pt-br", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
+                      {split.amountType == AmountType.FIXED
+                        ? numberFormat(split.amount, "pt-br", {
+                            style: "currency",
+                            currency: "BRL",
+                          })
+                        : `${split.amount}%`}
                     </div>
                   ))}
                 </div>

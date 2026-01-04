@@ -8,7 +8,14 @@ import * as Yup from "yup";
 import { Button } from "@/app/_components/ui/Button";
 import { useState, useTransition } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
-import { PaymentBodyType, PaymentDataType, PaymentStatus, SplitDataType, SplitType } from "@/app/_services/finanances";
+import {
+  AmountType,
+  PaymentBodyType,
+  PaymentDataType,
+  PaymentStatus,
+  SplitDataType,
+  SplitType,
+} from "@/app/_services/finanances";
 import { DatePicker } from "@/app/_components/ui/DatePicker";
 import { UseCases } from "@/app/_hooks/cases";
 import { NumericFormat } from "react-number-format";
@@ -33,6 +40,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
   const [isPending, startTransition] = useTransition();
 
   const [splits, setSplits] = useState<Omit<SplitDataType, "id" | "paymentId">[]>([]);
+  const [selectedAmountType, setSelectedType] = useState(AmountType.FIXED);
   const totalSplitsAmount = splits.reduce((total, split) => total + split.amount, 0);
   const { data: cases } = UseCases({});
   const { mutateAsync: createPayment } = useCreatePayment();
@@ -87,9 +95,22 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
   const splitOptions = [
     {
       id: SplitType.LAWYER,
+      label: "Advogado",
     },
     {
       id: SplitType.INDICATOR,
+      label: "Indicação",
+    },
+  ];
+
+  const amountOptions = [
+    {
+      id: AmountType.FIXED,
+      label: "Valor fixo",
+    },
+    {
+      id: AmountType.PERCENTAGE,
+      label: "Porcentagem",
     },
   ];
 
@@ -99,6 +120,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
       {
         amount: 0,
         type: SplitType.LAWYER,
+        amountType: selectedAmountType,
       },
     ]);
   };
@@ -198,7 +220,28 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                 {values.amount && values.dueDate ? (
                   <div className="border rounded min-h-36 p-4 flex flex-col text-sm gap-2 col-span-12">
                     <div className="flex justify-between items-center">
-                      <div className="font-semibold">Divisão financeira</div>
+                      <div className="flex items-center gap-4">
+                        <div className="font-semibold flex-shrink-0">Divisão financeira</div>
+                        <Select
+                          value={selectedAmountType || ""}
+                          onValueChange={(value) => {
+                            setSplits([]);
+                            setSelectedType(value as AmountType);
+                          }}
+                        >
+                          <SelectTrigger className="w-full" variant="simple">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {amountOptions?.map((item) => (
+                              <SelectItem key={item.id} value={item.id}>
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
                       <div>
                         <Button type="button" size="icon" variant="ghost" onClick={handleAddSplit}>
@@ -232,13 +275,13 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                             <SelectContent>
                               {splitOptions?.map((item) => (
                                 <SelectItem key={item.id} value={item.id}>
-                                  {item.id}
+                                  {item.label}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="col-span-4">
+                        <div className="col-span-4 flex items-center gap-2">
                           <NumericFormat
                             customInput={Input}
                             variant="simple"
@@ -247,6 +290,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                             thousandSeparator="."
                             onValueChange={({ floatValue }) => handleUpdateSplitAmount(index, floatValue || 0)}
                           />
+                          <div>{selectedAmountType == AmountType.FIXED ? "R$" : "%"}</div>
                         </div>
                         <div className="col-span-3 flex justify-end">
                           <Button size={"icon"} variant={"ghost"} onClick={() => handleRemoveSplit(index)}>
