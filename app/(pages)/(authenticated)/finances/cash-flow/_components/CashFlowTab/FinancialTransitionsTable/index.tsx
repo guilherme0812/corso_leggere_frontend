@@ -68,7 +68,7 @@ function FinancialTransitionsTable({ data, handleSelecRecord }: IFinancialTransi
                   ) : null}
                 </TableCell>
 
-                <TableCell className="max-w-[100px]">
+                <TableCell className="min-w-[100px]">
                   <div>
                     {client.type == "RECEIVABLE" ? (
                       <div className="flex items-center justify-center gap-2 font-medium text-sm bg-green-200 p-1 min-w-8">
@@ -90,7 +90,7 @@ function FinancialTransitionsTable({ data, handleSelecRecord }: IFinancialTransi
                     : client.origin}
                 </TableCell>
 
-                <TableCell className="font-medium text-sm">
+                <TableCell className="font-medium text-sm min-w-[100px]">
                   <div
                     className={`${
                       statusBgColor[client.status]

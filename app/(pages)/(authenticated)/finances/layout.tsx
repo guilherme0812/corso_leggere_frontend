@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
-import { LuDollarSign, LuUsers } from "react-icons/lu";
+import { LuBookText, LuDollarSign, LuUsers } from "react-icons/lu";
 import { MdCurrencyExchange } from "react-icons/md";
 
 function Layout({ children }: { children: ReactNode }) {
@@ -23,6 +23,11 @@ function Layout({ children }: { children: ReactNode }) {
       link: "/finances/payments",
       label: "Pagamento de clientes",
       icon: <LuUsers className="size-4 shrink-0" />,
+    },
+    {
+      link: "/finances/categories",
+      label: "Categorias",
+      icon: <LuBookText className="size-4 shrink-0" />,
     },
   ];
 
