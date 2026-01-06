@@ -70,7 +70,7 @@ function Header({
     },
   ];
   return (
-    <header className="h-full grid grid-cols-12 gap-4 shadow-md bg-white p-4">
+    <header className=" grid grid-cols-12 gap-4 shadow-md bg-white p-4">
       <div className="col-span-12 md:col-span-2">
         <Label>Status</Label>
 

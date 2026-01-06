@@ -1,5 +1,5 @@
 import { getFiancialSummary, getFinancialEntry, getMonthReports } from "@/app/_services/finanances";
-import FinanceChart from "../../../painel/_compoenents/FinanceChart";
+import FinanceChart from "../../../../painel/_compoenents/FinanceChart";
 import FinancesTable from "./FinancesTable";
 import { LuDollarSign, LuPlus } from "react-icons/lu";
 import moment from "moment";
@@ -29,7 +29,12 @@ async function FinancialOverviewTab() {
 
   return (
     <>
-      {/* <ButtonsSection /> */}
+      <div className="p-2 border-b w-full mb-4">
+        <div className=" peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-sm">
+          <LuDollarSign className="size-5" />
+          <span className="text-base font-semibold">Resumo financeiro</span>
+        </div>
+      </div>
 
       <div className="flex gap-4">
         <div className="text-white w-[300px] p-4 min-h-36 mb-6 border-2 bg-green-800 rounded-md flex flex-col justify-between">
@@ -47,10 +52,10 @@ async function FinancialOverviewTab() {
             <div className="w-7 h-7 rounded-full bg-green-200 text-black flex justify-center items-center">
               <LuPlus />
             </div>
-            
+
             <h3 className="font-semibold">Criar conta</h3>
           </div>
-          
+
           <div>
             <ButtonsSection />
           </div>

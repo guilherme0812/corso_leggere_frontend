@@ -7,10 +7,14 @@ import FinanceChart from "./_compoenents/FinanceChart";
 import { getMonthReports } from "@/app/_services/finanances";
 import { CaseStatus, getCases } from "@/app/_services/case";
 import ProcessChart from "./_compoenents/ProcessChart";
+import moment from "moment";
 
 async function Dashboard({}: { searchParams: { [key: string]: string } }) {
-  const monthReports = await getMonthReports({ startDate: "2025-01-01", endDate: "2025-12-31" });
-  
+  const endDate = moment().format("YYYY-MM-DD");
+
+  const startDate = moment().subtract(12, "months").startOf("month").format("YYYY-MM-DD");
+  const monthReports = await getMonthReports({ startDate: startDate, endDate: endDate });
+
   const cases = await getCases({});
 
   const pendingCases = cases?.filter((item) => item.status != CaseStatus.CLOSED) || [];

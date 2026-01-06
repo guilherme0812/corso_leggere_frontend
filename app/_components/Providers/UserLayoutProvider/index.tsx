@@ -27,7 +27,7 @@ function UserLayoutProvider({ children, user }: { children: ReactNode; user: Log
     {
       icon: <MdCurrencyExchange />,
       label: "Financeiro",
-      link: "/finances",
+      link: "/finances/financial-summary",
       selected: pathname.includes("/finances"),
     },
     {
@@ -81,14 +81,14 @@ function UserLayoutProvider({ children, user }: { children: ReactNode; user: Log
           selected: pathname.includes("/admin"),
         },
       ]);
-    }else if (user?.role == UserRole.owner) {
+    } else if (user?.role == UserRole.owner) {
       setItems(() => [
         ...list,
         {
           icon: <LuCircleUser />,
           label: "Usuários",
           link: "/users",
-          selected: pathname == "/users"
+          selected: pathname == "/users",
         },
       ]);
     } else {

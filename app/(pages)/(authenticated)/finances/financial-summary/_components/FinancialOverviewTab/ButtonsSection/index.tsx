@@ -2,7 +2,7 @@
 
 import { Button } from "@/app/_components/ui/Button";
 import { useState } from "react";
-import EntryPaymentModal from "../../ClientPaymentsTab/EntryPaymentModal";
+import EntryPaymentModal from "../../../../payments/_components/ClientPaymentsTab/EntryPaymentModal";
 
 function ButtonsSection() {
   const [entryPaymentModalType, setEntryPaymentModalType] = useState<"RECEIVABLE" | "PAYABLE">();
