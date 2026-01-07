@@ -18,7 +18,9 @@ type ModalType = {
   status: any;
   description?: string;
   dueDate?: string;
+  paidDate?: string;
   amount: number;
+  category?: string;
 };
 
 function PayPaymentModal({
@@ -29,7 +31,9 @@ function PayPaymentModal({
   status,
   description,
   dueDate,
+  paidDate,
   amount,
+  category,
 }: ModalType) {
   const { mutateAsync: payPayment } = usePayPayment();
 
@@ -37,12 +41,14 @@ function PayPaymentModal({
     PENDING: "bg-yellow-200",
     PAID: "bg-green-200",
     LATE: "bg-red-200",
+    OVERDUE: "bg-red-200", // arrive from entry
   };
 
   const statusTranslate: any = {
     PENDING: "Pendente",
     PAID: "Pago",
     LATE: "Atrasado",
+    OVERDUE: "Atrasado",
   };
 
   const SplitTypeTranslate = {
@@ -73,8 +79,12 @@ function PayPaymentModal({
     <Dialog open onOpenChange={handleClose}>
       <DialogContent className="max-w-screen-sm max-h-[95vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Efetuar pagamento</DialogTitle>
-          <DialogDescription>Confirme para efeituar o pagamento e a geraçao das proximas transaçoes</DialogDescription>
+          <DialogTitle>informações sobre o pagamento</DialogTitle>
+          <DialogDescription>
+            {status != "PAID"
+              ? "Confirme para efeituar o pagamento e a geração das proximas transaçoes"
+              : "Veja todas as informações sobre este pagamento"}
+          </DialogDescription>
         </DialogHeader>
 
         <div>
@@ -85,6 +95,13 @@ function PayPaymentModal({
               <div className="flex justify-between">
                 <div className="font-semibold">Processo</div>
                 <div>{caseData?.title}</div>
+              </div>
+            ) : null}
+
+            {paidDate ? (
+              <div className="flex justify-between">
+                <div className="font-semibold">Data de pagamento</div>
+                <div>{paidDate ? moment(paidDate).format("DD/MM/YYYY") : null}</div>
               </div>
             ) : null}
 
@@ -101,6 +118,13 @@ function PayPaymentModal({
                 <div>
                   {caseData?.client?.firstName} {caseData?.client?.lastName}
                 </div>
+              </div>
+            ) : null}
+
+            {category ? (
+              <div className="flex justify-between">
+                <div className="font-semibold">Categoria</div>
+                <div>{category}</div>
               </div>
             ) : null}
 
@@ -155,12 +179,14 @@ function PayPaymentModal({
             ) : null}
           </div>
 
-          <div className="mt-4">
-            <Button className="w-full" onClick={handleClickPay}>
-              <LuDollarSign />
-              Realizar pagamento
-            </Button>
-          </div>
+          {status != "PAID" ? (
+            <div className="mt-4">
+              <Button className="w-full" onClick={handleClickPay}>
+                <LuDollarSign />
+                Realizar pagamento
+              </Button>
+            </div>
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>

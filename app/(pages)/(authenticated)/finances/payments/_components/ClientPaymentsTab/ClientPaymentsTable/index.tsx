@@ -1,7 +1,7 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { Tooltip } from "@/app/_components/ui/Tooltip";
-import { AmountType, PaymentDataType, PaymentStatus } from "@/app/_services/finanances";
+import { AmountType, PaymentDataType } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
 import { MdOutlinePayments } from "react-icons/md";
@@ -82,13 +82,11 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
               <TableCell>{item.paidAt ? moment(item.paidAt).format("DD/MM/yyyy") : null}</TableCell>
               <TableCell>R$ {numberFormat(item.amount)}</TableCell>
               <TableCell>
-                {item.status != PaymentStatus.PAID ? (
-                  <Tooltip content="Pagar">
-                    <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
-                      <MdOutlinePayments />
-                    </Button>
-                  </Tooltip>
-                ) : null}
+                <Tooltip content="Ver mais informações / Registrar pagamento">
+                  <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
+                    <MdOutlinePayments />
+                  </Button>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}

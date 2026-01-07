@@ -40,6 +40,8 @@ function ProjectionFlowContentWrapper({ data: initialData }: { data: CashFlowDat
           description={financialEntryToPay?.description}
           amount={financialEntryToPay.amount}
           dueDate={financialEntryToPay.dueDate}
+          paidDate={financialEntryToPay.paidAt}
+          category={financialEntryToPay?.category?.name}
         />
       ) : null}
     </div>

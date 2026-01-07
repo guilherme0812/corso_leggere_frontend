@@ -3,18 +3,14 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/Button";
 import {
+  CategoryType,
   CreateFinancialEntryDTO,
   FinancialEntryOriginStatus,
   PaymentStatus,
 } from "@/app/_services/finanances";
-import { useCreateFinancialEntry } from "@/app/_hooks/finances";
+import { useCreateFinancialEntry, useFinancialCategories } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-} from "@/app/_components/ui/carousel";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/app/_components/ui/carousel";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { Label } from "@/app/_components/ui/Label";
@@ -34,6 +30,7 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
   const [count, setCount] = useState(0);
 
   const [type, setType] = useState(_type);
+  const [financialCategoryId, setFinancialCategoryId] = useState<string>();
   const [amount, setAmount] = useState(0);
   const [dueDate, setDueDate] = useState(new Date(new Date().setMonth(new Date().getMonth() + 1)));
   const [description, setDescription] = useState<string>();
@@ -41,6 +38,12 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
   const [disabled, setDisabled] = useState(false);
 
   const { mutateAsync: createFinancialEntry, isPending } = useCreateFinancialEntry();
+  const { data: financialCategories } = useFinancialCategories({});
+
+  const categoriesFiltered =
+    type == "RECEIVABLE"
+      ? financialCategories?.filter((cat) => cat.type == CategoryType.INCOME)
+      : financialCategories?.filter((cat) => cat.type == CategoryType.EXPENSE);
 
   const typeOption = [
     {
@@ -68,6 +71,7 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
         status: PaymentStatus.PENDING,
         type: type || "RECEIVABLE",
         description: description,
+        categoryId: financialCategoryId,
       };
 
       const res = await createFinancialEntry(body);
@@ -125,13 +129,14 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
               <CarouselContent className="h-full">
                 <CarouselItem className="h-full">
                   <div className="w-full h-[300px] border p-2 flex flex-col justify-center">
-                    <div className="">
+                    <div className="mb-2">
                       <Label>Selecione o tipo de conta que deseja criar</Label>
 
                       <Select
                         value={type || ""}
                         onValueChange={(value) => {
                           setType(value as any);
+                          setFinancialCategoryId(undefined);
                         }}
                       >
                         <SelectTrigger variant="filled">
@@ -142,6 +147,29 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
                           {typeOption?.map((item) => (
                             <SelectItem key={item.id} value={item.id}>
                               {item.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="">
+                      <Label>Categoria</Label>
+
+                      <Select
+                        value={financialCategoryId || ""}
+                        onValueChange={(value) => {
+                          setFinancialCategoryId(value);
+                        }}
+                      >
+                        <SelectTrigger variant="filled">
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {categoriesFiltered?.map((item) => (
+                            <SelectItem key={item.id} value={item.id}>
+                              {item.name}
                             </SelectItem>
                           ))}
                         </SelectContent>

@@ -58,6 +58,7 @@ function Content({ data: initialData }: { data: PaymentDataType[] }) {
           amount={paymentToPay.amount}
           status={paymentToPay.status}
           dueDate={paymentToPay.dueDate}
+          paidDate={paymentToPay.paidAt}
         />
       ) : null}
     </div>

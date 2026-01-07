@@ -3,7 +3,7 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { Tooltip } from "@/app/_components/ui/Tooltip";
-import { CashFlowDataType, FinancialEntryOriginStatus, PaymentStatus } from "@/app/_services/finanances";
+import { CashFlowDataType, FinancialEntryOriginStatus } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
@@ -108,13 +108,11 @@ function FinancialTransitionsTable({ data, handleSelecRecord }: IFinancialTransi
                 <TableCell>R$ {numberFormat(client.amount)}</TableCell>
 
                 <TableCell className="flex justify-between items-center">
-                  {client.status != PaymentStatus.PAID ? (
-                    <Tooltip content="Pagar">
-                      <Button variant={"ghost"} size={"sm"} onClick={() => handleSelecRecord(client)}>
-                        <MdOutlinePayments />
-                      </Button>
-                    </Tooltip>
-                  ) : null}
+                  <Tooltip content="Ver mais informações / Registrar pagamento">
+                    <Button variant={"ghost"} size={"sm"} onClick={() => handleSelecRecord(client)}>
+                      <MdOutlinePayments />
+                    </Button>
+                  </Tooltip>
 
                   <Tooltip content="Copiar ID da transação financeira">
                     <Button variant={"outline"} size={"sm"} onClick={() => handleCopyId(client)}>
