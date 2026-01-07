@@ -48,21 +48,25 @@ export type CashFlowDataType = {
   paymentId: string;
   splitId: any;
   companyId: string;
-  category?: Category;
+  category?: FinancialCategoryDataType;
   case?: ICase;
   payment: Payment;
   split: any;
   projectedAmount: number;
 };
 
-export interface Category {
+export enum CategoryType {
+  INCOME = "INCOME",
+  EXPENSE = "EXPENSE",
+}
+export type FinancialCategoryDataType = {
   id: string;
   name: string;
-  type: string;
-  parentId: any;
+  type: CategoryType;
+  parentId?: string;
   createdAt: string;
-  updatedAt: string;
-}
+  updatedAt?: string;
+};
 
 export interface Payment {
   id: string;
@@ -341,6 +345,69 @@ export const payPaymentClientSide = async (id: string) => {
       params: {
         id: id,
       },
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const getFinancialCategoriesClientSide = async () => {
+  try {
+    const res = await apiLeggere<FinancialCategoryDataType[]>({
+      url: `/financial/categories`,
+      method: "GET",
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const createFinancialCategoriesClientSide = async (body: Partial<FinancialCategoryDataType>) => {
+  try {
+    const res = await apiLeggere({
+      url: `/financial/category`,
+      method: "POST",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const updateFinancialCategoriesClientSide = async (body: Partial<FinancialCategoryDataType>) => {
+  try {
+    const res = await apiLeggere({
+      url: `/financial/category`,
+      method: "PUT",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const removeFinancialCategoriesClientSide = async (id: string) => {
+  try {
+    const res = await apiLeggere({
+      url: `/financial/category`,
+      method: "DELETE",
+      params: { id },
     });
 
     const { data } = res;

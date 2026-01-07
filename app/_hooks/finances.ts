@@ -1,14 +1,19 @@
 import {
   CashFlowDataType,
+  createFinancialCategoriesClientSide,
   CreateFinancialEntryClientSide,
   createPaymentClientSide,
+  FinancialCategoryDataType,
   GetAllPaymentsParams,
   getCashFlowClientSide,
+  getFinancialCategoriesClientSide,
   GetMonthReportParams,
   getPaymentsClientSide,
   getProjectionFlowClientSide,
   PaymentDataType,
   payPaymentClientSide,
+  removeFinancialCategoriesClientSide,
+  updateFinancialCategoriesClientSide,
 } from "../_services/finanances";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -67,7 +72,7 @@ export function useCreatePayment() {
     onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: [PAYMENTS_QUERY_KEY],
-        exact: false
+        exact: false,
       });
     },
   });
@@ -82,7 +87,7 @@ export function usePayPayment() {
     onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: [PAYMENTS_QUERY_KEY],
-        exact: false
+        exact: false,
       });
     },
   });
@@ -97,6 +102,64 @@ export function useCreateFinancialEntry() {
     onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: [CASH_FLOW_QUERY_KEY, PROJECTION_FLOW_QUERY_KEY],
+      });
+    },
+  });
+}
+
+const FINANCIAL_CATEGORIES_QUERY_KEY = "financial_categories";
+
+type UseFinancialCategoriesProps = {
+  initialData?: FinancialCategoryDataType[];
+  enabled?: boolean;
+};
+
+export function useFinancialCategories({ initialData, enabled = true }: UseFinancialCategoriesProps) {
+  return useQuery({
+    queryKey: [FINANCIAL_CATEGORIES_QUERY_KEY],
+    queryFn: () => getFinancialCategoriesClientSide(),
+    enabled,
+    initialData,
+  });
+}
+
+export function useCreateFinancialCategories() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createFinancialCategoriesClientSide,
+
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: [FINANCIAL_CATEGORIES_QUERY_KEY],
+      });
+    },
+  });
+}
+
+export function useUpdateFinancialCategories() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateFinancialCategoriesClientSide,
+
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: [FINANCIAL_CATEGORIES_QUERY_KEY],
+      });
+    },
+  });
+}
+
+export function useRemoveFinancialCategories() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: removeFinancialCategoriesClientSide,
+
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: [FINANCIAL_CATEGORIES_QUERY_KEY],
       });
     },
   });
