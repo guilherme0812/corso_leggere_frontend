@@ -34,8 +34,8 @@ export const getMonthReports = async ({ startDate, endDate }: GetMonthReportPara
 export type CashFlowDataType = {
   id: string;
   type: "RECEIVABLE" | "PAYABLE";
-  origin: FinancialEntryOriginStatus;
-  status: string;
+  origin: FinancialEntryOrigin;
+  status: FinancialEntryStatus;
   amount: number;
   dueDate: string;
   paidAt: any;
@@ -51,7 +51,7 @@ export type CashFlowDataType = {
   category?: FinancialCategoryDataType;
   case?: ICase;
   payment: Payment;
-  split: any;
+  split?: SplitDataType;
   projectedAmount: number;
 };
 
@@ -152,22 +152,28 @@ export enum PaymentStatus {
   LATE = "LATE",
 }
 
-export enum FinancialEntryOriginStatus {
+export enum FinancialEntryOrigin {
   PAYMENT = "PAYMENT",
   SPLIT = "SPLIT",
   MANUAL = "MANUAL",
   CASE = "CASE",
 }
+export enum FinancialEntryStatus {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  PARTIAL = "PARTIAL",
+  OVERDUE = "OVERDUE",
+}
 
 export type FinancialEntryDataType = {
   id: string;
   type: "RECEIVABLE" | "PAYABLE";
-  origin: FinancialEntryOriginStatus;
+  origin: FinancialEntryOrigin;
   amount: number;
   dueDate: string;
   createdAt: string;
   paidAt: string;
-  status: PaymentStatus;
+  status: FinancialEntryStatus;
 };
 
 export const getFinancialEntry = async (params: GetPaymentsParams) => {
@@ -189,8 +195,8 @@ export const getFinancialEntry = async (params: GetPaymentsParams) => {
 
 export type CreateFinancialEntryDTO = {
   type: "RECEIVABLE" | "PAYABLE";
-  status: PaymentStatus;
-  origin: FinancialEntryOriginStatus;
+  status: FinancialEntryStatus;
+  origin: FinancialEntryOrigin;
   amount: number;
   dueDate: string;
   categoryId?: string | undefined;

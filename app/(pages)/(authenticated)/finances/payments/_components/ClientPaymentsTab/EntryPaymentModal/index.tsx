@@ -5,8 +5,8 @@ import { Button } from "@/app/_components/ui/Button";
 import {
   CategoryType,
   CreateFinancialEntryDTO,
-  FinancialEntryOriginStatus,
-  PaymentStatus,
+  FinancialEntryOrigin,
+  FinancialEntryStatus,
 } from "@/app/_services/finanances";
 import { useCreateFinancialEntry, useFinancialCategories } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
@@ -67,8 +67,8 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
       const body: CreateFinancialEntryDTO = {
         amount: amount,
         dueDate: dueDate.toISOString().split("T")[0],
-        origin: FinancialEntryOriginStatus.MANUAL,
-        status: PaymentStatus.PENDING,
+        origin: FinancialEntryOrigin.MANUAL,
+        status: FinancialEntryStatus.PENDING,
         type: type || "RECEIVABLE",
         description: description,
         categoryId: financialCategoryId,

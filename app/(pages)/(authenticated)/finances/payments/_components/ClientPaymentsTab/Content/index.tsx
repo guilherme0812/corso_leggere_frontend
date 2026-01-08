@@ -51,14 +51,15 @@ function Content({ data: initialData }: { data: PaymentDataType[] }) {
 
       {paymentToPay ? (
         <PayPaymentModal
-          financialEntryId={paymentToPay?.entries[0]?.id}
-          splits={paymentToPay.splits || []}
-          case={paymentToPay.case as any}
           handleClose={() => setPaymentToPay(undefined)}
-          amount={paymentToPay.amount}
-          status={paymentToPay.status}
-          dueDate={paymentToPay.dueDate}
-          paidDate={paymentToPay.paidAt}
+          data={paymentToPay}
+          // financialEntryId={paymentToPay?.entries[0]?.id}
+          // splits={paymentToPay.splits || []}
+          // case={paymentToPay.case as any}
+          // amount={paymentToPay.amount}
+          // status={paymentToPay.status}
+          // dueDate={paymentToPay.dueDate}
+          // paidDate={paymentToPay.paidAt}
         />
       ) : null}
     </div>

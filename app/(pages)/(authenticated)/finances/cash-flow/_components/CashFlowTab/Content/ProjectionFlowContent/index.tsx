@@ -6,7 +6,7 @@ import Header from "../../Header";
 import FinancialTransitionsTable from "../../FinancialTransitionsTable";
 import { useProjectionFLow } from "@/app/_hooks/finances";
 import moment from "moment";
-import PayPaymentModal from "@/app/_components/patterns/Payments/PayPaymentModal";
+import EntryInfoModal from "../../EntryInfoModal";
 
 function ProjectionFlowContentWrapper({ data: initialData }: { data: CashFlowDataType[] }) {
   const start = moment().clone().startOf("month").toDate();
@@ -31,18 +31,7 @@ function ProjectionFlowContentWrapper({ data: initialData }: { data: CashFlowDat
       </div>
 
       {financialEntryToPay ? (
-        <PayPaymentModal
-          financialEntryId={financialEntryToPay.id}
-          splits={financialEntryToPay.split ? [financialEntryToPay.split] : []}
-          case={financialEntryToPay.case as any}
-          handleClose={() => setFinancialEntryToPay(undefined)}
-          status={financialEntryToPay.status}
-          description={financialEntryToPay?.description}
-          amount={financialEntryToPay.amount}
-          dueDate={financialEntryToPay.dueDate}
-          paidDate={financialEntryToPay.paidAt}
-          category={financialEntryToPay?.category?.name}
-        />
+        <EntryInfoModal handleClose={() => setFinancialEntryToPay(undefined)} data={financialEntryToPay} />
       ) : null}
     </div>
   );

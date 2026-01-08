@@ -3,7 +3,7 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { Tooltip } from "@/app/_components/ui/Tooltip";
-import { CashFlowDataType, FinancialEntryOriginStatus } from "@/app/_services/finanances";
+import { CashFlowDataType, FinancialEntryOrigin } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
@@ -85,7 +85,7 @@ function FinancialTransitionsTable({ data, handleSelecRecord }: IFinancialTransi
                 <TableCell className="font-medium text-sm">
                   {client?.origin == "PAYMENT"
                     ? "Pagamento"
-                    : client.origin == FinancialEntryOriginStatus.SPLIT
+                    : client.origin == FinancialEntryOrigin.SPLIT
                     ? `Pagamento honorários`
                     : client.origin}
                 </TableCell>

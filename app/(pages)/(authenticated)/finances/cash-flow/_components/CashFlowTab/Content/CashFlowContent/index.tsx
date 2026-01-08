@@ -6,7 +6,7 @@ import Header from "../../Header";
 import FinancialTransitionsTable from "../../FinancialTransitionsTable";
 import { useCashFLow } from "@/app/_hooks/finances";
 import moment from "moment";
-import PayPaymentModal from "@/app/_components/patterns/Payments/PayPaymentModal";
+import EntryInfoModal from "../../EntryInfoModal";
 
 function CashFlowContentWrapper({ data: initialData }: { data: CashFlowDataType[] }) {
   const [financialEntryToPay, setFinancialEntryToPay] = useState<CashFlowDataType>();
@@ -22,6 +22,7 @@ function CashFlowContentWrapper({ data: initialData }: { data: CashFlowDataType[
     filters,
     initialData: initialData,
   });
+
   return (
     <div>
       <Header {...{ filters, refetch, setFilters }} />
@@ -31,18 +32,7 @@ function CashFlowContentWrapper({ data: initialData }: { data: CashFlowDataType[
       </div>
 
       {financialEntryToPay ? (
-        <PayPaymentModal
-          financialEntryId={financialEntryToPay.id}
-          splits={financialEntryToPay.split ? [financialEntryToPay.split] : []}
-          case={financialEntryToPay.case as any}
-          handleClose={() => setFinancialEntryToPay(undefined)}
-          status={financialEntryToPay.status}
-          description={financialEntryToPay?.description}
-          amount={financialEntryToPay.amount}
-          dueDate={financialEntryToPay.dueDate}
-          paidDate={financialEntryToPay.paidAt}
-          category={financialEntryToPay?.category?.name}
-        />
+        <EntryInfoModal handleClose={() => setFinancialEntryToPay(undefined)} data={financialEntryToPay} />
       ) : null}
     </div>
   );

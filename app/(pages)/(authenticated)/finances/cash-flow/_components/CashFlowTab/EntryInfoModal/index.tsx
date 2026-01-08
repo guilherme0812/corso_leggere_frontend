@@ -2,33 +2,27 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/Button";
-import { AmountType, PaymentDataType } from "@/app/_services/finanances";
+import { AmountType, CashFlowDataType, FinancialEntryStatus } from "@/app/_services/finanances";
 import { usePayPayment } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
-import { LuDollarSign } from "react-icons/lu";
+import { LuArrowDown, LuArrowUp, LuCopy, LuDollarSign } from "react-icons/lu";
 import { Spinner } from "@/app/_components/ui/Spinner";
 
 type ModalType = {
-  data: PaymentDataType;
+  data: CashFlowDataType;
   handleClose(): void;
 };
 
-function PayPaymentModal({ data, handleClose }: ModalType) {
+function EntryInfoModal({ data, handleClose }: ModalType) {
   const { mutateAsync: payPayment, isPending } = usePayPayment();
 
-  const statusBgColor: any = {
-    PENDING: "bg-yellow-200",
-    PAID: "bg-green-200",
-    LATE: "bg-red-200",
-    OVERDUE: "bg-red-200", // arrive from entry
-  };
-
-  const statusTranslate: any = {
-    PENDING: "Aguardando pagamento (pendente)",
-    PAID: "Pagamento já realizado",
-    LATE: "Pagamento em atraso",
+  const originTranslate: any = {
+    PAYMENT: "Conta gerada através de Pagamento",
+    SPLIT: "Divisão financeira",
+    MANUAL: "Conta criada manualmente",
+    CASE: "Outro",
   };
 
   const SplitTypeTranslate = {
@@ -58,8 +52,8 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
 
   const handleClickPay = async () => {
     try {
-      if (data.entries && data.entries.length > 0) {
-        const res = await payPayment(data.entries[0].id);
+      if (data.id) {
+        const res = await payPayment(data.id);
 
         if (res) {
           enqueueSnackbar({
@@ -78,11 +72,11 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
     <Dialog open onOpenChange={handleClose}>
       <DialogContent className="max-w-screen-sm max-h-[95vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>informações sobre o pagamento</DialogTitle>
+          <DialogTitle>Informações sobre título financeiro</DialogTitle>
           <DialogDescription>
             {data.status != "PAID"
               ? "Confirme para efeituar o pagamento e a geração das proximas transaçoes"
-              : "Veja todas as informações sobre este pagamento"}
+              : "Veja todas as informações sobre este títulos financeiro"}
           </DialogDescription>
         </DialogHeader>
 
@@ -91,14 +85,32 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
             <div className="font-semibold text-3xl text-center">R${numberFormat(data.amount)}</div>
             <div
               className={`${
-                statusBgColor[data.status]
+                entryStatusBgColor[data.status]
               } p-1 px-2 text-xs flex justify-center font-medium min-w-[50px] rounded`}
             >
-              {statusTranslate[data.status]}
+              {entryStatusTranslate[data.status]}
             </div>
           </div>
 
           <div className="border rounded p-4 flex flex-col text-sm gap-2 mb-4">
+            <div className="flex justify-between">
+              <div className="font-semibold">Tipo de titulo</div>
+              <div>
+                <div>
+                  {data.type == "RECEIVABLE" ? (
+                    <div className="px-2 flex items-center justify-center gap-2 font-medium text-sm bg-green-200 p-1 min-w-8">
+                      <LuArrowDown /> receita{" "}
+                      {data.status != FinancialEntryStatus.PAID ? `(${entryTypeTranslate[data.type]})` : null}
+                    </div>
+                  ) : (
+                    <div className="px-2 flex items-center justify-center gap-2 font-medium text-sm bg-red-100 p-1 min-w-8">
+                      <LuArrowUp /> despesa
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
             {data.paidAt ? (
               <div className="flex justify-between">
                 <div className="font-semibold">Data de pagamento</div>
@@ -112,6 +124,33 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                 <div>{data.dueDate ? moment(data.dueDate).format("DD/MM/YYYY") : null}</div>
               </div>
             ) : null}
+
+            <div className="flex justify-between">
+              <div className="font-semibold">Origem</div>
+              <div>{originTranslate[data.origin]}</div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className="font-semibold">ID</div>
+              <div className="flex items-center flex-2 text-xs">
+                <div>{data.id}</div>
+                <div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      enqueueSnackbar({
+                        message: "ID copiado para a área de transferência",
+                        variant: "info",
+                      });
+                      navigator.clipboard.writeText(data.id!);
+                    }}
+                  >
+                    <LuCopy />
+                  </Button>
+                </div>
+              </div>
+            </div>
 
             <hr className="border-t border-gray-300" />
 
@@ -127,62 +166,39 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
               <div className="">Número do processo</div>
               <div>{data.case?.processNumber}</div>
             </div>
-            <div className="flex justify-between text-xs">
-              <div className="">Nome cliente/Responsável pelo pagamento</div>
-              <div>
-                {data.case?.client.firstName} {data.case?.client.lastName}
-              </div>
-            </div>
 
             <hr className="border-t border-gray-300" />
 
-            <div className="">
-              <div className="font-semibold">Divisão financeira</div>
-            </div>
-
-            {data.splits?.map((item, key) => (
-              <div className="flex justify-between text-xs" key={key}>
-                <div className="">{SplitTypeTranslate[item.type]}</div>
-                <div>
-                  {item.amountType == AmountType.FIXED
-                    ? numberFormat(item.amount, "pt-br", {
-                        style: "currency",
-                        currency: "BRL",
-                      })
-                    : `${item.amount}% (${numberFormat(item.amount, "pt-br", {
-                        style: "currency",
-                        currency: "BRL",
-                      })})`}
+            {data.split ? (
+              <>
+                <div className="">
+                  <div className="font-semibold">Origem desse título</div>
                 </div>
-              </div>
-            ))}
 
-            <hr className="border-t border-gray-300" />
-
-            <div className="">
-              <div className="font-semibold">Títulos financeiros gerados</div>
-            </div>
-
-            {data.entries?.map((item, key) => (
-              <div className="flex justify-between text-xs" key={key}>
-                <div className="">{entryTypeTranslate[item.type]}</div>
-                <div className="flex items-center gap-2">
+                <div className="flex justify-between text-xs">
+                  <div className="">{SplitTypeTranslate[data.split?.type]}</div>
                   <div>
-                    {numberFormat(item.amount, "pt-br", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </div>
-                  <div
-                    className={`${
-                      entryStatusBgColor[item.status]
-                    } p-1 px-2 text-xs flex justify-center font-medium min-w-[80px] rounded`}
-                  >
-                    {entryStatusTranslate[item.status]}
+                    {data.split?.amountType == AmountType.FIXED
+                      ? numberFormat(data.split.amount, "pt-br", {
+                          style: "currency",
+                          currency: "BRL",
+                        })
+                      : `${data.split.amount}% (${numberFormat(data.split.amount, "pt-br", {
+                          style: "currency",
+                          currency: "BRL",
+                        })})`}
                   </div>
                 </div>
-              </div>
-            ))}
+              </>
+            ) : null}
+
+            <hr className="border-t border-gray-300" />
+
+            <div className="">
+              <div className="font-semibold">Nota complementar</div>
+            </div>
+
+            <div className="flex justify-between text-xs">{data.description || "* Nenhuma nota adicionada"}</div>
           </div>
 
           {data.status != "PAID" ? (
@@ -207,4 +223,4 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
   );
 }
 
-export default PayPaymentModal;
+export default EntryInfoModal;
