@@ -7,7 +7,7 @@ import { usePayPayment } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
-import { LuDollarSign } from "react-icons/lu";
+import { LuCopy, LuDollarSign } from "react-icons/lu";
 import { Spinner } from "@/app/_components/ui/Spinner";
 
 type ModalType = {
@@ -54,6 +54,18 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
     PAID: "Pago",
     PARTIAL: "Parcial",
     OVERDUE: "Atrasado",
+  };
+
+  const paymentMethodTranslate: any = {
+    PIX: "PIX",
+    TRANSFER: "Pago",
+    CASH: "Dinheiro",
+    CREDIT_CARD: "Cartão de crédito",
+    OTHER: "Outro",
+    DEPOSIT: "Entrada/Depósito",
+    PAYOUT: "Saída/Levantamento",
+    REFUND: "Rembolso",
+    CHARGEBACK: "Estorno contestado",
   };
 
   const handleClickPay = async () => {
@@ -112,6 +124,33 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                 <div>{data.dueDate ? moment(data.dueDate).format("DD/MM/YYYY") : null}</div>
               </div>
             ) : null}
+
+            <div className="flex justify-between items-center">
+              <div className="font-semibold">Método de pagamento</div>
+              <div>{paymentMethodTranslate[data.method]}</div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className="font-semibold">ID do pagamento</div>
+              <div className="flex items-center flex-2 text-xs">
+                <div>{data.id}</div>
+                <div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      enqueueSnackbar({
+                        message: "ID copiado para a área de transferência",
+                        variant: "info",
+                      });
+                      navigator.clipboard.writeText(data.id!);
+                    }}
+                  >
+                    <LuCopy />
+                  </Button>
+                </div>
+              </div>
+            </div>
 
             <hr className="border-t border-gray-300" />
 

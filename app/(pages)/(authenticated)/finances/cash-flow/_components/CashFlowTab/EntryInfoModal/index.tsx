@@ -49,6 +49,17 @@ function EntryInfoModal({ data, handleClose }: ModalType) {
     PARTIAL: "Parcial",
     OVERDUE: "Atrasado",
   };
+  const paymentMethodTranslate: any = {
+    PIX: "PIX",
+    TRANSFER: "Pago",
+    CASH: "Dinheiro",
+    CREDIT_CARD: "Cartão de crédito",
+    OTHER: "Outro",
+    DEPOSIT: "Entrada/Depósito",
+    PAYOUT: "Saída/Levantamento",
+    REFUND: "Rembolso",
+    CHARGEBACK: "Estorno contestado",
+  };
 
   const handleClickPay = async () => {
     try {
@@ -130,6 +141,11 @@ function EntryInfoModal({ data, handleClose }: ModalType) {
               <div>{originTranslate[data.origin]}</div>
             </div>
 
+            <div className="flex justify-between">
+              <div className="font-semibold">Método de pagamento</div>
+              <div>{paymentMethodTranslate[data.method]}</div>
+            </div>
+
             <div className="flex justify-between items-center">
               <div className="font-semibold">ID</div>
               <div className="flex items-center flex-2 text-xs">
@@ -152,22 +168,24 @@ function EntryInfoModal({ data, handleClose }: ModalType) {
               </div>
             </div>
 
-            <hr className="border-t border-gray-300" />
+            {data?.case ? (
+              <>
+                <hr className="border-t border-gray-300" />
+                <div className="">
+                  <div className="font-semibold">Informações sobre o processo</div>
+                </div>
 
-            <div className="">
-              <div className="font-semibold">Informações sobre o processo</div>
-            </div>
-
-            <div className="flex justify-between text-xs">
-              <div className="">Descrição</div>
-              <div>{data.case?.title}</div>
-            </div>
-            <div className="flex justify-between text-xs">
-              <div className="">Número do processo</div>
-              <div>{data.case?.processNumber}</div>
-            </div>
-
-            <hr className="border-t border-gray-300" />
+                <div className="flex justify-between text-xs">
+                  <div className="">Descrição</div>
+                  <div>{data.case?.title}</div>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <div className="">Número do processo</div>
+                  <div>{data.case?.processNumber}</div>
+                </div>
+                <hr className="border-t border-gray-300" />
+              </>
+            ) : null}
 
             {data.split ? (
               <>

@@ -36,6 +36,7 @@ export type CashFlowDataType = {
   type: "RECEIVABLE" | "PAYABLE";
   origin: FinancialEntryOrigin;
   status: FinancialEntryStatus;
+  method: PaymentMethod;
   amount: number;
   dueDate: string;
   paidAt: any;
@@ -75,6 +76,7 @@ export interface Payment {
   dueDate: string;
   paidAt: any;
   status: PaymentStatus;
+  method: PaymentMethod;
 }
 
 export const getCashFlow = async (params: GetMonthReportParams) => {
@@ -146,6 +148,19 @@ type GetPaymentsParams = {
   limit?: number;
 };
 
+export enum PaymentMethod {
+  PIX = "PIX",
+  TRANSFER = "TRANSFER",
+  CASH = "CASH",
+  CREDIT_CARD = "CREDIT_CARD",
+  OTHER = "OTHER",
+  DEPOSIT = "DEPOSIT",
+  PAYOUT = "PAYOUT",
+  REFUND = "REFUND",
+  CHARGEBACK = "CHARGEBACK",
+  INVOICE = "INVOICE",
+}
+
 export enum PaymentStatus {
   PENDING = "PENDING",
   PAID = "PAID",
@@ -201,6 +216,7 @@ export type CreateFinancialEntryDTO = {
   dueDate: string;
   categoryId?: string | undefined;
   description?: string;
+  method?: PaymentMethod;
 };
 
 export const CreateFinancialEntryClientSide = async (body: CreateFinancialEntryDTO) => {
@@ -324,6 +340,7 @@ export type PaymentBodyType = {
   amount: number;
   dueDate: string;
   status: PaymentStatus;
+  method?: PaymentMethod;
   splits: Omit<SplitDataType, "id" | "paymentId">[];
 };
 

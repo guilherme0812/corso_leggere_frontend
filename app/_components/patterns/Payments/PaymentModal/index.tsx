@@ -45,6 +45,45 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
   const { data: cases } = UseCases({});
   const { mutateAsync: createPayment } = useCreatePayment();
 
+  const paymentMethods = [
+    {
+      id: "PIX",
+      label: "PIX",
+    },
+    {
+      id: "TRANSFER",
+      label: "Transferência",
+    },
+    {
+      id: "CASH",
+      label: "Dinheiro",
+    },
+    {
+      id: "CREDIT_CARD",
+      label: "Cartão de crédito",
+    },
+    {
+      id: "OTHER",
+      label: "Outro",
+    },
+    {
+      id: "DEPOSIT",
+      label: "Entrada/Depósito",
+    },
+    {
+      id: "PAYOUT",
+      label: "Saída/Levantamento",
+    },
+    {
+      id: "REFUND",
+      label: "Rembolso",
+    },
+    {
+      id: "CHARGEBACK",
+      label: "Estorno contestado",
+    },
+  ];
+
   async function handleSubmit(values: any) {
     startTransition(async () => {
       try {
@@ -55,6 +94,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
             caseId: values.caseId,
             dueDate: (values.dueDate as Date).toISOString().split("T")[0], // "2025-12-01"
             status: values.status,
+            method: values?.method,
             splits,
           };
 
@@ -76,6 +116,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
         amount: 0,
         dueDate: undefined,
         status: "PENDING",
+        method: undefined,
       };
 
   const statusOptions = [
@@ -215,6 +256,31 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="col-span-12 md:col-span-4">
+                  <div>
+                    <Label>Métodos de Pagamentos</Label>
+
+                    <Select
+                      value={values.method || ""}
+                      onValueChange={(value) => {
+                        setFieldValue("method", value);
+                      }}
+                    >
+                      <SelectTrigger variant="filled">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        {paymentMethods?.map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 {values.amount && values.dueDate ? (

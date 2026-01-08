@@ -41,7 +41,7 @@ function Content({ users }: ContentType) {
   const handleCloseModal = () => {
     setOpenModal(false);
     setEditData(undefined);
-  }
+  };
 
   useEffect(() => {
     setData(() => users);
@@ -49,7 +49,7 @@ function Content({ users }: ContentType) {
 
   return (
     <>
-      <div className="max-w-[1700px] m-auto grid grid-rows-[auto_1fr] h-full gap-4">
+      <div className="grid grid-rows-[auto_1fr] h-full gap-4">
         <UserHeader {...{ data, editData, openModal, setOpenModal, handleCloseModal }} />
 
         <div className="h-full">

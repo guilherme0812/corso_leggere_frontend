@@ -46,3 +46,26 @@ export const updateUserDetailsClientSide = async (body: UpdateUserDTO) => {
     console.log(error);
   }
 };
+
+export type UpdatePassarordDto = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
+export const updatePasswordClientSide = async (body: UpdatePassarordDto) => {
+  try {
+    const res = await apiLeggere({
+      url: `/user/password`,
+      method: "PUT",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+    throw error;
+  }
+};

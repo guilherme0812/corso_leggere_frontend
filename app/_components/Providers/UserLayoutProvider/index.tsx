@@ -1,6 +1,6 @@
 "use client";
 
-import { LuChartPie, LuCircleUser, LuFileText, LuNewspaper, LuUsers } from "react-icons/lu";
+import { LuChartPie, LuFileText, LuNewspaper, LuUsers } from "react-icons/lu";
 import PrimaryLayout from "../../Layout/PrimaryLayout";
 import { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -81,22 +81,16 @@ function UserLayoutProvider({ children, user }: { children: ReactNode; user: Log
           selected: pathname.includes("/admin"),
         },
       ]);
-    } else if (user?.role == UserRole.owner) {
-      setItems(() => [
-        ...list,
-        {
-          icon: <LuCircleUser />,
-          label: "Usuários",
-          link: "/users",
-          selected: pathname == "/users",
-        },
-      ]);
     } else {
       setItems(() => [...list]);
     }
   }, [pathname]);
 
-  return <PrimaryLayout itens={items}>{children}</PrimaryLayout>;
+  return (
+    <PrimaryLayout itens={items} user={user}>
+      {children}
+    </PrimaryLayout>
+  );
 }
 
 export default UserLayoutProvider;

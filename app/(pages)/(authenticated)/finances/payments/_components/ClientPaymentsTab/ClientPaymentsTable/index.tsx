@@ -30,6 +30,7 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
     INDICATOR: "indicação",
     OFFICE: "Escritorio",
   };
+
   return (
     <div className="absolute left-0 top-0 h-full w-full overflow-y-auto">
       <Table>

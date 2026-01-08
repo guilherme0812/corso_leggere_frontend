@@ -8,13 +8,16 @@ import UserInfo from "./UserInfo";
 import { signOut } from "next-auth/react";
 import { MdOutlineBalance } from "react-icons/md";
 import { usePathname } from "next/navigation";
+import { UserDataType } from "@/app/_types/login";
+import { UserRole } from "@/app/_types";
 
 type PrimaryLayoutType = {
   children: ReactNode;
   itens: DrawerItemType[];
+  user: UserDataType;
 };
 
-function PrimaryLayout({ children, itens }: PrimaryLayoutType) {
+function PrimaryLayout({ children, itens, user }: PrimaryLayoutType) {
   const [open, setOpen] = useState(false);
   const drawerWidth = "md:w-[280px]";
   const pathname = usePathname();
@@ -65,9 +68,15 @@ function PrimaryLayout({ children, itens }: PrimaryLayoutType) {
 
               <div className="p-0 flex flex-col gap-2">
                 <hr className="border-t border-gray-300 w-full" />
-                <Link href={"/settings/company"}>
-                  <DrawerItem icon={<LuSettings />} selected={pathname.startsWith("/settings")} label="Configurações" />
-                </Link>
+                {user?.role != UserRole.employee && (
+                  <Link href={"/settings/company"}>
+                    <DrawerItem
+                      icon={<LuSettings />}
+                      selected={pathname.startsWith("/settings")}
+                      label="Configurações"
+                    />
+                  </Link>
+                )}
                 <DrawerItem icon={<LuLogOut />} label="Signout" onClick={signOut} />
               </div>
             </div>

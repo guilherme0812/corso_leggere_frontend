@@ -1,28 +1,21 @@
-// import { getCompany } from "@/app/_services/companies";
-// import { LoginDataType } from "@/app/_types";
-// import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-// import { getServerSession } from "next-auth";
-import { LuUsers } from "react-icons/lu";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+
+import { UserDataType } from "@/app/_types/login";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import Content from "./_components/Content";
+import { getUsers } from "@/app/_services/users";
 
 async function Page() {
-  //   const session = await getServerSession(authOptions);
-  //   const user = session?.user as LoginDataType;
-  //   const company = await get({ id: user?.companyId as string });
+  const session = await getServerSession(authOptions);
 
-  //   if (!company) {
-  //     return <> Internal error </>;
-  //   }
+  if ((session?.user as any as UserDataType)?.role != "owner") {
+    return redirect("/painel");
+  }
 
-  return (
-    <div className="w-full">
-      <div className="p-2 border-b w-full">
-        <div className=" peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-sm">
-          <LuUsers className="size-5" />
-          <span className="text-base font-semibold">Usuários </span>
-        </div>
-      </div>
-    </div>
-  );
+  const users = await getUsers({});
+
+  return <Content users={users || []} />;
 }
 
 export default Page;

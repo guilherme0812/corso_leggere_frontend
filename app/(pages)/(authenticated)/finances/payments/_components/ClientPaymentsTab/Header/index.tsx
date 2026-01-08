@@ -102,7 +102,7 @@ function Header({
         </div>
       </div>
 
-      <div className="col-span-12 md:col-span-6 flex flex-col items-end justify-center gap-2">
+      <div className="col-span-12 md:col-span-6 flex flex-col items-end justify-end gap-2">
         <div className="flex gap-4 items-center">
           <Button onClick={handleSearch}>
             <LuSearch />

@@ -7,6 +7,7 @@ import {
   CreateFinancialEntryDTO,
   FinancialEntryOrigin,
   FinancialEntryStatus,
+  PaymentMethod,
 } from "@/app/_services/finanances";
 import { useCreateFinancialEntry, useFinancialCategories } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
@@ -31,19 +32,59 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
 
   const [type, setType] = useState(_type);
   const [financialCategoryId, setFinancialCategoryId] = useState<string>();
+  const [paymentMethod, setPaymentMethod] = useState<string>();
   const [amount, setAmount] = useState(0);
   const [dueDate, setDueDate] = useState(new Date(new Date().setMonth(new Date().getMonth() + 1)));
   const [description, setDescription] = useState<string>();
 
   const [disabled, setDisabled] = useState(false);
 
-  const { mutateAsync: createFinancialEntry, isPending } = useCreateFinancialEntry();
+  const { mutateAsync: createFinancialEntry } = useCreateFinancialEntry();
   const { data: financialCategories } = useFinancialCategories({});
 
   const categoriesFiltered =
     type == "RECEIVABLE"
       ? financialCategories?.filter((cat) => cat.type == CategoryType.INCOME)
       : financialCategories?.filter((cat) => cat.type == CategoryType.EXPENSE);
+
+  const paymentMethods = [
+    {
+      id: "PIX",
+      label: "PIX",
+    },
+    {
+      id: "TRANSFER",
+      label: "Transferência",
+    },
+    {
+      id: "CASH",
+      label: "Dinheiro",
+    },
+    {
+      id: "CREDIT_CARD",
+      label: "Cartão de crédito",
+    },
+    {
+      id: "OTHER",
+      label: "Outro",
+    },
+    {
+      id: "DEPOSIT",
+      label: "Entrada/Depósito",
+    },
+    {
+      id: "PAYOUT",
+      label: "Saída/Levantamento",
+    },
+    {
+      id: "REFUND",
+      label: "Rembolso",
+    },
+    {
+      id: "CHARGEBACK",
+      label: "Estorno contestado",
+    },
+  ];
 
   const typeOption = [
     {
@@ -72,6 +113,7 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
         type: type || "RECEIVABLE",
         description: description,
         categoryId: financialCategoryId,
+        method: paymentMethod as PaymentMethod | undefined,
       };
 
       const res = await createFinancialEntry(body);
@@ -104,8 +146,6 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
       setDisabled(amount && dueDate ? false : true);
     }
   }, [current, amount, dueDate, description, type]);
-
-  console.log("isPending", isPending);
 
   return (
     <Dialog open onOpenChange={handleClose}>
@@ -153,27 +193,52 @@ function EntryPaymentModal({ type: _type, handleClose }: ModalType) {
                       </Select>
                     </div>
 
-                    <div className="">
-                      <Label>Categoria</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Categoria</Label>
 
-                      <Select
-                        value={financialCategoryId || ""}
-                        onValueChange={(value) => {
-                          setFinancialCategoryId(value);
-                        }}
-                      >
-                        <SelectTrigger variant="filled">
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
+                        <Select
+                          value={financialCategoryId || ""}
+                          onValueChange={(value) => {
+                            setFinancialCategoryId(value);
+                          }}
+                        >
+                          <SelectTrigger variant="filled">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
 
-                        <SelectContent>
-                          {categoriesFiltered?.map((item) => (
-                            <SelectItem key={item.id} value={item.id}>
-                              {item.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                          <SelectContent>
+                            {categoriesFiltered?.map((item) => (
+                              <SelectItem key={item.id} value={item.id}>
+                                {item.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label>Métodos de Pagamentos</Label>
+
+                        <Select
+                          value={paymentMethod || ""}
+                          onValueChange={(value) => {
+                            setPaymentMethod(value);
+                          }}
+                        >
+                          <SelectTrigger variant="filled">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {paymentMethods?.map((item) => (
+                              <SelectItem key={item.id} value={item.id}>
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
                 </CarouselItem>

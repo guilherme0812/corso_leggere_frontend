@@ -4,7 +4,7 @@
 // import { Label } from "@/app/_components/ui/Label";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { Button } from "@/app/_components/ui/Button";
-import { LuPlus, LuSearch } from "react-icons/lu";
+import { LuPlus, LuSearch, LuUsers } from "react-icons/lu";
 import { Dispatch, SetStateAction, useState } from "react";
 // import ClientModal from "../ClientModal";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,7 @@ function UserHeader({
   openModal,
   setOpenModal,
   editData,
-  handleCloseModal
+  handleCloseModal,
 }: {
   data: UserDataType[];
   openModal: boolean;
@@ -29,46 +29,19 @@ function UserHeader({
 
   const handleSearch = () => {
     if (name.trim()) {
-      router.push(`/users?name=${encodeURIComponent(name.trim())}`);
+      router.push(`/settings/users?name=${encodeURIComponent(name.trim())}`);
     } else {
       router.push("/users");
     }
   };
 
-  // const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === "Enter") {
-  //     handleSearch();
-  //   }
-  // };
-
-
-
   return (
-    <header className="h-full grid grid-cols-12 gap-4 shadow-md bg-white p-4">
-      <div className="col-span-12 md:col-span-3">
-        {/* <Label>Nome</Label>
-        <Input
-          placeholder="Digite o nome do usuario"
-          variant="filled"
-          value={clientName}
-          onChange={(e) => setClientName(e.target.value)}
-          onKeyDown={handleKeyDown}
-        /> */}
-      </div>
-
-      <div className="col-span-12 md:col-span-2">
-        {/* <Label>Status</Label>
-
-        <Select>
-          <SelectTrigger className="w-full" variant="filled">
-            <SelectValue placeholder="Selecione o status" />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="light">Ativo</SelectItem>
-            <SelectItem value="dark">Inativo</SelectItem>
-          </SelectContent>
-        </Select> */}
+    <header className="h-full grid grid-cols-12 gap-4 pb-4 border-b">
+      <div className="col-span-12 md:col-span-5">
+        <div className=" peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-sm">
+          <LuUsers className="size-5" />
+          <span className="text-base font-semibold">Usuários </span>
+        </div>
       </div>
 
       <div className="col-span-12 md:col-span-7 flex flex-col items-end justify-end gap-2">

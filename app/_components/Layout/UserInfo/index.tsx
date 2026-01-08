@@ -6,12 +6,23 @@ import Image from "next/image";
 import { useState } from "react";
 import { MdMoreVert } from "react-icons/md";
 import SimpleUserDetailModal from "../../patterns/users/SimpleUserDetailModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/app/_components/ui/DropdownMenu";
+import { Button } from "../../ui/Button";
+import ChangePasswordModal from "../../patterns/users/ChangePasswordModal";
 
 type UserInfoType = {
   open: boolean;
 };
 
 function UserInfo({ open }: UserInfoType) {
+  const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false);
   const [openUserModal, setOpenUserModal] = useState(false);
   const { data } = useSession();
 
@@ -45,12 +56,28 @@ function UserInfo({ open }: UserInfoType) {
       </div>
 
       <div className="h-12 pt-2">
-        <div role="button" className="p-1 hover:bg-gray-200 rounded-md" onClick={() => setOpenUserModal(true)}>
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" aria-label="Open menu" size="icon">
+              <MdMoreVert />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-40" align="end">
+            <DropdownMenuLabel>Suas ações</DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem onSelect={() => setOpenUserModal(true)}>informações</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setOpenChangePasswordModal(true)}>Alterar senha</DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* <div role="button" className="p-1 hover:bg-gray-200 rounded-md" onClick={() => setOpenUserModal(true)}>
           <MdMoreVert />
-        </div>
+        </div> */}
       </div>
 
       {openUserModal ? <SimpleUserDetailModal editData={user} handleClose={() => setOpenUserModal(false)} /> : null}
+      {openChangePasswordModal ? <ChangePasswordModal handleClose={() => setOpenChangePasswordModal(false)} /> : null}
     </div>
   );
 }
