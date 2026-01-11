@@ -50,10 +50,10 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
         <TableBody>
           {data.map((item, index) => (
             <TableRow key={index}>
-              <TableCell className="font-medium text-sm">
+              <TableCell className="font-medium text-sm min-w-[150px]">
                 {item.case.client.firstName} {item.case.client.lastName}
               </TableCell>
-              <TableCell className="font-medium text-sm">{item.case.title}</TableCell>
+              <TableCell className="font-medium text-sm max-w-[150px]">{item.case.title}</TableCell>
               <TableCell className="font-medium text-sm">{item.case.processNumber}</TableCell>
               <TableCell>
                 <div

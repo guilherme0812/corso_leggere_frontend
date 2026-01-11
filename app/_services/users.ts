@@ -66,6 +66,6 @@ export const updatePasswordClientSide = async (body: UpdatePassarordDto) => {
     return data || [];
   } catch (error: any) {
     console.log(error);
-    throw error;
+    throw new Error("Error");
   }
 };

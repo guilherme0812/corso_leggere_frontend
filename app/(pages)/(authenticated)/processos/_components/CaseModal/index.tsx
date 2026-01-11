@@ -262,34 +262,9 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
                 {errors.title && touched.title && <div className="text-red-500 text-sm">{errors.title}</div>}
               </div>
 
-              {/* FEES */}
-              <div className="col-span-12 md:col-span-4">
-                <Label>Honorário Empresarial (%)</Label>
-                <Field as={Input} type="number" name="businessFee" variant="filled" />
-                {errors.businessFee && touched.businessFee && (
-                  <div className="text-red-500 text-sm">{errors.businessFee}</div>
-                )}
-              </div>
-
-              <div className="col-span-12 md:col-span-4">
-                <Label>Honorário Advogado (%)</Label>
-                <Field as={Input} type="number" name="lawyerFee" variant="filled" />
-                {errors.lawyerFee && touched.lawyerFee && (
-                  <div className="text-red-500 text-sm">{errors.lawyerFee}</div>
-                )}
-              </div>
-
-              <div className="col-span-12 md:col-span-4">
-                <Label>Honorário Indicador (%)</Label>
-                <Field as={Input} type="number" name="indicatorFee" variant="filled" />
-                {errors.indicatorFee && touched.indicatorFee && (
-                  <div className="text-red-500 text-sm">{errors.indicatorFee}</div>
-                )}
-              </div>
-
               {/* INDICATOR ID */}
               <div className="col-span-12 md:col-span-4">
-                <Label>ID do Indicador</Label>
+                <Label>Indicador</Label>
                 <Select
                   value={values.indicatorId?.toString() || ""}
                   onValueChange={(value) => {
@@ -351,6 +326,36 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
                   />
                 </div>
               ) : null}
+
+              <div className="col-span-12 grid grid-cols-12 gap-4 p-4 border rounded-lg bg-gray-50">
+                <div className="col-span-12">
+                  <h3>Preferência de divisão</h3>
+                </div>
+                {/* FEES */}
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Honorário Empresarial (%)</Label>
+                  <Field as={Input} type="number" name="businessFee" variant="filled" />
+                  {errors.businessFee && touched.businessFee && (
+                    <div className="text-red-500 text-sm">{errors.businessFee}</div>
+                  )}
+                </div>
+
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Honorário Advogado (%)</Label>
+                  <Field as={Input} type="number" name="lawyerFee" variant="filled" />
+                  {errors.lawyerFee && touched.lawyerFee && (
+                    <div className="text-red-500 text-sm">{errors.lawyerFee}</div>
+                  )}
+                </div>
+
+                <div className="col-span-12 md:col-span-4">
+                  <Label>Honorário Indicador (%)</Label>
+                  <Field as={Input} type="number" name="indicatorFee" variant="filled" />
+                  {errors.indicatorFee && touched.indicatorFee && (
+                    <div className="text-red-500 text-sm">{errors.indicatorFee}</div>
+                  )}
+                </div>
+              </div>
 
               {/* SUBMIT */}
               <div className="col-span-12 flex justify-end">

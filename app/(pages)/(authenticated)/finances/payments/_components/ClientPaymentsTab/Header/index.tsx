@@ -3,27 +3,27 @@
 import { Label } from "@/app/_components/ui/Label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { Button } from "@/app/_components/ui/Button";
-import { LuPlus, LuSearch } from "react-icons/lu";
+import { LuSearch } from "react-icons/lu";
 import { Dispatch, SetStateAction, useState } from "react";
 import { GetAllPaymentsParams } from "@/app/_services/finanances";
 import { DatePicker } from "@/app/_components/ui/DatePicker";
+import { UseCases } from "@/app/_hooks/cases";
 
 function Header({
-  // openModal,
-  setOpenModal,
-  // filters,
+  filters,
   setFilters,
   refetch,
 }: {
   refetch(): void;
-  openModal: boolean;
-  setOpenModal: Dispatch<SetStateAction<boolean>>;
   filters: GetAllPaymentsParams;
   setFilters: Dispatch<SetStateAction<GetAllPaymentsParams>>;
 }) {
   const [status, setStatus] = useState<string>();
+  const [processNumber, setProcessNumber] = useState<string>(filters?.processNumber as any);
   const [startDueDate, setStartDueDate] = useState<Date>();
   const [endDueDate, setEndDueDate] = useState<Date>();
+
+  const { data: cases, isLoading: casesIsLoading } = UseCases({});
 
   // const handleSearch = () => {
   //   if (clientName.trim()) {
@@ -33,11 +33,17 @@ function Header({
   //   }
   // };
 
+  console.log(filters);
+
   const handleSearch = () => {
     const options: any = {};
 
     if (status) {
       options.status = status;
+    }
+
+    if (processNumber) {
+      options.processNumber = processNumber;
     }
 
     if (startDueDate && endDueDate) {
@@ -81,7 +87,7 @@ function Header({
 
           <SelectContent>
             {options.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
+              <SelectItem key={item.label} value={item.value}>
                 {item.label}
               </SelectItem>
             ))}
@@ -102,15 +108,30 @@ function Header({
         </div>
       </div>
 
-      <div className="col-span-12 md:col-span-6 flex flex-col items-end justify-end gap-2">
+      <div className="col-span-12 md:col-span-2">
+        <Label>Processo</Label>
+
+        <Select value={filters.processNumber || ""} onValueChange={(value) => setProcessNumber(value)}>
+          <SelectTrigger className="w-full" variant="filled">
+            <SelectValue placeholder="Selecione o status" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {casesIsLoading ? <div>Carregando...</div> : []}
+            {cases?.map((item) => (
+              <SelectItem key={item.id} value={item.processNumber || item.id}>
+                {item.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="col-span-12 md:col-span-4 flex flex-col items-end justify-end gap-2">
         <div className="flex gap-4 items-center">
           <Button onClick={handleSearch}>
             <LuSearch />
             Buscar pagamentos
-          </Button>
-          <Button variant={"outline"} onClick={() => setOpenModal(true)}>
-            <LuPlus />
-            Adicionar pagamento
           </Button>
         </div>
       </div>

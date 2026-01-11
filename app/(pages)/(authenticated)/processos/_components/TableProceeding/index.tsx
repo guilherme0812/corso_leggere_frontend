@@ -28,7 +28,7 @@ export default function TableProceeding({ data, handleEdit, handleDelete, handle
               <TableHead>Cliente</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Financeiro</TableHead>
+              <TableHead>Preferência de divisão</TableHead>
               <TableHead className="w-[60px]"></TableHead>
             </TableRow>
           </TableHeader>
