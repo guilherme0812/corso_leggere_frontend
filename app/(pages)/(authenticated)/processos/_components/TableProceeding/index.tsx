@@ -1,9 +1,10 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { ICase } from "@/app/_services/case";
-import { LuDollarSign, LuPencil, LuTrash, LuUsers } from "react-icons/lu";
+import { LuDollarSign, LuPencil, LuPlus, LuTrash, LuUsers } from "react-icons/lu";
 import { FaLandmark } from "react-icons/fa6";
 import { MdOutlineBalance } from "react-icons/md";
+import Link from "next/link";
 
 type ITableProceeding = {
   data: ICase[];
@@ -77,8 +78,13 @@ export default function TableProceeding({ data, handleEdit, handleDelete, handle
                 </TableCell>
 
                 <TableCell className="flex gap-4">
+                  <Link href={`/finances/payments?processNumber=${item.processNumber}`}>
+                    <Button variant="outline" size="sm">
+                      <LuDollarSign /> Pagamantos
+                    </Button>
+                  </Link>
                   <Button variant="outline" size="sm" onClick={() => handleCreatePayment(item)}>
-                    <LuDollarSign /> Solicitar pagamento
+                    <LuPlus /> Solicitar pagamento
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => handleEdit(item)}>
                     <LuPencil />
