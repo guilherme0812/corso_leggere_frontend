@@ -16,7 +16,22 @@ function Layout({ children }: { children: ReactNode }) {
     },
     {
       link: "/finances/cash-flow",
-      label: "Mov. financeira",
+      label: "Transações",
+      icon: <MdCurrencyExchange className="size-4 shrink-0" />,
+    },
+    {
+      link: "/finances/cash-flow",
+      label: "Pendências",
+      icon: <MdCurrencyExchange className="size-4 shrink-0" />,
+    },
+    {
+      link: "/finances/cash-flow",
+      label: "Advogados",
+      icon: <MdCurrencyExchange className="size-4 shrink-0" />,
+    },
+    {
+      link: "/finances/cash-flow",
+      label: "Beneficiarios",
       icon: <MdCurrencyExchange className="size-4 shrink-0" />,
     },
     {
