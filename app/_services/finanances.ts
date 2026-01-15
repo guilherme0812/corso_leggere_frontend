@@ -265,12 +265,15 @@ export enum AmountType {
 }
 
 export type SplitDataType = {
-  id: string;
+  id: string | number;
   paymentId: string;
   type: SplitType;
   amount: number;
   amountType: AmountType;
+  lawyerId?: string; // login in Payment modal
+  lawyer: any;
 };
+
 export const getFiancialSummary = async (params: GetPaymentsParams) => {
   try {
     // const prefix = _prefix != undefined ? _prefix : await getPrefix();

@@ -5,14 +5,19 @@ import { UserDataType } from "../_types/login";
 
 export const updateUser = async (formData: FormData) => {
   const data: Record<string, any> = {};
+  let preffix: string = "";
+
   formData.forEach((value, key) => {
     data[key] = value;
   });
   data.hasWhatsapp = data.hasWhatsapp == "true";
+  preffix = data.preffix;
+
+  delete data.preffix;
 
   try {
     const res = await apiServerLeggere<UserDataType[]>({
-      url: "/user",
+      url: `${preffix}/user`,
       method: "PUT",
       data,
     });
@@ -20,19 +25,25 @@ export const updateUser = async (formData: FormData) => {
     return res?.data || [];
   } catch (error: any) {
     console.log(error);
+    throw new Error("Erro interno");
   }
 };
 
 export const createUser = async (formData: FormData) => {
   const data: Record<string, any> = {};
+  let preffix: string = "";
+
   formData.forEach((value, key) => {
     data[key] = value;
   });
   data.hasWhatsapp = data.hasWhatsapp == "true";
+  preffix = data.preffix;
+
+  delete data.preffix;
 
   try {
     const res = await apiServerLeggere<UserDataType[]>({
-      url: "/register",
+      url: `${preffix || ""}/register`,
       method: "POST",
       data,
     });
@@ -51,7 +62,7 @@ export const deleteUser = async (formData: FormData) => {
 
   try {
     const res = await apiServerLeggere<UserDataType[]>({
-      url: "/users",
+      url: "/user",
       method: "DELETE",
       params,
     });

@@ -7,6 +7,7 @@ import { Button } from "../Button";
 import { Calendar } from "../calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Label } from "../Label";
+import clsx from "clsx";
 
 export type DatePickerParams = {
   label?: string;
@@ -14,14 +15,22 @@ export type DatePickerParams = {
   variant?: "link" | "default" | "filled" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
   onChange?(date?: Date): void;
   initialValue?: Date;
+  buttonClassName?: string;
 };
 
-export function DatePicker({ label, variant, placeholder = "Select date", onChange, initialValue }: DatePickerParams) {
+export function DatePicker({
+  label,
+  variant,
+  placeholder = "Select date",
+  onChange,
+  initialValue,
+  buttonClassName,
+}: DatePickerParams) {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(initialValue);
 
   return (
-    <div className="flex flex-col gap-3 bg-red-200">
+    <div className="flex flex-col gap-3">
       {label ? (
         <Label htmlFor="date" className="px-1">
           {label}
@@ -30,7 +39,11 @@ export function DatePicker({ label, variant, placeholder = "Select date", onChan
 
       <Popover open={open} onOpenChange={setOpen} modal={false}>
         <PopoverTrigger asChild>
-          <Button variant={variant || "filled"} id="date" className="w-full justify-between font-normal">
+          <Button
+            variant={variant || "filled"}
+            id="date"
+            className={clsx("w-full justify-between font-normal", buttonClassName)}
+          >
             {date ? date.toLocaleDateString() : placeholder}
             <ChevronDownIcon />
           </Button>

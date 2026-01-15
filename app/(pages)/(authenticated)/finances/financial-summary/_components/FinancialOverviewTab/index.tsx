@@ -1,13 +1,16 @@
 import { getFiancialSummary, getFinancialEntry, getMonthReports } from "@/app/_services/finanances";
 import FinanceChart from "../../../../painel/_compoenents/FinanceChart";
 import FinancesTable from "./FinancesTable";
-import { LuDollarSign, LuPlus } from "react-icons/lu";
+import { LuArrowDownRight, LuArrowUpRight, LuDollarSign, LuPlus, LuTrendingUp } from "react-icons/lu";
 import moment from "moment";
 import { numberFormat } from "@/app/_utils";
 import { IoArrowDown, IoArrowDownCircle, IoArrowUp, IoArrowUpCircle } from "react-icons/io5";
 import ButtonsSection from "./ButtonsSection";
+import { LucideBarChart3 } from "lucide-react";
 
-async function FinancialOverviewTab() {
+async function FinancialOverviewTab({ companyReportData }: { companyReportData: any }) {
+  const mockData = companyReportData;
+
   const startDate = moment().subtract(12, "months").format("YYYY-MM-DD");
   const endDate = moment().format("YYYY-MM-DD");
 
@@ -36,8 +39,8 @@ async function FinancialOverviewTab() {
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <div className="text-white w-[300px] p-4 min-h-36 mb-6 border-2 bg-green-800 rounded-md flex flex-col justify-between">
+      {/* <div className="flex gap-4">
+        <div className="text-white w-[300px] p-4 min-h-36 mb-6 border-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex flex-col justify-between">
           <div className="flex items-center gap-4">
             <div className="w-7 h-7 rounded-full bg-green-200 text-black flex justify-center items-center">
               <LuDollarSign />
@@ -59,6 +62,58 @@ async function FinancialOverviewTab() {
           <div>
             <ButtonsSection />
           </div>
+        </div>
+      </div> */}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {/* Saldo em Caixa */}
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-4 text-white shadow-xl shadow-blue-200">
+          <div className="flex items-center justify-between mb-2">
+            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+              <LuDollarSign className="w-4 h-4" />
+            </div>
+            <LuTrendingUp className="w-5 h-5 opacity-80" />
+          </div>
+          <p className="text-blue-100 text-sm font-medium mb-1">Saldo em Caixa</p>
+          <p className="text-3xl font-bold">{numberFormat(mockData.summary.currentBalance)}</p>
+          {/* <p className="text-blue-100 text-xs mt-2">↑ 12% vs mês anterior</p> */}
+        </div>
+
+        {/* Receitas */}
+        <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-green-100 rounded-xl">
+              <LuArrowUpRight className="w-4 h-4 text-green-600" />
+            </div>
+            <span className="text-green-600 text-sm font-medium">+18%</span>
+          </div>
+          <p className="text-slate-600 text-sm font-medium mb-1">Receitas (mês)</p>
+          <p className="text-3xl font-bold text-slate-900">{numberFormat(mockData.summary.totalIncome)}</p>
+        </div>
+
+        {/* Despesas */}
+        <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-red-100 rounded-xl">
+              <LuArrowDownRight className="w-4 h-4 text-red-600" />
+            </div>
+            <span className="text-red-600 text-sm font-medium">-8%</span>
+          </div>
+          <p className="text-slate-600 text-sm font-medium mb-1">Despesas (mês)</p>
+          <p className="text-3xl font-bold text-slate-900">{numberFormat(mockData.summary.totalExpenses)}</p>
+        </div>
+
+        {/* Lucro Líquido */}
+        <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-4 text-white shadow-xl shadow-emerald-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+              <LuTrendingUp className="w-4 h-4" />
+            </div>
+            <LucideBarChart3 className="w-5 h-5 opacity-80" />
+          </div>
+          <p className="text-emerald-100 text-sm font-medium mb-1">Lucro Líquido</p>
+          <p className="text-3xl font-bold">{numberFormat(mockData.summary.netProfit)}</p>
+          {/* <p className="text-emerald-100 text-xs mt-2">Margem: 64%</p> */}
         </div>
       </div>
 

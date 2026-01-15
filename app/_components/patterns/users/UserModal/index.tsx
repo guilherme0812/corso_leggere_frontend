@@ -15,11 +15,13 @@ import { UserDataType, UserStatusEnum } from "@/app/_types/login";
 import { useSession } from "next-auth/react";
 import { ICompany } from "@/app/_services/companies";
 import { createUser, updateUser } from "@/app/actions/user";
+import { enqueueSnackbar } from "notistack";
 
 type UserModalType = {
   handleClose(): void;
   editData: UserDataType | undefined;
   companies: ICompany[];
+  isAdmin?: boolean;
 };
 
 const schema = Yup.object().shape({
@@ -32,7 +34,7 @@ const schema = Yup.object().shape({
   email: Yup.string().email("Formato de email inválido").required("Email é obrigatório"),
 });
 
-function UserModal({ editData, handleClose, companies }: UserModalType) {
+function UserModal({ editData, handleClose, companies, isAdmin }: UserModalType) {
   const [isPending, startTransition] = useTransition();
   const { data } = useSession();
 
@@ -41,8 +43,12 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
   async function handleSubmit(values: any) {
     startTransition(async () => {
       if (editData) {
+        const body = {
+          ...values,
+          preffix: isAdmin ? "/admin" : "",
+        };
         const formData = new FormData();
-        Object.entries(values).forEach(([key, value]) => {
+        Object.entries(body).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             formData.append(key, String(value));
           }
@@ -52,17 +58,23 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
           const res = await updateUser(formData);
 
           if (typeof res == "object") {
+            enqueueSnackbar({
+              message: "usuário atualizado com sucesso",
+              variant: "success",
+            });
             router.refresh();
             handleClose();
           }
           console.log("res", res);
           // aqui se quiser pode disparar um toast de sucesso
         } catch (err) {
+          enqueueSnackbar({ message: "Erro interno, tente novamente mais tarde", variant: "error" });
           console.error(err);
           // aqui vc pode mostrar toast de erro
         }
       } else {
         const payload = {
+          preffix: isAdmin ? "/admin" : "",
           email: values.email,
           password: values.password,
           firstName: values.firstName,
@@ -86,13 +98,19 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
           const res = await createUser(formData);
 
           if (typeof res == "object") {
+            enqueueSnackbar({
+              message: "usuário criado com sucesso",
+              variant: "success",
+            });
+
             router.refresh();
             handleClose();
           }
-          console.log("res", res);
+
+          console.log(res);
           // aqui se quiser pode disparar um toast de sucesso
         } catch (err) {
-          console.error(err);
+          console.error("err:", err);
           // aqui vc pode mostrar toast de erro
         }
       }
@@ -127,19 +145,24 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
   ];
   const statusOptions = [
     {
-      label: UserStatusEnum.ACTIVE,
+      id: UserStatusEnum.ACTIVE,
+      label: "Ativo",
     },
     {
-      label: UserStatusEnum.DELETED,
+      id: UserStatusEnum.DELETED,
+      label: "Deletado",
     },
     {
-      label: UserStatusEnum.INACTIVE,
+      id: UserStatusEnum.INACTIVE,
+      label: "Inativo",
     },
     {
-      label: UserStatusEnum.PENDING,
+      id: UserStatusEnum.PENDING,
+      label: "Pendente",
     },
     {
-      label: UserStatusEnum.SUSPENDED,
+      id: UserStatusEnum.SUSPENDED,
+      label: "Suspenso",
     },
   ];
 
@@ -250,7 +273,7 @@ function UserModal({ editData, handleClose, companies }: UserModalType) {
 
                     <SelectContent>
                       {statusOptions?.map((item) => (
-                        <SelectItem key={item.label} value={item.label.toString()}>
+                        <SelectItem key={item.id} value={item.id.toString()}>
                           {item.label}
                         </SelectItem>
                       ))}

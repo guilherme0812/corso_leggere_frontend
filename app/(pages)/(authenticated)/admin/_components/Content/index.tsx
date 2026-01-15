@@ -55,7 +55,9 @@ function Content({ attorneys, clients, companies, users }: ContentType) {
 
             <div>
               <div className="text-sm font-semibold">{users?.length} Novos users</div>
-              <div className="text-xs text-gray-600">veja mais</div>
+              <Link href={"/admin/users"}>
+                <div className="text-xs text-gray-600">Ver mais detalhes</div>
+              </Link>
             </div>
           </div>
 

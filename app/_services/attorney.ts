@@ -1,5 +1,5 @@
 import { getPrefix } from ".";
-import { apiServerLeggere } from "./api";
+import { apiLeggere, apiServerLeggere } from "./api";
 
 export type IAttorney = {
   id: string;
@@ -32,5 +32,24 @@ export const getAttorneys = async ({ name }: { name?: string | null }, _prefix?:
     return data || [];
   } catch (error: any) {
     console.log(error);
+  }
+};
+
+export const getAttorneysClientSide = async ({ name }: { name?: string | null }) => {
+  try {
+    const res = await apiLeggere<IAttorney[]>({
+      url: `/attorney`,
+      method: "GET",
+      params: { name },
+    });
+
+    const { data } = res;
+
+    console.log("data", data);
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error("error");
   }
 };
