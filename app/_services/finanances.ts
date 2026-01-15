@@ -148,6 +148,10 @@ type GetPaymentsParams = {
   limit?: number;
 };
 
+type GetTransactionsParams = {
+  limit?: number;
+};
+
 export enum PaymentMethod {
   PIX = "PIX",
   TRANSFER = "TRANSFER",
@@ -191,11 +195,67 @@ export type FinancialEntryDataType = {
   status: FinancialEntryStatus;
 };
 
+export enum TransactionTypeEnum {
+  INCOME = "INCOME", // Entrada de dinheiro (cliente pagando)
+  EXPENSE = "EXPENSE", // Saída de dinheiro (pagando advogado/indicação)
+  TRANSFER = "TRANSFER", // Transferência interna
+  REFUND = "REFUND", // Estorno
+  ADJUSTMENT = "ADJUSTMENT", // Ajuste manual
+}
+
+export enum TransactionStatusEnum {
+  PENDING = "PENDING", // Aguardando processamento
+  COMPLETED = "COMPLETED", // Concluída
+  FAILED = "FAILED", // Falhou
+  CANCELLED = "CANCELLED", // Cancelada
+  REVERSED = "REVERSED", // Estornada
+}
+export type TransactionDataType = {
+  id: string;
+  code: string;
+  type: TransactionTypeEnum;
+  status: TransactionStatusEnum;
+  amount: number;
+  fee: number;
+  netAmount: number;
+  method: string;
+  transactionDate: string;
+  effectiveDate: string;
+  description: string;
+  notes: null;
+  receiptUrl: null;
+  paymentId: string;
+  distributionId: string;
+  beneficiaryId: string;
+  caseId: string;
+  companyId: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export const getFinancialEntry = async (params: GetPaymentsParams) => {
   try {
     // const prefix = _prefix != undefined ? _prefix : await getPrefix();
     const res = await apiServerLeggere<FinancialEntryDataType[]>({
-      url: `/financial`,
+      url: `/financial/payments`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const getTransactions = async (params: GetTransactionsParams) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiServerLeggere<TransactionDataType[]>({
+      url: `/financial/transactions`,
       method: "GET",
       params,
     });
