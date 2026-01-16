@@ -63,16 +63,28 @@ function Header({
 
   const options = [
     {
+      value: "LATE",
+      label: "Atrasado",
+    },
+    {
       value: "PENDING",
       label: "Pendente",
     },
     {
-      value: "PAID",
-      label: "Pago",
+      value: "PARTIAL",
+      label: "Parcialmente pago",
     },
     {
-      value: "LATE",
-      label: "Atrasado",
+      value: "CANCELLED",
+      label: "Cancelado",
+    },
+    {
+      value: "REFUNDED",
+      label: "Estornado",
+    },
+    {
+      value: "PAID",
+      label: "Completamente pago",
     },
   ];
   return (

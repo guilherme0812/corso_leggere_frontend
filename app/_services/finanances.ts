@@ -1,4 +1,5 @@
 import { apiLeggere, apiServerLeggere } from "./api";
+import { BeneficiaryDataType } from "./beneficiary";
 import { ICase } from "./case";
 
 export type MonthReport = {
@@ -321,6 +322,14 @@ export type DistributionDataType = {
   updatedAt: string;
 };
 
+export type CreateDistribution = {
+  beneficiaryId: string;
+  type: SplitTypeEnum;
+  fixedAmount: number;
+  percentage: number;
+  beneficiary?: BeneficiaryDataType;
+};
+
 export const getPayments = async (params: GetAllPaymentsParams) => {
   try {
     // const prefix = _prefix != undefined ? _prefix : await getPrefix();
@@ -434,11 +443,9 @@ type SummaryDataType = {
 
 export type PaymentBodyType = {
   caseId: string;
-  amount: number;
   dueDate: string;
-  status: PaymentStatus;
-  method?: PaymentMethod;
-  splits: Omit<SplitDataType, "id" | "paymentId">[];
+  totalAmount: number;
+  distributions: CreateDistribution[];
 };
 
 export const createPaymentClientSide = async (body: PaymentBodyType) => {
@@ -453,6 +460,7 @@ export const createPaymentClientSide = async (body: PaymentBodyType) => {
 
     return data || [];
   } catch (error: any) {
+    throw new Error("Error");
     console.log(error);
   }
 };

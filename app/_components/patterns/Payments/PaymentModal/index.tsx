@@ -6,24 +6,24 @@ import { Label } from "@/app/_components/ui/Label";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/app/_components/ui/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import {
   AmountType,
+  CreateDistribution,
   PaymentBodyType,
   PaymentDataType,
-  PaymentStatus,
-  SplitDataType,
-  SplitType,
+  SplitTypeEnum,
 } from "@/app/_services/finanances";
 import { DatePicker } from "@/app/_components/ui/DatePicker";
 import { UseCases } from "@/app/_hooks/cases";
 import { NumericFormat } from "react-number-format";
 import { useCreatePayment } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
-import { LuCalendar, LuCheck, LuChevronRight, LuCreditCard, LuDollarSign, LuPlus, LuTrash2 } from "react-icons/lu";
+import { LuCalendar, LuCheck, LuChevronRight, LuDollarSign, LuPlus, LuTrash2 } from "react-icons/lu";
 import { numberFormat } from "@/app/_utils";
-import { useAttornies } from "@/app/_hooks/attorney";
+import { useBeneficiaries } from "@/app/_hooks/beneficiary";
+import { BeneficiaryDataType, BeneficiaryTypeEnum } from "@/app/_services/beneficiary";
 
 type ModalType = {
   handleClose(): void;
@@ -41,76 +41,55 @@ const schema = Yup.object().shape({
 function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
   const [step, setStep] = useState(1);
 
-  const [splits, setSplits] = useState<Omit<SplitDataType, "paymentId">[]>([]);
-  const [selectedAmountType, setSelectedAmountType] = useState(AmountType.FIXED);
+  const [splits, setSplits] = useState<CreateDistribution[]>([]);
+  const [selectedAmountType, setSelectedAmountType] = useState(AmountType.PERCENTAGE);
   // const totalSplitsAmount = splits.reduce((total, split) => total + split.amount, 0);
 
   const { data: cases } = UseCases({});
-  const { data: attornies } = useAttornies({ filters: {} });
+  const { data: beneficiaries } = useBeneficiaries({ filters: {} });
   const { mutateAsync: createPayment } = useCreatePayment();
 
-  console.log("attornies", attornies);
-  const paymentMethods = [
-    {
-      id: "PIX",
-      label: "PIX",
-    },
-    {
-      id: "TRANSFER",
-      label: "Transferência",
-    },
-    {
-      id: "CASH",
-      label: "Dinheiro",
-    },
-    {
-      id: "CREDIT_CARD",
-      label: "Cartão de crédito",
-    },
-    {
-      id: "OTHER",
-      label: "Outro",
-    },
-    {
-      id: "DEPOSIT",
-      label: "Entrada/Depósito",
-    },
-    {
-      id: "PAYOUT",
-      label: "Saída/Levantamento",
-    },
-    {
-      id: "REFUND",
-      label: "Rembolso",
-    },
-    {
-      id: "CHARGEBACK",
-      label: "Estorno contestado",
-    },
-  ];
+  const totalDistributed = splits.reduce((sum, s) => {
+    if (selectedAmountType == AmountType.PERCENTAGE) {
+      return sum + (s.percentage || 0);
+    }
+
+    return sum + (s.fixedAmount || 0);
+  }, 0);
 
   async function handleSubmit(values: any) {
     try {
-      if (editData) {
-      } else {
-        const payload: PaymentBodyType = {
-          amount: values.amount,
-          caseId: values.caseId,
-          dueDate: (values.dueDate as Date).toISOString().split("T")[0], // "2025-12-01"
-          status: values.status,
-          method: values?.method,
-          splits: splits.map((item) => ({
-            amount: item.amount,
-            amountType: item.amountType,
-            type: item.type,
-          })) as SplitDataType[],
-        };
+      const diffAmountToOffice =
+        selectedAmountType == AmountType.PERCENTAGE ? 100 - totalDistributed : values.totalAMount - totalDistributed;
 
-        const res = await createPayment(payload);
+      const splitToOffice: CreateDistribution = {
+        beneficiaryId: beneficiaries?.find((item) => item.type == BeneficiaryTypeEnum.OFFICE)?.id || "",
+        fixedAmount: selectedAmountType == AmountType.FIXED ? diffAmountToOffice : 0,
+        percentage: selectedAmountType == AmountType.PERCENTAGE ? diffAmountToOffice : 0,
+        type: SplitTypeEnum.OFFICE,
+      };
 
-        enqueueSnackbar({ message: "Pagamento criado com sucesso", variant: "success" });
-        res && handleClose();
-      }
+      const distributions = [
+        ...splits.map((item) => ({
+          beneficiaryId: item.beneficiaryId,
+          fixedAmount: item.fixedAmount,
+          percentage: item.percentage,
+          type: item.type,
+        })),
+        splitToOffice,
+      ];
+
+      const payload: PaymentBodyType = {
+        caseId: values.caseId,
+        dueDate: values.dueDate,
+        totalAmount: values.totalAmount,
+        distributions,
+      };
+
+      const res = await createPayment(payload);
+
+      enqueueSnackbar({ message: "Pagamento criado com sucesso", variant: "success" });
+      res && handleClose();
     } catch (error: any) {
       console.log(error);
     }
@@ -120,32 +99,32 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
     ? editData
     : {
         caseId: initialCaseId,
-        amount: 0,
+        totalAmount: 0,
         dueDate: undefined,
         status: "PENDING",
         method: undefined,
       };
 
-  const statusOptions = [
-    {
-      id: PaymentStatus.PENDING,
-      label: PaymentStatus.PENDING.toLocaleLowerCase(),
-    },
-    // {
-    //   id: PaymentStatus.PAID,
-    //   label: PaymentStatus.PAID.toLocaleLowerCase(),
-    // },
-    {
-      id: PaymentStatus.LATE,
-      label: PaymentStatus.LATE.toLocaleLowerCase(),
-    },
-  ];
+  // const statusOptions = [
+  //   {
+  //     id: PaymentStatus.PENDING,
+  //     label: PaymentStatus.PENDING.toLocaleLowerCase(),
+  //   },
+  //   // {
+  //   //   id: PaymentStatus.PAID,
+  //   //   label: PaymentStatus.PAID.toLocaleLowerCase(),
+  //   // },
+  //   {
+  //     id: PaymentStatus.,
+  //     label: PaymentStatus.LATE.toLocaleLowerCase(),
+  //   },
+  // ];
 
-  const statusOptionsTranslate = {
-    [PaymentStatus.PENDING]: "Pendente",
-    [PaymentStatus.PAID]: "Pago",
-    [PaymentStatus.LATE]: "Atrasado",
-  };
+  // const statusOptionsTranslate = {
+  //   [PaymentStatus.PENDING]: "Pendente",
+  //   [PaymentStatus.PAID]: "Pago",
+  //   [PaymentStatus.LATE]: "Atrasado",
+  // };
   // const splitOptions = [
   //   {
   //     id: SplitType.LAWYER,
@@ -189,57 +168,58 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
   //   setSplits((old) => old.map((item, i) => (i === index ? { ...item, type: value } : item)));
   // };
 
-  const availableAttornies = attornies?.filter((l) => !splits.find((s) => s.lawyerId === l.id)) || [];
+  const availableAttornies =
+    beneficiaries
+      ?.filter((d) => d.type == BeneficiaryTypeEnum.ATTORNEY)
+      .filter((l) => !splits.find((s) => s.beneficiaryId === l.id)) || [];
 
-  const addLawyerSplit = (lawyer: any) => {
-    if (!splits.find((s) => s.lawyerId === lawyer.id)) {
-      setSplits([
-        ...splits,
-        {
-          id: Date.now(),
-          lawyerId: lawyer.id,
-          lawyer: lawyer,
-          amount: 0,
-          amountType: selectedAmountType,
-          type: SplitType.LAWYER,
-        },
-      ]);
-    }
-  };
+  const availableReferral =
+    beneficiaries?.filter((d) => d.type == "REFERRAL").filter((l) => !splits.find((s) => s.beneficiaryId === l.id)) ||
+    [];
 
-  const addIndicatorSplit = () => {
-    setSplits([
-      ...splits,
+  const addAttorneyToSplit = (beneficiary: BeneficiaryDataType) => {
+    setSplits((prev) => [
+      ...prev,
       {
-        id: Date.now(),
-        lawyerId: undefined,
-        lawyer: undefined,
-        amount: 0,
-        amountType: selectedAmountType,
-        type: SplitType.INDICATOR,
+        beneficiaryId: beneficiary.id,
+        fixedAmount: 0,
+        percentage: 0,
+        type: SplitTypeEnum.ATTORNEY,
+        beneficiary,
+      },
+    ]);
+  };
+  const addReferralToSplit = (beneficiary: BeneficiaryDataType) => {
+    setSplits((prev) => [
+      ...prev,
+      {
+        beneficiaryId: beneficiary.id,
+        fixedAmount: 0,
+        percentage: 0,
+        type: SplitTypeEnum.REFERRAL,
+        beneficiary,
       },
     ]);
   };
 
   const removeSplit = (id: string) => {
-    setSplits(splits.filter((s) => s.id !== id));
+    setSplits(splits.filter((s) => s.beneficiaryId !== id));
   };
 
   const updateSplit = (id: string, field: any, value: number) => {
-    setSplits(splits.map((s) => (s.id === id ? { ...s, amount: value } : s)));
+    setSplits(splits.map((s) => (s.beneficiaryId === id ? { ...s, [field]: value } : s)));
   };
 
-  const totalDistributed = splits.reduce((sum, s) => {
-    return sum + (s.amount || 0);
-  }, 0);
+  useEffect(() => {
+    setSplits((prev) => prev.map((d) => ({ ...d, fixedAmount: 0, percentage: 0 })));
+  }, [selectedAmountType]);
+
+  console.log(splits);
 
   return (
     <Dialog open onOpenChange={handleClose}>
       <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
         {({ errors, touched, values, setFieldValue }) => {
-          const isValidDistribution: boolean =
-            selectedAmountType == AmountType.PERCENTAGE ? totalDistributed <= 100 : totalDistributed <= values.amount;
-
           return (
             <DialogContent className="max-w-screen-lg max-h-[95vh] overflow-y-auto grid grid-cols-12 p-0 border-none">
               <div className="col-span-4 bg-slate-800 text-white p-4">
@@ -318,7 +298,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                 <div className="mt-auto pt-6 border-t border-slate-700">
                   <div className="text-xs text-slate-300 mb-2">Valor Total</div>
                   <div className="text-3xl font-bold text-white">
-                    {numberFormat(values.amount, "pt-br", {
+                    {numberFormat(values.totalAmount, "pt-br", {
                       style: "currency",
                       currency: "BRL",
                     })}
@@ -473,7 +453,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                           <div className="relative">
                             <LuDollarSign className="absolute left-3 top-[0.85rem] text-gray-600" size={20} />
                             <NumericFormat
-                              value={values.amount}
+                              value={values.totalAmount}
                               className="px-8 py-6"
                               customInput={Input}
                               name="amount"
@@ -481,11 +461,11 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                               variant="filled"
                               decimalSeparator=","
                               thousandSeparator="."
-                              onValueChange={({ floatValue }) => setFieldValue("amount", floatValue)}
+                              onValueChange={({ floatValue }) => setFieldValue("totalAmount", floatValue)}
                             />
                           </div>
-                          {errors.amount && touched.amount && (
-                            <div className="text-red-500 text-sm">{errors.amount}</div>
+                          {errors.totalAmount && touched.totalAmount && (
+                            <div className="text-red-500 text-sm">{errors.totalAmount}</div>
                           )}
                         </div>
 
@@ -504,7 +484,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                           )}
                         </div>
 
-                        <div>
+                        {/* <div>
                           <Label>Status</Label>
                           <Select
                             value={values.status || ""}
@@ -524,9 +504,9 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                               ))}
                             </SelectContent>
                           </Select>
-                        </div>
+                        </div> */}
 
-                        <div>
+                        {/* <div>
                           <Label>Método de Pagamento</Label>
                           <div className="relative">
                             <LuCreditCard className="absolute left-3 top-[0.85rem] text-gray-600" size={20} />
@@ -549,7 +529,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                               </SelectContent>
                             </Select>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   )}
@@ -559,6 +539,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                       {/* Toggle Tipo de Divisão */}
                       <div className="mb-8 flex items-center justify-center gap-4">
                         <button
+                          type="button"
                           onClick={() => setSelectedAmountType(AmountType.PERCENTAGE)}
                           className={`px-8 py-4 rounded-md font-semibold transition-all ${
                             selectedAmountType === AmountType.PERCENTAGE
@@ -569,6 +550,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                           📊 Divisão por Percentual
                         </button>
                         <button
+                          type="button"
                           onClick={() => setSelectedAmountType(AmountType.FIXED)}
                           className={`px-8 py-4 rounded-md font-semibold transition-all ${
                             selectedAmountType === AmountType.FIXED
@@ -581,11 +563,11 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                       </div>
 
                       {/* Advogados Selecionados */}
-                      {splits?.filter((item) => item.type == SplitType.LAWYER).length > 0 && (
+                      {splits?.filter((item) => item.type == SplitTypeEnum.ATTORNEY).length > 0 && (
                         <div className="mb-8 space-y-4">
                           <h4 className="text-lg font-bold text-gray-800 mb-4">Advogados Selecionados</h4>
                           {splits
-                            ?.filter((item) => item.type == SplitType.LAWYER)
+                            ?.filter((item) => item.type == SplitTypeEnum.ATTORNEY)
                             .map((split, index) => (
                               <div
                                 key={index}
@@ -594,13 +576,17 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                                 <div className="flex items-center gap-4">
                                   <div className="text-5xl">👨‍⚖️</div>
                                   <div className="flex-1">
-                                    <div className="font-bold text-gray-900 text-lg">{split.lawyer.name}</div>
-                                    <div className="text-sm text-gray-600">{split.lawyer.specialty}</div>
+                                    <div className="font-bold text-gray-900 text-lg">{split.beneficiary?.name}</div>
+                                    <div className="text-sm text-gray-600">{split.beneficiary?.document}</div>
                                   </div>
                                   <div className="w-48">
                                     <div className="relative">
                                       <NumericFormat
-                                        value={split.amount}
+                                        value={
+                                          selectedAmountType == AmountType.PERCENTAGE
+                                            ? split.percentage
+                                            : split.fixedAmount
+                                        }
                                         className="w-full pl-4 pr-12 py-3 bg-white border-2 border-blue-300 rounded-xl focus:ring-4 focus:ring-blue-500 focus:ring-opacity-20 focus:border-blue-500 transition-all text-lg font-bold"
                                         name="amount"
                                         placeholder="Digite o sobrenome"
@@ -608,10 +594,8 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                                         thousandSeparator="."
                                         onValueChange={({ floatValue }) =>
                                           updateSplit(
-                                            split.id as any,
-                                            selectedAmountType === AmountType.PERCENTAGE
-                                              ? AmountType.PERCENTAGE
-                                              : AmountType.FIXED,
+                                            split.beneficiaryId,
+                                            selectedAmountType === AmountType.PERCENTAGE ? "percentage" : "fixedAmount",
                                             floatValue || 0
                                           )
                                         }
@@ -624,7 +608,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                                     </div>
                                   </div>
                                   <button
-                                    onClick={() => removeSplit(split.id as string)}
+                                    onClick={() => removeSplit(split.beneficiaryId as string)}
                                     className="p-3 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-all"
                                   >
                                     <LuTrash2 size={20} />
@@ -644,16 +628,16 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                               <button
                                 type="button"
                                 key={lawyer.id}
-                                onClick={() => addLawyerSplit(lawyer)}
+                                onClick={() => addAttorneyToSplit(lawyer)}
                                 className="bg-white border-2 border-gray-200 rounded-md p-5 hover:border-blue-500 hover:shadow-lg transition-all group"
                               >
                                 <div className="flex items-center gap-4">
                                   <div className="text-4xl">👨‍⚖️</div>
                                   <div className="flex-1 text-left">
                                     <div className="font-bold text-sm leading-4 text-gray-900 group-hover:text-blue-600 transition-colors">
-                                      {lawyer.firstName} {lawyer.lastName}
+                                      {lawyer.name}
                                     </div>
-                                    <div className="text-sm text-gray-500">{lawyer.licenceNumber}</div>
+                                    <div className="text-sm text-gray-500">{lawyer.document}</div>
                                   </div>
                                   <LuPlus className="text-gray-400 group-hover:text-blue-500" size={24} />
                                 </div>
@@ -664,11 +648,11 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                       )}
 
                       {/* indicadores Selecionados */}
-                      {splits?.filter((item) => item.type == SplitType.INDICATOR).length > 0 && (
+                      {splits?.filter((item) => item.type == SplitTypeEnum.REFERRAL).length > 0 && (
                         <div className="mb-8 space-y-4">
                           <h4 className="text-lg font-bold text-gray-800 mb-4">Indicadores Selecionados</h4>
                           {splits
-                            ?.filter((item) => item.type == SplitType.INDICATOR)
+                            ?.filter((item) => item.type == SplitTypeEnum.REFERRAL)
                             .map((split, index) => (
                               <div
                                 key={index}
@@ -677,13 +661,17 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                                 <div className="flex items-center gap-4">
                                   <div className="text-5xl">👨‍⚖️</div>
                                   <div className="flex-1">
-                                    <div className="font-bold text-gray-900 text-lg">Indicação</div>
-                                    <div className="text-sm text-gray-600">teste</div>
+                                    <div className="font-bold text-gray-900 text-lg">{split.beneficiary?.name}</div>
+                                    <div className="text-sm text-gray-600">{split.beneficiary?.document}</div>
                                   </div>
                                   <div className="w-48">
                                     <div className="relative">
                                       <NumericFormat
-                                        value={split.amount}
+                                        value={
+                                          selectedAmountType == AmountType.PERCENTAGE
+                                            ? split.percentage
+                                            : split.fixedAmount
+                                        }
                                         className="w-full pl-4 pr-12 py-3 bg-white border-2 border-blue-300 rounded-xl focus:ring-4 focus:ring-blue-500 focus:ring-opacity-20 focus:border-blue-500 transition-all text-lg font-bold"
                                         name="amount"
                                         placeholder="Digite o sobrenome"
@@ -691,10 +679,8 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                                         thousandSeparator="."
                                         onValueChange={({ floatValue }) =>
                                           updateSplit(
-                                            split.id as any,
-                                            selectedAmountType === AmountType.PERCENTAGE
-                                              ? AmountType.PERCENTAGE
-                                              : AmountType.FIXED,
+                                            split.beneficiaryId,
+                                            selectedAmountType === AmountType.PERCENTAGE ? "percentage" : "fixedAmount",
                                             floatValue || 0
                                           )
                                         }
@@ -707,7 +693,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                                     </div>
                                   </div>
                                   <button
-                                    onClick={() => removeSplit(split.id as string)}
+                                    onClick={() => removeSplit(split.beneficiaryId as string)}
                                     className="p-3 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-all"
                                   >
                                     <LuTrash2 size={20} />
@@ -718,27 +704,33 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                         </div>
                       )}
 
-                      <div>
-                        <h4 className="text-lg font-bold text-gray-800 mb-4">Adicionar indicação</h4>
-                        <div className="grid grid-cols-2">
-                          <button
-                            type="button"
-                            onClick={() => addIndicatorSplit()}
-                            className="bg-white border-2 border-gray-200 rounded-md p-5 hover:border-blue-500 hover:shadow-lg transition-all group"
-                          >
-                            <div className="flex items-center gap-4">
-                              <div className="text-4xl">👩‍⚖️</div>
-                              <div className="flex-1 text-left">
-                                <div className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                                  Indicador
+                      {/* referrer Disponíveis */}
+                      {availableReferral?.length > 0 && (
+                        <div className="mb-4" id="referrer">
+                          <h4 className="text-lg font-bold text-gray-800 mb-4">Adicionar indicação</h4>
+                          <div className="grid grid-cols-2 gap-4">
+                            {availableReferral.map((lawyer) => (
+                              <button
+                                type="button"
+                                key={`referrer-${lawyer.id}`}
+                                onClick={() => addReferralToSplit(lawyer)}
+                                className="bg-white border-2 border-gray-200 rounded-md p-5 hover:border-blue-500 hover:shadow-lg transition-all group"
+                              >
+                                <div className="flex items-center gap-4">
+                                  <div className="text-4xl">👨‍⚖️</div>
+                                  <div className="flex-1 text-left">
+                                    <div className="font-bold text-sm leading-4 text-gray-900 group-hover:text-blue-600 transition-colors">
+                                      {lawyer.name}
+                                    </div>
+                                    <div className="text-sm text-gray-500">{lawyer.document}</div>
+                                  </div>
+                                  <LuPlus className="text-gray-400 group-hover:text-blue-500" size={24} />
                                 </div>
-                                <div className="text-sm text-gray-500">Valores por indicaçao</div>
-                              </div>
-                              <LuPlus className="text-gray-400 group-hover:text-blue-500" size={24} />
-                            </div>
-                          </button>
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Validação */}
                       {/* {splits.length > 0 && (
@@ -792,7 +784,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                           <div className="flex justify-between items-center py-3 border-b border-blue-200">
                             <span className="text-gray-700 font-medium">Valor Total:</span>
                             <span className="text-gray-900 font-bold text-sm">
-                              {numberFormat(values.amount, "pt-br", {
+                              {numberFormat(values.totalAmount, "pt-br", {
                                 style: "currency",
                                 currency: "BRL",
                               })}
@@ -804,16 +796,6 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                               {new Date(values.dueDate || "").toLocaleDateString("pt-BR")}
                             </span>
                           </div>
-                          <div className="flex justify-between items-center py-3 border-b border-blue-200">
-                            <span className="text-gray-700 font-medium">Status:</span>
-                            <span className="text-gray-900 font-bold">
-                              {(statusOptionsTranslate as any)[values.status]}
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center py-3">
-                            <span className="text-gray-700 font-medium">Método de Pagamento:</span>
-                            <span className="text-gray-900 font-bold">{values.method || "Não definido"}</span>
-                          </div>
                         </div>
                       </div>
 
@@ -823,41 +805,31 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                           <div className="space-y-4">
                             {splits.map((split) => (
                               <div
-                                key={split.id}
+                                key={split.beneficiaryId}
                                 className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
                               >
                                 <div className="flex items-center gap-3">
-                                  {split.type == SplitType.LAWYER ? (
-                                    <>
-                                      <div className="text-3xl">👩‍⚖️</div>
+                                  <>
+                                    <div className="text-3xl">👩‍⚖️</div>
 
-                                      <div>
-                                        <div className="font-bold text-gray-900">
-                                          {split?.lawyer?.firstName} {split?.lawyer?.lastName}
-                                        </div>
-                                        <div className="text-sm text-gray-500">{split?.lawyer?.licenceNumber}</div>
+                                    <div>
+                                      <div className="font-bold text-gray-900">
+                                        {split.type == SplitTypeEnum.ATTORNEY ? "Dr." : ""} {split?.beneficiary?.name}{" "}
+                                        {split.type == SplitTypeEnum.REFERRAL ? "(Indicação)" : ""}
                                       </div>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <div className="text-3xl">👩‍⚖️</div>
-
-                                      <div>
-                                        <div className="font-bold text-gray-900">Indicação</div>
-                                        <div className="text-sm text-gray-500">Indicação selecionada</div>
-                                      </div>
-                                    </>
-                                  )}
+                                      <div className="text-sm text-gray-500">{split?.beneficiary?.document}</div>
+                                    </div>
+                                  </>
                                 </div>
                                 <div className="text-right">
                                   <div className=" font-bold text-blue-600">
                                     {selectedAmountType === AmountType.PERCENTAGE
-                                      ? `${split.amount}%`
-                                      : `R$ ${(split.amount || 0).toFixed(2)}`}
+                                      ? `${split.percentage}%`
+                                      : `R$ ${(split.fixedAmount || 0).toFixed(2)}`}
                                   </div>
                                   {selectedAmountType === AmountType.PERCENTAGE && (
                                     <div className="text-sm text-gray-500">
-                                      R$ {((values.amount * (split.amount || 0)) / 100).toFixed(2)}
+                                      R$ {((values.totalAmount * (split?.percentage || 0)) / 100).toFixed(2)}
                                     </div>
                                   )}
                                 </div>
@@ -893,7 +865,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                         variant={"secondary"}
                         size={"lg"}
                         type="button"
-                        disabled={values.caseId && values.dueDate && values.status && values.amount ? false : true}
+                        disabled={values.caseId && values.dueDate && values.status && values.totalAmount ? false : true}
                       >
                         Próximo
                         <LuChevronRight size={20} />
@@ -905,7 +877,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                           id="submitBtn"
                           size={"lg"}
                           className="px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
-                          disabled={!isValidDistribution}
+                          disabled={Object.entries(errors).length ? true : false}
                           type="submit"
                         >
                           <LuCheck size={20} />

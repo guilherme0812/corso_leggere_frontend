@@ -4,6 +4,8 @@ import { Tooltip } from "@/app/_components/ui/Tooltip";
 import { GetAllPaymentDataType, PaymentDataType } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
+import { enqueueSnackbar } from "notistack";
+import { LuCopy } from "react-icons/lu";
 import { MdOutlinePayments } from "react-icons/md";
 
 type IClientPaymentsTable = {
@@ -13,9 +15,9 @@ type IClientPaymentsTable = {
 };
 
 export const statusTranslate = {
-  PENDING: "Aguardando pagamento", // Aguardando pagamento
-  PARTIAL: "Parcialmente pago", // Parcialmente pago
-  PAID: "Completamente pago", // Completamente pago
+  PENDING: "Pendente", // Aguardando pagamento
+  PARTIAL: "Pagamento parcial", // Parcialmente pago
+  PAID: "Pago", // Completamente pago
   CANCELLED: "Cancelado", // Cancelado
   REFUNDED: "Estornado", // Estornado
 };
@@ -42,7 +44,7 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
           <TableRow>
             <TableHead>Código</TableHead>
             <TableHead>Processo</TableHead>
-            <TableHead>Processo</TableHead>
+            <TableHead></TableHead>
             <TableHead>Status</TableHead>
             {/* <TableHead>Div. de valores</TableHead> */}
             <TableHead>Dta. Vencimento</TableHead>
@@ -52,17 +54,34 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
             <TableHead className="w-[60px]">Pagar</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="text-xs">
           {data.map((item, index) => (
             <TableRow key={index}>
-              <TableCell className="font-medium text-sm min-w-[150px]">{item.code}</TableCell>
-              <TableCell className="font-medium text-sm max-w-[150px]">{item.case.title}</TableCell>
-              <TableCell className="font-medium text-sm">{item.case.processNumber}</TableCell>
+              <TableCell className="font-medium group flex items-center gap-2">
+                <div>{item.code}</div>
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    variant={"ghost"}
+                    size={"icon"}
+                    onClick={() => {
+                      enqueueSnackbar({
+                        message: "Código de pagamento copiado para a área de transferência",
+                        variant: "info",
+                      });
+                      navigator.clipboard.writeText(item.code!);
+                    }}
+                  >
+                    <LuCopy />
+                  </Button>
+                </div>
+              </TableCell>
+              <TableCell className="font-medium max-w-[150px]">{item.case.title}</TableCell>
+              <TableCell className="font-medium">{item.case.processNumber}</TableCell>
               <TableCell>
                 <div
-                  className={`${
+                  className={`text-center ${
                     statusBgColor[item.status]
-                  } p-1 text-xs flex justify-center font-medium min-w-[50px] rounded`}
+                  } min-w-[100px] p-1 text-xs flex justify-center font-medium rounded`}
                 >
                   {statusTranslate[item.status]}
                 </div>
