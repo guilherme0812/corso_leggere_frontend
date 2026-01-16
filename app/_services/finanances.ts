@@ -149,7 +149,7 @@ type GetPaymentsParams = {
   limit?: number;
 };
 
-type GetTransactionsParams = {
+export type GetTransactionsParams = {
   limit?: number;
 };
 
@@ -251,6 +251,23 @@ export const getTransactions = async (params: GetTransactionsParams) => {
   try {
     // const prefix = _prefix != undefined ? _prefix : await getPrefix();
     const res = await apiServerLeggere<TransactionDataType[]>({
+      url: `/financial/transactions`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const getTransactionsClientSide = async (params: GetTransactionsParams) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<TransactionDataType[]>({
       url: `/financial/transactions`,
       method: "GET",
       params,

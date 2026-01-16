@@ -1,11 +1,9 @@
-import { getFiancialSummary, getFinancialEntry, getMonthReports, getTransactions } from "@/app/_services/finanances";
+import { getMonthReports, getTransactions } from "@/app/_services/finanances";
 import FinanceChart from "../../../../painel/_compoenents/FinanceChart";
 import FinancesTable from "./FinancesTable";
-import { LuArrowDownRight, LuArrowUpRight, LuDollarSign, LuPlus, LuTrendingUp } from "react-icons/lu";
+import { LuArrowDownRight, LuArrowUpRight, LuDollarSign, LuTrendingUp } from "react-icons/lu";
 import moment from "moment";
 import { numberFormat } from "@/app/_utils";
-import { IoArrowDown, IoArrowDownCircle, IoArrowUp, IoArrowUpCircle } from "react-icons/io5";
-import ButtonsSection from "./ButtonsSection";
 import { LucideBarChart3 } from "lucide-react";
 import { Button } from "@/app/_components/ui/Button";
 
@@ -20,7 +18,7 @@ async function FinancialOverviewTab({ companyReportData }: { companyReportData: 
     endDate,
   });
 
-  const summary = await getFiancialSummary({});
+  // const summary = await getFiancialSummary({});
   const transactions = await getTransactions({
     limit: 5,
   });

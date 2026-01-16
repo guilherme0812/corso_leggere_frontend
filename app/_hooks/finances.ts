@@ -13,9 +13,12 @@ import {
   GetMonthReportParams,
   getPaymentsClientSide,
   getProjectionFlowClientSide,
+  getTransactionsClientSide,
+  GetTransactionsParams,
   payEntryClientSide,
   payPaymentClientSide,
   removeFinancialCategoriesClientSide,
+  TransactionDataType,
   updateFinancialCategoriesClientSide,
 } from "../_services/finanances";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,6 +35,24 @@ export function usePayments({ filters, initialData, enabled = true }: UsePayment
   return useQuery({
     queryKey: [PAYMENTS_QUERY_KEY, filters],
     queryFn: () => getPaymentsClientSide(filters),
+    enabled,
+    initialData,
+    // staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+}
+
+const TRANSACTIONS_QUERY_KEY = "TRANSACTIONS";
+
+type UseTransactionsProps = {
+  filters: GetTransactionsParams;
+  initialData?: TransactionDataType[];
+  enabled?: boolean;
+};
+
+export function useTransactions({ filters, initialData, enabled = true }: UseTransactionsProps) {
+  return useQuery({
+    queryKey: [TRANSACTIONS_QUERY_KEY, filters],
+    queryFn: () => getTransactionsClientSide(filters),
     enabled,
     initialData,
     // staleTime: 1000 * 60 * 5, // 5 minutos

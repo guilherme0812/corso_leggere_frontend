@@ -15,22 +15,22 @@ function Layout({ children }: { children: ReactNode }) {
       icon: <LuDollarSign className="size-4 shrink-0" />,
     },
     {
-      link: "/finances/cash-flow",
+      link: "/finances/transactions",
       label: "Transações",
       icon: <LuArrowRightLeft className="size-4 shrink-0" />,
     },
     {
-      link: "/finances/cash-flow",
+      link: "/finances/pending",
       label: "Pendências",
       icon: <LuClock3 className="size-4 shrink-0" />,
     },
     {
-      link: "/finances/cash-flow",
+      link: "/finances/attorneis",
       label: "Advogados",
       icon: <MdOutlineBalance className="size-4 shrink-0" />,
     },
     {
-      link: "/finances/cash-flow",
+      link: "/finances/beneficiaries",
       label: "Beneficiarios",
       icon: <LuUsers className="size-4 shrink-0" />,
     },
