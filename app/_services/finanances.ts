@@ -165,12 +165,6 @@ export enum PaymentMethod {
   INVOICE = "INVOICE",
 }
 
-export enum PaymentStatus {
-  PENDING = "PENDING",
-  PAID = "PAID",
-  LATE = "LATE",
-}
-
 export enum FinancialEntryOrigin {
   PAYMENT = "PAYMENT",
   SPLIT = "SPLIT",
@@ -203,6 +197,24 @@ export enum TransactionTypeEnum {
   ADJUSTMENT = "ADJUSTMENT", // Ajuste manual
 }
 
+export const getFinancialEntry = async (params: GetPaymentsParams) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiServerLeggere<FinancialEntryDataType[]>({
+      url: `/financial/payments`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+// Transaction
 export enum TransactionStatusEnum {
   PENDING = "PENDING", // Aguardando processamento
   COMPLETED = "COMPLETED", // Concluída
@@ -234,23 +246,6 @@ export type TransactionDataType = {
   updatedAt: string;
 };
 
-export const getFinancialEntry = async (params: GetPaymentsParams) => {
-  try {
-    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
-    const res = await apiServerLeggere<FinancialEntryDataType[]>({
-      url: `/financial/payments`,
-      method: "GET",
-      params,
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-  }
-};
-
 export const getTransactions = async (params: GetTransactionsParams) => {
   try {
     // const prefix = _prefix != undefined ? _prefix : await getPrefix();
@@ -267,6 +262,99 @@ export const getTransactions = async (params: GetTransactionsParams) => {
     console.log(error);
   }
 };
+
+// PAYMENTS
+export enum PaymentStatus {
+  PENDING = "PENDING", // Aguardando pagamento
+  PARTIAL = "PARTIAL", // Parcialmente pago
+  PAID = "PAID", // Completamente pago
+  CANCELLED = "CANCELLED", // Cancelado
+  REFUNDED = "REFUNDED", // Estornado
+}
+
+export type PaymentDataType = {
+  id: string;
+  code: string;
+  description: any;
+  totalAmount: number;
+  paidAmount: number;
+  remainingAmount: number;
+  issueDate: string;
+  dueDate: string;
+  status: PaymentStatus;
+  caseId: string;
+  companyId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type GetAllPaymentDataType = PaymentDataType & {
+  transactions: TransactionDataType[];
+  case: ICase;
+  distributions: [];
+};
+
+// Distribution
+export enum SplitTypeEnum {
+  ATTORNEY = "ATTORNEY_FEE", // Honorários do advogado
+  REFERRAL = "REFERRAL_FEE", // Comissão de indicação
+  OFFICE = "OFFICE_FEE", // Taxa do escritório
+  PARTNER = "PARTNER_FEE", // Taxa de parceiro
+  EXPENSE = "EXPENSE", // Despesa/custo
+}
+
+export type DistributionDataType = {
+  id: string;
+  paymentId: string;
+  beneficiaryId: string;
+  type: SplitTypeEnum;
+  percentage: number;
+  fixedAmount: number;
+  calculatedAmount: number;
+  dueDate: string;
+  isPaid: boolean;
+  paidAt: string | null;
+  paidAmount: number;
+  caseId: string;
+  companyId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const getPayments = async (params: GetAllPaymentsParams) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiServerLeggere<PaymentDataType[]>({
+      url: `/financial/payments`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const getPaymentsClientSide = async (params: GetAllPaymentsParams) => {
+  try {
+    const res = await apiLeggere<GetAllPaymentDataType[]>({
+      url: `/financial/payments`,
+      method: "GET",
+      params,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+//
 
 export type CreateFinancialEntryDTO = {
   type: "RECEIVABLE" | "PAYABLE";
@@ -296,29 +384,6 @@ export const CreateFinancialEntryClientSide = async (body: CreateFinancialEntryD
   }
 };
 
-export type PaymentDataType = Payment & {
-  splits: SplitDataType[];
-  case: {
-    title: string;
-    processNumber: string;
-    lawyerFee: number;
-    businessFee: number;
-    indicatorFee: number;
-    indicatorId: string;
-    client: {
-      firstName: string;
-      lastName: string;
-    };
-  };
-  entries: FinancialEntryDataType[];
-};
-
-export enum SplitType {
-  OFFICE = "OFFICE",
-  LAWYER = "LAWYER",
-  INDICATOR = "INDICATOR",
-}
-
 export enum AmountType {
   FIXED = "FIXED",
   PERCENTAGE = "PERCENTAGE",
@@ -327,7 +392,7 @@ export enum AmountType {
 export type SplitDataType = {
   id: string | number;
   paymentId: string;
-  type: SplitType;
+  type: SplitTypeEnum;
   amount: number;
   amountType: AmountType;
   lawyerId?: string; // login in Payment modal
@@ -365,39 +430,6 @@ type SummaryDataType = {
   receivable: number;
   payable: number;
   currencentBalance: number;
-};
-
-export const getPayments = async (params: GetAllPaymentsParams) => {
-  try {
-    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
-    const res = await apiServerLeggere<PaymentDataType[]>({
-      url: `/financial/payments`,
-      method: "GET",
-      params,
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-  }
-};
-
-export const getPaymentsClientSide = async (params: GetAllPaymentsParams) => {
-  try {
-    const res = await apiLeggere<PaymentDataType[]>({
-      url: `/financial/payments`,
-      method: "GET",
-      params,
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-  }
 };
 
 export type PaymentBodyType = {

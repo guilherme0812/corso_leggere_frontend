@@ -6,6 +6,7 @@ import {
   deleteEntryClientSide,
   deletePaymentClientSide,
   FinancialCategoryDataType,
+  GetAllPaymentDataType,
   GetAllPaymentsParams,
   getCashFlowClientSide,
   getFinancialCategoriesClientSide,
@@ -13,7 +14,6 @@ import {
   getPaymentsClientSide,
   getProjectionFlowClientSide,
   payEntryClientSide,
-  PaymentDataType,
   payPaymentClientSide,
   removeFinancialCategoriesClientSide,
   updateFinancialCategoriesClientSide,
@@ -24,7 +24,7 @@ const PAYMENTS_QUERY_KEY = "payments";
 
 type UsePaymentsProps = {
   filters: GetAllPaymentsParams;
-  initialData?: PaymentDataType[];
+  initialData?: GetAllPaymentDataType[];
   enabled?: boolean;
 };
 

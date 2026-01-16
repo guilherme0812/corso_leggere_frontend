@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
-import { LuBookText, LuDollarSign, LuUsers } from "react-icons/lu";
-import { MdCurrencyExchange } from "react-icons/md";
+import { LuArrowRightLeft, LuBookText, LuClock3, LuCreditCard, LuDollarSign, LuUsers } from "react-icons/lu";
+import { MdCurrencyExchange, MdOutlineBalance } from "react-icons/md";
 
 function Layout({ children }: { children: ReactNode }) {
   const path = usePathname();
@@ -17,27 +17,27 @@ function Layout({ children }: { children: ReactNode }) {
     {
       link: "/finances/cash-flow",
       label: "Transações",
-      icon: <MdCurrencyExchange className="size-4 shrink-0" />,
+      icon: <LuArrowRightLeft className="size-4 shrink-0" />,
     },
     {
       link: "/finances/cash-flow",
       label: "Pendências",
-      icon: <MdCurrencyExchange className="size-4 shrink-0" />,
+      icon: <LuClock3 className="size-4 shrink-0" />,
     },
     {
       link: "/finances/cash-flow",
       label: "Advogados",
-      icon: <MdCurrencyExchange className="size-4 shrink-0" />,
+      icon: <MdOutlineBalance className="size-4 shrink-0" />,
     },
     {
       link: "/finances/cash-flow",
       label: "Beneficiarios",
-      icon: <MdCurrencyExchange className="size-4 shrink-0" />,
+      icon: <LuUsers className="size-4 shrink-0" />,
     },
     {
       link: "/finances/payments",
       label: "Pagamento de clientes",
-      icon: <LuUsers className="size-4 shrink-0" />,
+      icon: <LuCreditCard className="size-4 shrink-0" />,
     },
     {
       link: "/finances/categories",

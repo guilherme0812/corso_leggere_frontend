@@ -1,6 +1,6 @@
 "use client";
 
-import { GetAllPaymentsParams, PaymentDataType } from "@/app/_services/finanances";
+import { GetAllPaymentDataType, GetAllPaymentsParams, PaymentDataType } from "@/app/_services/finanances";
 import ClientPaymentsTable from "../ClientPaymentsTable";
 import Header from "../Header";
 import { usePayments } from "@/app/_hooks/finances";
@@ -11,11 +11,11 @@ import PayPaymentModal from "@/app/_components/patterns/Payments/PayPaymentModal
 import { LuPlus, LuUsers } from "react-icons/lu";
 import { Button } from "@/app/_components/ui/Button";
 
-function Content({ data: initialData, processNumber }: { data: PaymentDataType[]; processNumber?: string }) {
+function Content({ data: initialData }: { data: GetAllPaymentDataType[]; processNumber?: string }) {
   const [openModal, setOpenModal] = useState(false);
   const [paymentToPay, setPaymentToPay] = useState<PaymentDataType>();
 
-  const [filters, setFilters] = useState<GetAllPaymentsParams>({ processNumber });
+  const [filters, setFilters] = useState<GetAllPaymentsParams>({});
   const { data, isLoading, refetch } = usePayments({
     filters,
     initialData: initialData,
