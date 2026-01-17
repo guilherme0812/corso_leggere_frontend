@@ -25,7 +25,7 @@ function Layout({ children }: { children: ReactNode }) {
       icon: <LuClock3 className="size-4 shrink-0" />,
     },
     {
-      link: "/finances/attorneis",
+      link: "/finances/attornies",
       label: "Advogados",
       icon: <MdOutlineBalance className="size-4 shrink-0" />,
     },

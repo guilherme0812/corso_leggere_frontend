@@ -8,13 +8,14 @@ import { useState } from "react";
 import Skeleton from "@/app/_components/ui/Skeleton";
 import { LuPlus, LuUsers } from "react-icons/lu";
 import { Button } from "@/app/_components/ui/Button";
+import { useBeneficiaries } from "@/app/_hooks/beneficiary";
 
 function Content() {
   // const [openModal, setOpenModal] = useState(false);
   // const [paymentToPay, setPaymentToPay] = useState<PaymentDataType>();
 
   const [filters, setFilters] = useState<GetTransactionsParams>({});
-  const { data, isLoading, refetch } = useTransactions({
+  const { data, isLoading, refetch } = useBeneficiaries({
     filters,
     // initialData: [],
   });
@@ -24,7 +25,7 @@ function Content() {
       <div className="p-2 border-b w-full mb-4 flex justify-between">
         <div className=" peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-sm">
           <LuUsers className="size-5" />
-          <span className="text-base font-semibold">Transações</span>
+          <span className="text-base font-semibold">Beneficiarios</span>
         </div>
 
         <Button
@@ -32,7 +33,7 @@ function Content() {
           // onClick={() => setOpenModal(true)}
         >
           <LuPlus />
-          Nova Transação
+          Nova beneficiario
         </Button>
       </div>
 
