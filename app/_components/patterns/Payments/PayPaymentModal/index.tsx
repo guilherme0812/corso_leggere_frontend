@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/Button";
 import { GetAllPaymentDataType, PayPaymentDataType } from "@/app/_services/finanances";
-import { useDeletePayment, usePayPayment } from "@/app/_hooks/finances";
+import { usePayPayment } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
@@ -38,7 +38,6 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
   });
 
   const { mutateAsync: payPayment, isPending } = usePayPayment();
-  const { mutateAsync: deletePayment } = useDeletePayment();
 
   const SplitTypeTranslate = {
     OFFICE_FEE: "Escritorio",
@@ -69,21 +68,21 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
   };
 
   const handleDeletePayment = async () => {
-    try {
-      await deletePayment(data.id!);
-      enqueueSnackbar({
-        message: "Pagamento removido com sucesso",
-        variant: "success",
-      });
-      setConfirmModalIsOpen(false);
-      handleClose();
-    } catch (error: any) {
-      console.log(error);
-      enqueueSnackbar({
-        message: "Erro ao remover pagamento",
-        variant: "error",
-      });
-    }
+    // try {
+    //   await deletePayment(data.id!);
+    //   enqueueSnackbar({
+    //     message: "Pagamento removido com sucesso",
+    //     variant: "success",
+    //   });
+    //   setConfirmModalIsOpen(false);
+    //   handleClose();
+    // } catch (error: any) {
+    //   console.log(error);
+    //   enqueueSnackbar({
+    //     message: "Erro ao remover pagamento",
+    //     variant: "error",
+    //   });
+    // }
   };
 
   const paymentMethods = [

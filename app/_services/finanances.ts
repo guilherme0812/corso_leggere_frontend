@@ -127,21 +127,6 @@ export const getProjectionFlow = async (params: GetMonthReportParams) => {
     console.log(error);
   }
 };
-export const getProjectionFlowClientSide = async (params: GetMonthReportParams) => {
-  try {
-    const res = await apiLeggere<CashFlowDataType[]>({
-      url: `/financial/projectedFlow`,
-      method: "GET",
-      params,
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-  }
-};
 
 type GetPaymentsParams = {
   startDueDate?: string | null;
@@ -312,11 +297,51 @@ export type GetAllPaymentDataType = PaymentDataType & {
   distributions: DistributionDataType[];
 };
 
+export type PaymentBodyType = {
+  caseId: string;
+  dueDate: string;
+  totalAmount: number;
+  distributions: CreateDistribution[];
+};
+
 export type PayPaymentDataType = {
   paymentId: string;
   amount: number;
   method: string;
   transactionDate: string;
+};
+
+export const createPaymentClientSide = async (body: PaymentBodyType) => {
+  try {
+    const res = await apiLeggere<PaymentDataType[]>({
+      url: `/financial/createPayment`,
+      method: "POST",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    throw new Error("Error");
+    console.log(error);
+  }
+};
+
+export const payPaymentClientSide = async (body: PayPaymentDataType) => {
+  try {
+    const res = await apiLeggere<PaymentDataType[]>({
+      url: `/financial/payment/pay`,
+      method: "POST",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
 };
 
 // Distribution
@@ -400,23 +425,6 @@ export type CreateFinancialEntryDTO = {
   method?: PaymentMethod;
 };
 
-export const CreateFinancialEntryClientSide = async (body: CreateFinancialEntryDTO) => {
-  try {
-    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
-    const res = await apiLeggere<FinancialEntryDataType>({
-      url: `/financial/createEntryPayment`,
-      method: "POST",
-      data: body,
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-  }
-};
-
 export enum AmountType {
   FIXED = "FIXED",
   PERCENTAGE = "PERCENTAGE",
@@ -465,100 +473,7 @@ type SummaryDataType = {
   currencentBalance: number;
 };
 
-export type PaymentBodyType = {
-  caseId: string;
-  dueDate: string;
-  totalAmount: number;
-  distributions: CreateDistribution[];
-};
-
-export const createPaymentClientSide = async (body: PaymentBodyType) => {
-  try {
-    const res = await apiLeggere<PaymentDataType[]>({
-      url: `/financial/createPayment`,
-      method: "POST",
-      data: body,
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    throw new Error("Error");
-    console.log(error);
-  }
-};
-
-export const payPaymentClientSide = async (body: PayPaymentDataType) => {
-  try {
-    const res = await apiLeggere<PaymentDataType[]>({
-      url: `/financial/payment/pay`,
-      method: "POST",
-      data: body,
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-  }
-};
-export const deletePaymentClientSide = async (id: string) => {
-  try {
-    const res = await apiLeggere({
-      url: `/financial/payment/delete`,
-      method: "DELETE",
-      params: {
-        id: id,
-      },
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-    throw new Error("Error");
-  }
-};
-
-export const payEntryClientSide = async (id: string) => {
-  try {
-    const res = await apiLeggere<PaymentDataType[]>({
-      url: `/financial/payEntry`,
-      method: "POST",
-      params: {
-        id: id,
-      },
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-    throw new Error("Error");
-  }
-};
-export const deleteEntryClientSide = async (id: string) => {
-  try {
-    const res = await apiLeggere<PaymentDataType[]>({
-      url: `/financial/entryPayment`,
-      method: "DELETE",
-      params: {
-        id: id,
-      },
-    });
-
-    const { data } = res;
-
-    return data || [];
-  } catch (error: any) {
-    console.log(error);
-    throw new Error("Error");
-  }
-};
+// Categories
 
 export const getFinancialCategoriesClientSide = async () => {
   try {

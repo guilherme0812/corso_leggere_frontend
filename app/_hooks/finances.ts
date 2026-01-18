@@ -1,10 +1,7 @@
 import {
   CashFlowDataType,
   createFinancialCategoriesClientSide,
-  CreateFinancialEntryClientSide,
   createPaymentClientSide,
-  deleteEntryClientSide,
-  deletePaymentClientSide,
   FinancialCategoryDataType,
   GetAllPaymentDataType,
   GetAllPaymentsParams,
@@ -12,10 +9,8 @@ import {
   getFinancialCategoriesClientSide,
   GetMonthReportParams,
   getPaymentsClientSide,
-  getProjectionFlowClientSide,
   getTransactionsClientSide,
   GetTransactionsParams,
-  payEntryClientSide,
   payPaymentClientSide,
   removeFinancialCategoriesClientSide,
   TransactionDataType,
@@ -76,17 +71,6 @@ export function useCashFLow({ filters, initialData, enabled = true }: UseCashFlo
   });
 }
 
-const PROJECTION_FLOW_QUERY_KEY = "projection";
-
-export function useProjectionFLow({ filters, initialData, enabled = true }: UseCashFlowProps) {
-  return useQuery({
-    queryKey: [PROJECTION_FLOW_QUERY_KEY, filters],
-    queryFn: () => getProjectionFlowClientSide(filters),
-    enabled,
-    initialData,
-  });
-}
-
 export function useCreatePayment() {
   const queryClient = useQueryClient();
 
@@ -112,64 +96,6 @@ export function usePayPayment() {
       queryClient.invalidateQueries({
         queryKey: [PAYMENTS_QUERY_KEY],
         exact: false,
-      });
-    },
-  });
-}
-export function useDeletePayment() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: deletePaymentClientSide,
-
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: [PAYMENTS_QUERY_KEY],
-        exact: false,
-      });
-    },
-  });
-}
-
-export function usePayEntry() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: payEntryClientSide,
-
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: [CASH_FLOW_QUERY_KEY, PROJECTION_FLOW_QUERY_KEY, PAYMENTS_QUERY_KEY],
-        exact: false,
-      });
-    },
-  });
-}
-
-export function useDeleteEntry() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: deleteEntryClientSide,
-
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: [CASH_FLOW_QUERY_KEY, PROJECTION_FLOW_QUERY_KEY, PAYMENTS_QUERY_KEY],
-        exact: false,
-      });
-    },
-  });
-}
-
-export function useCreateFinancialEntry() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: CreateFinancialEntryClientSide,
-
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: [CASH_FLOW_QUERY_KEY, PROJECTION_FLOW_QUERY_KEY],
       });
     },
   });
