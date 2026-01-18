@@ -33,8 +33,8 @@ export default function PendingPaymentsTable({ data }: ITable) {
             <TableHead>Código</TableHead>
             <TableHead>Vencimento</TableHead>
             <TableHead>Status pag. cliente</TableHead>
-            <TableHead>Valor a receber</TableHead>
-            <TableHead>Valor total</TableHead>
+            <TableHead>Valor pag. cliente</TableHead>
+            <TableHead>A receber</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-xs">
@@ -71,7 +71,7 @@ export default function PendingPaymentsTable({ data }: ITable) {
               </TableCell>
 
               <TableCell className="font-medium">
-                {numberFormat(item.percentage || item.fixedAmount, "pt-BR", {
+                {numberFormat(item.payment.totalAmount, "pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}

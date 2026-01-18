@@ -100,11 +100,7 @@ function FinancialAttorneyCard({ data, handleBack }: FinancialAttorneyCardProps)
             <p className="text-2xl font-bold">
               {numberFormat(
                 pendingPayments?.reduce((sum, s) => {
-                  if (s.percentage) {
-                    return sum + (s.percentage || 0);
-                  }
-
-                  return sum + (s.fixedAmount || 0);
+                  return sum + (s.calculatedAmount || 0);
                 }, 0) || 0,
                 "pt-br",
                 {

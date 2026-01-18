@@ -1,7 +1,7 @@
 import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { Tooltip } from "@/app/_components/ui/Tooltip";
-import { GetAllPaymentDataType, PaymentDataType } from "@/app/_services/finanances";
+import { GetAllPaymentDataType } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
@@ -10,7 +10,7 @@ import { MdOutlinePayments } from "react-icons/md";
 
 type IClientPaymentsTable = {
   data: GetAllPaymentDataType[];
-  handlePay(data: PaymentDataType): void;
+  handlePay(data: GetAllPaymentDataType): void;
   //   handleDelete: (document: string) => void;
 };
 
@@ -24,7 +24,7 @@ export const statusTranslate = {
 
 export const statusBgColor = {
   PENDING: "bg-yellow-200",
-  PARTIAL: "bg-yellow-200",
+  PARTIAL: "bg-blue-200",
   CANCELLED: "bg-blue-200",
   PAID: "bg-green-300",
   REFUNDED: "bg-brown-200",

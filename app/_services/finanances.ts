@@ -309,7 +309,14 @@ export type PaymentDataType = {
 export type GetAllPaymentDataType = PaymentDataType & {
   transactions: TransactionDataType[];
   case: ICase;
-  distributions: [];
+  distributions: DistributionDataType[];
+};
+
+export type PayPaymentDataType = {
+  paymentId: string;
+  amount: number;
+  method: string;
+  transactionDate: string;
 };
 
 // Distribution
@@ -482,14 +489,12 @@ export const createPaymentClientSide = async (body: PaymentBodyType) => {
   }
 };
 
-export const payPaymentClientSide = async (id: string) => {
+export const payPaymentClientSide = async (body: PayPaymentDataType) => {
   try {
     const res = await apiLeggere<PaymentDataType[]>({
       url: `/financial/payment/pay`,
       method: "POST",
-      params: {
-        id: id,
-      },
+      data: body,
     });
 
     const { data } = res;

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
-import { LuArrowRightLeft, LuBookText, LuClock3, LuCreditCard, LuDollarSign, LuUsers } from "react-icons/lu";
+import { LuArrowRightLeft, LuBookText, LuCreditCard, LuDollarSign, LuUsers } from "react-icons/lu";
 import { MdCurrencyExchange, MdOutlineBalance } from "react-icons/md";
 
 function Layout({ children }: { children: ReactNode }) {
@@ -19,11 +19,11 @@ function Layout({ children }: { children: ReactNode }) {
       label: "Transações",
       icon: <LuArrowRightLeft className="size-4 shrink-0" />,
     },
-    {
-      link: "/finances/pending",
-      label: "Pendências",
-      icon: <LuClock3 className="size-4 shrink-0" />,
-    },
+    // {
+    //   link: "/finances/pending",
+    //   label: "Pendências",
+    //   icon: <LuClock3 className="size-4 shrink-0" />,
+    // },
     {
       link: "/finances/attornies",
       label: "Advogados",
