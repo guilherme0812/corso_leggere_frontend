@@ -230,24 +230,28 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                 </div>
               ))}
 
-              <hr className="border-t border-gray-300" />
+              {data?.transactions?.length ? (
+                <>
+                  <hr className="border-t border-gray-300" />
 
-              <div className="">
-                <div className="font-semibold">Transações do pagamentos</div>
-              </div>
-
-              {data.transactions?.map((item, key) => (
-                <div className="flex justify-between text-xs" key={key}>
-                  <div className="">{typeTranslate[item.type]}</div>
-                  <div>Pago: {moment(item.effectiveDate).format("DD/MM/YYYY")}</div>
-                  <div>
-                    {numberFormat(item.amount, "pt-br", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                  <div className="">
+                    <div className="font-semibold">Transações do pagamentos</div>
                   </div>
-                </div>
-              ))}
+
+                  {data.transactions?.map((item, key) => (
+                    <div className="flex justify-between text-xs" key={key}>
+                      <div className="">{typeTranslate[item.type]}</div>
+                      <div>Pago: {moment(item.effectiveDate).format("DD/MM/YYYY")}</div>
+                      <div>
+                        {numberFormat(item.amount, "pt-br", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              ) : null}
             </div>
 
             {data.status != "PAID" ? (

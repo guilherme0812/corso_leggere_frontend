@@ -90,6 +90,25 @@ function Header({
   return (
     <header className=" grid grid-cols-12 gap-4 shadow-md bg-white p-4">
       <div className="col-span-12 md:col-span-2">
+        <Label>Processo</Label>
+
+        <Select value={filters.processNumber || ""} onValueChange={(value) => setProcessNumber(value)}>
+          <SelectTrigger className="w-full" variant="filled">
+            <SelectValue placeholder="Selecione o status" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {casesIsLoading ? <div>Carregando...</div> : []}
+            {cases?.map((item) => (
+              <SelectItem key={item.id} value={item.processNumber || item.id}>
+                {item.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="col-span-12 md:col-span-2">
         <Label>Status</Label>
 
         <Select onValueChange={(value) => setStatus(value)}>
@@ -118,25 +137,6 @@ function Header({
             <DatePicker placeholder="Data final" onChange={setEndDueDate} />
           </div>
         </div>
-      </div>
-
-      <div className="col-span-12 md:col-span-2">
-        <Label>Processo</Label>
-
-        <Select value={filters.processNumber || ""} onValueChange={(value) => setProcessNumber(value)}>
-          <SelectTrigger className="w-full" variant="filled">
-            <SelectValue placeholder="Selecione o status" />
-          </SelectTrigger>
-
-          <SelectContent>
-            {casesIsLoading ? <div>Carregando...</div> : []}
-            {cases?.map((item) => (
-              <SelectItem key={item.id} value={item.processNumber || item.id}>
-                {item.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       <div className="col-span-12 md:col-span-4 flex flex-col items-end justify-end gap-2">

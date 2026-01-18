@@ -57,8 +57,8 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
         <TableBody className="text-xs">
           {data.map((item, index) => (
             <TableRow key={index}>
-              <TableCell className="font-medium group flex items-center gap-2">
-                <div>{item.code}</div>
+              <TableCell className="font-medium group flex items-center gap-2 max-w-[200px] justify-between">
+                <div className=" truncate">{item.code}</div>
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
                     variant={"ghost"}
@@ -75,7 +75,7 @@ export default function ClientPaymentsTable({ data, handlePay }: IClientPayments
                   </Button>
                 </div>
               </TableCell>
-              <TableCell className="font-medium max-w-[150px]">{item.case.title}</TableCell>
+              <TableCell className="font-medium min-w-[150px]">{item.case.title}</TableCell>
               <TableCell className="font-medium">{item.case.processNumber}</TableCell>
               <TableCell>
                 <div

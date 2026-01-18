@@ -11,9 +11,6 @@ export const createCase = async (formData: FormData) => {
 
   const body = {
     ...data,
-    businessFee: Number(data.businessFee),
-    lawyerFee: Number(data.lawyerFee),
-    indicatorFee: data.indicatorFee ? Number(data.indicatorFee) : null,
   };
 
   try {
@@ -38,9 +35,6 @@ export const updateCase = async (formData: FormData) => {
 
   const body = {
     ...data,
-    businessFee: Number(data.businessFee),
-    lawyerFee: Number(data.lawyerFee),
-    indicatorFee: data.indicatorFee ? Number(data.indicatorFee) : null,
   };
 
   try {

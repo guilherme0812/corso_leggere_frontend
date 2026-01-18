@@ -54,32 +54,12 @@ export const getAttorneys = async () => {
 };
 
 // Schema atualizado
-const CaseSchema = Yup.object()
-  .shape({
-    clientId: Yup.string().required("Cliente é obrigatório"),
-    lawyerId: Yup.string().required("Advogado é obrigatório"),
-    title: Yup.string().min(3, "Mínimo 3 caracteres").required("Título é obrigatório"),
-
-    businessFee: Yup.number().typeError("Valor inválido").min(0, "Mínimo 0").max(100, "Máximo 100").optional(),
-
-    lawyerFee: Yup.number().typeError("Valor inválido").min(0, "Mínimo 0").max(100, "Máximo 100").optional(),
-
-    indicatorFee: Yup.number().typeError("Valor inválido").min(0, "Mínimo 0").max(100, "Máximo 100").optional(),
-    // indicatorFee: Yup.number()
-    //   .typeError("Valor inválido")
-    //   .min(0, "Mínimo 0")
-    //   .max(100, "Máximo 100")
-    //   .required("Obrigatório"),
-
-    // indicatorId: Yup.number().typeError("ID inválido").required("ID obrigatório"),
-
-    processNumber: Yup.string().required("Número do processo é obrigatório"),
-  })
-  .test("fees-sum-100", "A soma de businessFee, lawyerFee e indicatorFee deve ser exatamente 100", (values) => {
-    if (!values) return false;
-    const total = (values.businessFee || 0) + (values.lawyerFee || 0) + (values?.indicatorFee || 0);
-    return total === 100;
-  });
+const CaseSchema = Yup.object().shape({
+  clientId: Yup.string().required("Cliente é obrigatório"),
+  attorneyId: Yup.string().required("Advogado é obrigatório"),
+  title: Yup.string().min(3, "Mínimo 3 caracteres").required("Título é obrigatório"),
+  processNumber: Yup.string().required("Número do processo é obrigatório"),
+});
 
 export default function CaseModal({ editData, handleClose }: CaseModalProps) {
   const [isPending, startTransition] = useTransition();
@@ -87,12 +67,8 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
 
   const initialValues = editData || {
     clientId: "",
-    lawyerId: "",
+    attorneyId: "",
     title: "",
-    businessFee: 100,
-    lawyerFee: 0,
-    indicatorFee: 0,
-    indicatorId: 0,
     processNumber: "",
   };
 
@@ -107,11 +83,8 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
             id: values.id,
             processNumber: values.processNumber,
             title: values.title,
-            lawyerId: values.lawyerId,
+            attorneyId: values.attorneyId,
             indicatorId: values.indicatorId,
-            businessFee: values.businessFee,
-            lawyerFee: values.lawyerFee,
-            indicatorFee: values.indicatorFee || undefined,
             status: values.status,
             createdAt: values.createdAt,
             closedAt: values?.status == CaseStatus.CLOSED ? values?.closedAt || new Date().toISOString() : null,
@@ -119,7 +92,6 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
             companyId: values.companyId,
           };
 
-          console.log(body);
           Object.entries(body).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
               formData.append(key, value as any);
@@ -127,20 +99,16 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
           });
           const res = await updateCase(formData);
 
-          console.log("res", res);
           if (typeof res === "object") {
             router.refresh();
             handleClose();
           }
         } else {
           const body = {
-            clientId: values.clientId,
-            lawyerId: values.lawyerId,
-            title: values.title,
-            businessFee: Number(values.businessFee),
-            lawyerFee: Number(values.lawyerFee),
-            indicatorFee: values.indicatorFee ? Number(values.indicatorFee) : null,
             processNumber: values.processNumber,
+            clientId: values.clientId,
+            attorneyId: values.attorneyId,
+            title: values.title,
           };
           Object.entries(body).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
@@ -233,9 +201,9 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
               <div className="col-span-12 md:col-span-4">
                 <Label>Advogado</Label>
                 <Select
-                  value={values.lawyerId || ""}
+                  value={values.attorneyId || ""}
                   onValueChange={(value) => {
-                    setFieldValue("lawyerId", value);
+                    setFieldValue("attorneyId", value);
                   }}
                 >
                   <SelectTrigger className="w-full" variant="filled">
@@ -252,7 +220,9 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
                       ))}
                   </SelectContent>
                 </Select>
-                {errors.lawyerId && touched.lawyerId && <div className="text-red-500 text-sm">{errors.lawyerId}</div>}
+                {errors.attorneyId && touched.attorneyId && (
+                  <div className="text-red-500 text-sm">{errors.attorneyId}</div>
+                )}
               </div>
 
               {/* TÍTULO */}
@@ -263,7 +233,7 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
               </div>
 
               {/* INDICATOR ID */}
-              <div className="col-span-12 md:col-span-4">
+              {/* <div className="col-span-12 md:col-span-4">
                 <Label>Indicador</Label>
                 <Select
                   value={values.indicatorId?.toString() || ""}
@@ -285,10 +255,8 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
                       ))}
                   </SelectContent>
                 </Select>
-                {errors.indicatorId && touched.indicatorId && (
-                  <div className="text-red-500 text-sm">{errors.indicatorId}</div>
-                )}
-              </div>
+                
+              </div> */}
 
               {/* STATUS */}
               {editData ? (
@@ -326,36 +294,6 @@ export default function CaseModal({ editData, handleClose }: CaseModalProps) {
                   />
                 </div>
               ) : null}
-
-              <div className="col-span-12 grid grid-cols-12 gap-4 p-4 border rounded-lg bg-gray-50">
-                <div className="col-span-12">
-                  <h3>Preferência de divisão</h3>
-                </div>
-                {/* FEES */}
-                <div className="col-span-12 md:col-span-4">
-                  <Label>Honorário Empresarial (%)</Label>
-                  <Field as={Input} type="number" name="businessFee" variant="filled" />
-                  {errors.businessFee && touched.businessFee && (
-                    <div className="text-red-500 text-sm">{errors.businessFee}</div>
-                  )}
-                </div>
-
-                <div className="col-span-12 md:col-span-4">
-                  <Label>Honorário Advogado (%)</Label>
-                  <Field as={Input} type="number" name="lawyerFee" variant="filled" />
-                  {errors.lawyerFee && touched.lawyerFee && (
-                    <div className="text-red-500 text-sm">{errors.lawyerFee}</div>
-                  )}
-                </div>
-
-                <div className="col-span-12 md:col-span-4">
-                  <Label>Honorário Indicador (%)</Label>
-                  <Field as={Input} type="number" name="indicatorFee" variant="filled" />
-                  {errors.indicatorFee && touched.indicatorFee && (
-                    <div className="text-red-500 text-sm">{errors.indicatorFee}</div>
-                  )}
-                </div>
-              </div>
 
               {/* SUBMIT */}
               <div className="col-span-12 flex justify-end">

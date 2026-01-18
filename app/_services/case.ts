@@ -9,7 +9,7 @@ export enum CaseStatus {
 export type ICase = {
   id: string;
   title: string;
-  lawyerId: string;
+  attorneyId: string;
   indicatorId: null;
   businessFee: number;
   lawyerFee: number;
