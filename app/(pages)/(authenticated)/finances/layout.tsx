@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
-import { LuArrowRightLeft, LuBookText, LuCreditCard, LuDollarSign, LuUsers } from "react-icons/lu";
+import { LuArrowRightLeft, LuCreditCard, LuDollarSign, LuUsers } from "react-icons/lu";
 import { MdCurrencyExchange, MdOutlineBalance } from "react-icons/md";
 
 function Layout({ children }: { children: ReactNode }) {
@@ -39,11 +39,11 @@ function Layout({ children }: { children: ReactNode }) {
       label: "Pagamento de clientes",
       icon: <LuCreditCard className="size-4 shrink-0" />,
     },
-    {
-      link: "/finances/categories",
-      label: "Categorias",
-      icon: <LuBookText className="size-4 shrink-0" />,
-    },
+    // {
+    //   link: "/finances/categories",
+    //   label: "Categorias",
+    //   icon: <LuBookText className="size-4 shrink-0" />,
+    // },
   ];
 
   return (
