@@ -16,6 +16,11 @@ import { Input } from "@/app/_components/ui/Input";
 import { Label } from "@/app/_components/ui/Label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { DatePicker } from "@/app/_components/ui/DatePicker";
+import { typeTranslate } from "@/app/(pages)/(authenticated)/finances/transactions/_components/TransactionTable";
+import {
+  statusBgColor,
+  statusTranslate,
+} from "@/app/(pages)/(authenticated)/finances/payments/_components/ClientPaymentsTab/ClientPaymentsTable";
 
 type ModalType = {
   data: GetAllPaymentDataType;
@@ -34,19 +39,6 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
 
   const { mutateAsync: payPayment, isPending } = usePayPayment();
   const { mutateAsync: deletePayment } = useDeletePayment();
-
-  const statusBgColor: any = {
-    PENDING: "bg-yellow-200",
-    PAID: "bg-green-200",
-    LATE: "bg-red-200",
-    OVERDUE: "bg-red-200", // arrive from entry
-  };
-
-  const statusTranslate: any = {
-    PENDING: "Aguardando pagamento (pendente)",
-    PAID: "Pagamento já realizado",
-    LATE: "Pagamento em atraso",
-  };
 
   const SplitTypeTranslate = {
     OFFICE_FEE: "Escritorio",
@@ -232,6 +224,25 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                   <div className="">{SplitTypeTranslate[item.type]}</div>
                   <div>
                     {numberFormat(item.calculatedAmount, "pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              <hr className="border-t border-gray-300" />
+
+              <div className="">
+                <div className="font-semibold">Transações do pagamentos</div>
+              </div>
+
+              {data.transactions?.map((item, key) => (
+                <div className="flex justify-between text-xs" key={key}>
+                  <div className="">{typeTranslate[item.type]}</div>
+                  <div>Pago: {moment(item.effectiveDate).format("DD/MM/YYYY")}</div>
+                  <div>
+                    {numberFormat(item.amount, "pt-br", {
                       style: "currency",
                       currency: "BRL",
                     })}

@@ -11,6 +11,14 @@ type ITable = {
   //   handleDelete: (document: string) => void;
 };
 
+export const typeTranslate = {
+  INCOME: "Entrada",
+  EXPENSE: "Saída",
+  TRANSFER: "Transferência",
+  REFUND: "Estorno",
+  ADJUSTMENT: "Ajuste manual",
+};
+
 export const statusTranslate = {
   PENDING: "Pendente",
   COMPLETED: "Concluída",
@@ -26,14 +34,6 @@ export default function TransactionTable({ data }: ITable) {
     FAILED: "bg-red-200",
     CANCELLED: "bg-yellow-200",
     REVERSED: "bg-yellow-200",
-  };
-
-  const typeTranslate = {
-    INCOME: "Entrada",
-    EXPENSE: "Saída",
-    TRANSFER: "Transferência",
-    REFUND: "Estorno",
-    ADJUSTMENT: "Ajuste manual",
   };
 
   return (
