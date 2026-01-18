@@ -3,7 +3,6 @@
 import { GetTransactionsParams } from "@/app/_services/finanances";
 import ClientPaymentsTable from "../TransactionTable";
 import Header from "../Header";
-import { useTransactions } from "@/app/_hooks/finances";
 import { useState } from "react";
 import Skeleton from "@/app/_components/ui/Skeleton";
 import { LuPlus, LuUsers } from "react-icons/lu";

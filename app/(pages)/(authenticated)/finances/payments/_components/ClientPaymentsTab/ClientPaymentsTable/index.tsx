@@ -22,15 +22,15 @@ export const statusTranslate = {
   REFUNDED: "Estornado", // Estornado
 };
 
-export default function ClientPaymentsTable({ data, handlePay }: IClientPaymentsTable) {
-  const statusBgColor = {
-    PENDING: "bg-yellow-200",
-    PARTIAL: "bg-yellow-200",
-    CANCELLED: "bg-blue-200",
-    PAID: "bg-green-300",
-    REFUNDED: "bg-brown-200",
-  };
+export const statusBgColor = {
+  PENDING: "bg-yellow-200",
+  PARTIAL: "bg-yellow-200",
+  CANCELLED: "bg-blue-200",
+  PAID: "bg-green-300",
+  REFUNDED: "bg-brown-200",
+};
 
+export default function ClientPaymentsTable({ data, handlePay }: IClientPaymentsTable) {
   // const splitTranslate = {
   //   LAWYER: "Advogado",
   //   INDICATOR: "indicação",
