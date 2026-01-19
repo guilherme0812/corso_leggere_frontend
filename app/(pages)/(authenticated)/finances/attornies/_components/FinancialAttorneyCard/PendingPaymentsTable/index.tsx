@@ -8,6 +8,8 @@ import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import { LuCopy } from "react-icons/lu";
 import { statusBgColor, statusTranslate } from "../../../../payments/_components/ClientPaymentsTab/ClientPaymentsTable";
+import { Tooltip } from "@/app/_components/ui/Tooltip";
+import { MdOutlinePayments } from "react-icons/md";
 
 type ITable = {
   data: AttorneyPendingPaymentDataType[];
@@ -35,6 +37,7 @@ export default function PendingPaymentsTable({ data }: ITable) {
             <TableHead>Status pag. cliente</TableHead>
             <TableHead>Valor pag. cliente</TableHead>
             <TableHead>A receber</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-xs">
@@ -81,6 +84,13 @@ export default function PendingPaymentsTable({ data }: ITable) {
                   style: "currency",
                   currency: "BRL",
                 })}
+              </TableCell>
+              <TableCell>
+                <Tooltip content="Pagar advogado">
+                  <Button variant={"ghost"} size={"sm"}>
+                    <MdOutlinePayments />
+                  </Button>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}

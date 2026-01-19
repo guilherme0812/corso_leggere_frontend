@@ -36,6 +36,16 @@ export function usePayments({ filters, initialData, enabled = true }: UsePayment
   });
 }
 
+export function usePaymentInstallments({ filters, initialData, enabled = true }: UsePaymentsProps) {
+  return useQuery({
+    queryKey: ["PAYMENT_INSTALLMENTS_QUERY_KEY", filters],
+    queryFn: () => getPaymentsClientSide(filters),
+    enabled,
+    initialData,
+    // staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+}
+
 const TRANSACTIONS_QUERY_KEY = "TRANSACTIONS";
 
 type UseTransactionsProps = {

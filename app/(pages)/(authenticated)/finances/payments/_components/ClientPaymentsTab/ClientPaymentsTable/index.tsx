@@ -4,8 +4,6 @@ import { Tooltip } from "@/app/_components/ui/Tooltip";
 import { GetAllPaymentDataType } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
-import { enqueueSnackbar } from "notistack";
-import { LuCopy } from "react-icons/lu";
 import { MdOutlinePayments } from "react-icons/md";
 
 type IClientPaymentsTable = {

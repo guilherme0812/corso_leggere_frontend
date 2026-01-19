@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/Button";
 import { GetAllPaymentDataType, PayPaymentDataType } from "@/app/_services/finanances";
-import { usePayPayment } from "@/app/_hooks/finances";
+import { usePaymentInstallments, usePayPayment } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
@@ -21,6 +21,7 @@ import {
   statusBgColor,
   statusTranslate,
 } from "@/app/(pages)/(authenticated)/finances/payments/_components/ClientPaymentsTab/ClientPaymentsTable";
+import Skeleton from "@/app/_components/ui/Skeleton";
 
 type ModalType = {
   data: GetAllPaymentDataType;
@@ -38,6 +39,12 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
   });
 
   const { mutateAsync: payPayment, isPending } = usePayPayment();
+  const { data: installments, isFetching: installmentsIsLoading } = usePaymentInstallments({
+    filters: {
+      parentPaymentId: data.parentPaymentId as string,
+    },
+    enabled: data.parentPaymentId ? true : false,
+  });
 
   const SplitTypeTranslate = {
     OFFICE_FEE: "Escritorio",
@@ -164,6 +171,15 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                 </div>
               ) : null}
 
+              {data.parentPaymentId ? (
+                <div className="flex justify-between">
+                  <div className="font-semibold">Parcela</div>
+                  <div>
+                    {data.installmentNumber} de {data.installmentTotal}
+                  </div>
+                </div>
+              ) : null}
+
               {/* <div className="flex justify-between items-center">
                 <div className="font-semibold">Método de pagamento</div>
                 <div>{paymentMethodTranslate[data.]}</div>
@@ -220,7 +236,9 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
 
               {data.distributions?.map((item, key) => (
                 <div className="flex justify-between text-xs" key={key}>
-                  <div className="">{SplitTypeTranslate[item.type]}</div>
+                  <div className="">
+                    {SplitTypeTranslate[item.type]}: {item.beneficiary?.name}
+                  </div>
                   <div>
                     {numberFormat(item.calculatedAmount, "pt-br", {
                       style: "currency",
@@ -250,6 +268,55 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                       </div>
                     </div>
                   ))}
+                </>
+              ) : null}
+
+              {installments?.length ? (
+                <>
+                  <hr className="border-t border-gray-300" />
+
+                  <div className="">
+                    <div className="font-semibold">Parcelas</div>
+                  </div>
+
+                  {installments?.map((item, key) => (
+                    <div className="flex justify-between text-xs" key={key}>
+                      <div className="flex items-center gap-2">
+                        <div>
+                          Parcela {item.installmentNumber} de {item.installmentTotal}{" "}
+                          {item.id == data.id ? "(Atual em exibiçao)" : null}
+                        </div>
+                        -
+                        <div>
+                          {numberFormat(item.totalAmount, "pt-br", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div>{moment(item.dueDate).format("DD/MM/yyyy")}</div>
+
+                        <div
+                          className={`${
+                            statusBgColor[item.status]
+                          } p-1 px-2 text-xs flex justify-center font-medium min-w-[50px] rounded`}
+                        >
+                          {statusTranslate[item.status]}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              ) : null}
+
+              {installmentsIsLoading ? (
+                <>
+                  <Skeleton className="w-full h-5 mb-2 bg-gray-200" />
+                  <Skeleton className="w-full h-5 mb-2 bg-gray-200" />
+                  <Skeleton className="w-full h-5 mb-2 bg-gray-200" />
+                  <Skeleton className="w-full h-5 mb-2 bg-gray-200" />
                 </>
               ) : null}
             </div>

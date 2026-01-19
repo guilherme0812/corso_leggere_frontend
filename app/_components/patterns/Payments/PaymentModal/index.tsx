@@ -24,6 +24,7 @@ import { LuCalendar, LuCheck, LuChevronRight, LuDollarSign, LuPlus, LuTrash2 } f
 import { numberFormat } from "@/app/_utils";
 import { useBeneficiaries } from "@/app/_hooks/beneficiary";
 import { BeneficiaryDataType, BeneficiaryTypeEnum } from "@/app/_services/beneficiary";
+import { Switch } from "@/app/_components/ui/switch";
 
 type ModalType = {
   handleClose(): void;
@@ -38,7 +39,7 @@ const schema = Yup.object().shape({
   status: Yup.string().required("Data de vencimento é obrigatório"),
 });
 
-function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
+function PaymentModal({ handleClose, initialCaseId }: ModalType) {
   const [step, setStep] = useState(1);
 
   const [splits, setSplits] = useState<CreateDistribution[]>([]);
@@ -81,11 +82,19 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
 
       const payload: PaymentBodyType = {
         caseId: values.caseId,
-        dueDate: values.dueDate,
+        dueDate: values.dueDate.toISOString().split("T")[0],
         totalAmount: values.totalAmount,
         distributions,
       };
 
+      if (values.hasInstallments) {
+        payload.installments = {
+          enabled: true,
+          firstDueDate: values.dueDate.toISOString().split("T")[0],
+          interval: values.interval || "MONTHLY",
+          quantity: Number(values.installmentsQuantity),
+        };
+      }
       const res = await createPayment(payload);
 
       enqueueSnackbar({ message: "Pagamento criado com sucesso", variant: "success" });
@@ -95,79 +104,31 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
     }
   }
 
-  const initialValues = editData
-    ? editData
-    : {
-        caseId: initialCaseId,
-        totalAmount: 0,
-        dueDate: undefined,
-        status: "PENDING",
-        method: undefined,
-      };
+  const installmentInterval = [
+    {
+      id: "MONTHLY",
+      label: "Mensal",
+    },
+    {
+      id: "BIWEEKLY",
+      label: "A cada duas semanas",
+    },
+    {
+      id: "WEEKLY",
+      label: "Mensal",
+    },
+  ];
 
-  // const statusOptions = [
-  //   {
-  //     id: PaymentStatus.PENDING,
-  //     label: PaymentStatus.PENDING.toLocaleLowerCase(),
-  //   },
-  //   // {
-  //   //   id: PaymentStatus.PAID,
-  //   //   label: PaymentStatus.PAID.toLocaleLowerCase(),
-  //   // },
-  //   {
-  //     id: PaymentStatus.,
-  //     label: PaymentStatus.LATE.toLocaleLowerCase(),
-  //   },
-  // ];
-
-  // const statusOptionsTranslate = {
-  //   [PaymentStatus.PENDING]: "Pendente",
-  //   [PaymentStatus.PAID]: "Pago",
-  //   [PaymentStatus.LATE]: "Atrasado",
-  // };
-  // const splitOptions = [
-  //   {
-  //     id: SplitType.LAWYER,
-  //     label: "Advogado",
-  //   },
-  //   {
-  //     id: SplitType.INDICATOR,
-  //     label: "Indicação",
-  //   },
-  // ];
-
-  // const amountOptions = [
-  //   {
-  //     id: AmountType.FIXED,
-  //     label: "Valor fixo",
-  //   },
-  //   {
-  //     id: AmountType.PERCENTAGE,
-  //     label: "Porcentagem",
-  //   },
-  // ];
-
-  // const handleAddSplit = () => {
-  //   setSplits((old) => [
-  //     ...old,
-  //     {
-  //       amount: 0,
-  //       type: SplitType.LAWYER,
-  //       amountType: selectedAmountType,
-  //     },
-  //   ]);
-  // };
-
-  // const handleRemoveSplit = (index: number) => {
-  //   setSplits((old) => old.filter((_, i) => i !== index));
-  // };
-  // const handleUpdateSplitAmount = (index: number, value: number) => {
-  //   setSplits((old) => old.map((item, i) => (i === index ? { ...item, amount: value } : item)));
-  // };
-  // const handleUpdateSplitType = (index: number, value: SplitType) => {
-  //   setSplits((old) => old.map((item, i) => (i === index ? { ...item, type: value } : item)));
-  // };
-
+  const initialValues = {
+    caseId: initialCaseId,
+    totalAmount: 0,
+    dueDate: undefined,
+    status: "PENDING",
+    method: undefined,
+    hasInstallments: false,
+    installmentsQuantity: 0,
+    interval: "",
+  };
   const availableAttornies =
     beneficiaries
       ?.filter((d) => d.type == BeneficiaryTypeEnum.ATTORNEY)
@@ -220,6 +181,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
     <Dialog open onOpenChange={handleClose}>
       <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
         {({ errors, touched, values, setFieldValue }) => {
+          console.log(errors);
           return (
             <DialogContent className="max-w-screen-lg max-h-[95vh] overflow-y-auto grid grid-cols-12 p-0 border-none">
               <div className="col-span-4 bg-slate-800 text-white p-4">
@@ -297,109 +259,21 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                 {/* Footer Sidebar */}
                 <div className="mt-auto pt-6 border-t border-slate-700">
                   <div className="text-xs text-slate-300 mb-2">Valor Total</div>
-                  <div className="text-3xl font-bold text-white">
+                  <div className="text-3xl font-bold text-white flex items-center gap-2">
                     {numberFormat(values.totalAmount, "pt-br", {
                       style: "currency",
                       currency: "BRL",
-                    })}
+                    })}{" "}
+                    <span className="text-sm">
+                      {values.hasInstallments && values.installmentsQuantity
+                        ? `(${values.installmentsQuantity} parcelas)`
+                        : null}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <Form className="flex flex-col col-span-8 min-h-[60vh]">
-                {/* 
-
-                  {values.amount && values.dueDate ? (
-                    <div className="border rounded min-h-36 p-4 flex flex-col text-sm gap-2 col-span-12">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-4">
-                          <div className="font-semibold flex-shrink-0">Divisão financeira</div>
-                          <Select
-                            value={selectedAmountType || ""}
-                            onValueChange={(value) => {
-                              setSplits([]);
-                              setSelectedType(value as AmountType);
-                            }}
-                          >
-                            <SelectTrigger className="w-full" variant="simple">
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-
-                            <SelectContent>
-                              {amountOptions?.map((item) => (
-                                <SelectItem key={item.id} value={item.id}>
-                                  {item.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div>
-                          <Button type="button" size="icon" variant="ghost" onClick={handleAddSplit}>
-                            <LuPlus />
-                          </Button>
-                        </div>
-                      </div>
-                      <hr className="border-t border-gray-300" />
-
-                      <div className="grid grid-cols-12 gap-4 px-6">
-                        <div className="col-span-5">
-                          <Label>Beneficiário</Label>
-                        </div>
-                        <div className="col-span-5">
-                          <Label>Valor</Label>
-                        </div>
-                      </div>
-                      {splits.map((item, index) => (
-                        <div key={index} className="bg-gray-200 p-2 px-4 rounded-md grid grid-cols-12 gap-4">
-                          <div className="col-span-5 flex items-center text-sm">
-                            <Select
-                              value={item.type || ""}
-                              onValueChange={(value) => {
-                                handleUpdateSplitType(index, value as SplitType);
-                              }}
-                            >
-                              <SelectTrigger className="w-full" variant="simple">
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-
-                              <SelectContent>
-                                {splitOptions?.map((item) => (
-                                  <SelectItem key={item.id} value={item.id}>
-                                    {item.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="col-span-4 flex items-center gap-2">
-                            <NumericFormat
-                              customInput={Input}
-                              variant="simple"
-                              value={item.amount}
-                              decimalSeparator=","
-                              thousandSeparator="."
-                              onValueChange={({ floatValue }) => handleUpdateSplitAmount(index, floatValue || 0)}
-                            />
-                            <div>{selectedAmountType == AmountType.FIXED ? "R$" : "%"}</div>
-                          </div>
-                          <div className="col-span-3 flex justify-end">
-                            <Button size={"icon"} variant={"ghost"} onClick={() => handleRemoveSplit(index)}>
-                              <LuTrash />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  <div className="col-span-12 flex justify-end mt-8">
-                    <Button disabled={isPending || totalSplitsAmount > values.amount} type="submit">
-                      {isPending ? <>Carregando...</> : editData ? "Salvar mudanças" : "Salvar"}
-                    </Button>
-                  </div> */}
-
                 <div className="px-8 py-6 border-b border-gray-200 flex items-center justify-between bg-white">
                   <div>
                     <h3 className="text-xl font-bold text-gray-900">
@@ -469,8 +343,70 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                           )}
                         </div>
 
+                        <div className="col-span-1">
+                          <Label>Parcelar pagamento</Label>
+                          <div className="pt-3">
+                            <Switch
+                              checked={values.hasInstallments}
+                              onCheckedChange={(v) => setFieldValue("hasInstallments", v)}
+                            />
+                          </div>
+                        </div>
+
+                        {values.hasInstallments ? (
+                          <>
+                            <div className="col-span-1">
+                              <Label>Parcelar pagamento</Label>
+                              <Select
+                                value={values.installmentsQuantity.toString() || ""}
+                                onValueChange={(value) => {
+                                  setFieldValue("installmentsQuantity", value);
+                                }}
+                              >
+                                <SelectTrigger className="w-full" variant="filled">
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                  {new Array(19).fill(0).map((opt, key) => (
+                                    <SelectItem key={key} value={(key + 2).toString()}>
+                                      {key + 2} parcelas -{" "}
+                                      {numberFormat(values.totalAmount / (key + 2), "pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                      })}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div className="col-span-1">
+                              <Label>Parcelas a cada</Label>
+                              <Select
+                                value={values.interval || ""}
+                                onValueChange={(value) => {
+                                  setFieldValue("interval", value);
+                                }}
+                              >
+                                <SelectTrigger className="w-full" variant="filled">
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                  {installmentInterval.map((opt, key) => (
+                                    <SelectItem key={key} value={opt.id}>
+                                      {opt.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </>
+                        ) : null}
+
                         <div>
-                          <Label>Data de Vencimento</Label>
+                          <Label>{values.hasInstallments ? "Primeiro vencimento" : "Data do vencimento"}</Label>
                           <div className="relative">
                             <LuCalendar className="absolute left-3 top-[0.85rem] text-gray-600" size={20} />
                             <DatePicker
@@ -596,7 +532,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                                           updateSplit(
                                             split.beneficiaryId,
                                             selectedAmountType === AmountType.PERCENTAGE ? "percentage" : "fixedAmount",
-                                            floatValue || 0
+                                            floatValue || 0,
                                           )
                                         }
                                         allowNegative={false}
@@ -681,7 +617,7 @@ function PaymentModal({ editData, handleClose, initialCaseId }: ModalType) {
                                           updateSplit(
                                             split.beneficiaryId,
                                             selectedAmountType === AmountType.PERCENTAGE ? "percentage" : "fixedAmount",
-                                            floatValue || 0
+                                            floatValue || 0,
                                           )
                                         }
                                         allowNegative={false}

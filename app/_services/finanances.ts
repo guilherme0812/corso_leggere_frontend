@@ -286,6 +286,9 @@ export type PaymentDataType = {
   dueDate: string;
   status: PaymentStatus;
   caseId: string;
+  installmentTotal: number | null;
+  installmentNumber: number | null;
+  parentPaymentId: string | null;
   companyId: string;
   createdAt: string;
   updatedAt: string;
@@ -302,6 +305,12 @@ export type PaymentBodyType = {
   dueDate: string;
   totalAmount: number;
   distributions: CreateDistribution[];
+  installments?: {
+    enabled: true;
+    quantity: number;
+    interval: "MONTHLY" | "BIWEEKLY" | "WEEKLY"; // MONTHLY, BIWEEKLY, WEEKLY
+    firstDueDate: string; // Opcional, usa dueDate se não informado
+  };
 };
 
 export type PayPaymentDataType = {
@@ -366,9 +375,7 @@ export type DistributionDataType = {
   paidAt: string | null;
   paidAmount: number;
   caseId: string;
-  companyId: string;
-  createdAt: string;
-  updatedAt: string;
+  beneficiary?: { name: string };
 };
 
 export type CreateDistribution = {
@@ -463,6 +470,7 @@ export type GetAllPaymentsParams = {
   status?: PaymentStatus | null;
   caseId?: string | null;
   processNumber?: string | null;
+  parentPaymentId?: string;
 };
 
 type SummaryDataType = {
