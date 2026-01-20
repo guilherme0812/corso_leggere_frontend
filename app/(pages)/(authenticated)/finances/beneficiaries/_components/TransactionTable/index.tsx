@@ -1,12 +1,14 @@
 "use client";
 
+import { Button } from "@/app/_components/ui/Button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { BeneficiaryDataType } from "@/app/_services/beneficiary";
+import { LuPencil, LuTrash } from "react-icons/lu";
 
 type ITable = {
   data: BeneficiaryDataType[];
-  // handlePay(data: TransactionDataType): void;
-  //   handleDelete: (document: string) => void;
+  handleEdit(client: BeneficiaryDataType): void;
+  handleDelete: (id: string) => void;
 };
 
 export const typeTranslate = {
@@ -18,7 +20,7 @@ export const typeTranslate = {
   OTHER: "Outro",
 };
 
-export default function TransactionTable({ data }: ITable) {
+export default function TransactionTable({ data, handleDelete, handleEdit }: ITable) {
   const typeBgColor = {
     ATTORNEY: "bg-purple-200",
     REFERRAL: "bg-yellow-300",
@@ -38,6 +40,7 @@ export default function TransactionTable({ data }: ITable) {
             <TableHead>Telefone</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Document</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="text-xs">
@@ -53,13 +56,14 @@ export default function TransactionTable({ data }: ITable) {
               <TableCell className="font-medium">{item.email}</TableCell>
               <TableCell className="font-medium">{item.document}</TableCell>
 
-              {/* <TableCell>
-                <Tooltip content="Ver mais informações / Registrar pagamento">
-                  <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
-                    <MdOutlinePayments />
-                  </Button>
-                </Tooltip>
-              </TableCell> */}
+              <TableCell className="flex gap-4">
+                <Button variant="outline" size="sm" onClick={() => handleEdit(item)}>
+                  <LuPencil />
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => handleDelete(item.id)}>
+                  <LuTrash />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

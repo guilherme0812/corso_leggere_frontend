@@ -43,3 +43,56 @@ export const getBeneficiariesClientSide = async ({ name }: { name?: string | nul
     throw new Error("error");
   }
 };
+
+export const createBeneficiatyClientSide = async (body: Omit<BeneficiaryDataType, "id" | "companyId" | "isActive">) => {
+  try {
+    const res = await apiLeggere<any>({
+      url: `/financial/beneficiary`,
+      method: "POST",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error("error");
+  }
+};
+
+export const updateBeneficiatyClientSide = async (body: BeneficiaryDataType) => {
+  try {
+    const res = await apiLeggere<any>({
+      url: `/financial/beneficiary`,
+      method: "PUT",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error("error");
+  }
+};
+
+export const deleteBeneficiatyClientSide = async (id: string) => {
+  try {
+    const res = await apiLeggere<any>({
+      url: `/financial/beneficiary`,
+      method: "DELETE",
+      params: {
+        id,
+      },
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error("error");
+  }
+};
