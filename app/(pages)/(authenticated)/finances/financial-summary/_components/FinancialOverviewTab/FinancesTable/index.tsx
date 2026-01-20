@@ -1,9 +1,8 @@
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/Table";
 import { cn } from "@/app/_lib";
 import { TransactionDataType, TransactionStatusEnum, TransactionTypeEnum } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
-import { LuArrowDown, LuArrowDownRight, LuArrowUp, LuArrowUpRight } from "react-icons/lu";
+import { LuArrowDownRight, LuArrowUpRight } from "react-icons/lu";
 
 type IFinancesTable = {
   data: TransactionDataType[];
@@ -22,7 +21,7 @@ export default function FinancesTable({ data }: IFinancesTable) {
                 <div
                   className={cn(
                     "w-12 h-12 rounded-md flex-shrink-0 flex justify-center items-center text-xl",
-                    item.type == TransactionTypeEnum.INCOME ? "bg-green-200" : "bg-red-200"
+                    item.type == TransactionTypeEnum.INCOME ? "bg-green-200" : "bg-red-200",
                   )}
                 >
                   {item.type == TransactionTypeEnum.INCOME ? <LuArrowUpRight /> : <LuArrowDownRight />}
@@ -35,7 +34,7 @@ export default function FinancesTable({ data }: IFinancesTable) {
                     <div
                       className={cn(
                         "px-2 py-1 rounded-md lowercase",
-                        item.status == TransactionStatusEnum.COMPLETED ? "bg-green-200" : "bg-yellow-400"
+                        item.status == TransactionStatusEnum.COMPLETED ? "bg-green-200" : "bg-yellow-400",
                       )}
                     >
                       {item.status}

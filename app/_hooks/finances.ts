@@ -11,12 +11,14 @@ import {
   getPaymentsClientSide,
   getTransactionsClientSide,
   GetTransactionsParams,
+  payDistributionClientSide,
   payPaymentClientSide,
   removeFinancialCategoriesClientSide,
   TransactionDataType,
   updateFinancialCategoriesClientSide,
 } from "../_services/finanances";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { PENDING_PAYMENTS_KEY } from "./attorney";
 
 const PAYMENTS_QUERY_KEY = "payments";
 
@@ -164,6 +166,22 @@ export function useRemoveFinancialCategories() {
     onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: [FINANCIAL_CATEGORIES_QUERY_KEY],
+      });
+    },
+  });
+}
+
+// Distributions
+
+export function usePayDistribution() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: payDistributionClientSide,
+
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: [PENDING_PAYMENTS_KEY],
       });
     },
   });

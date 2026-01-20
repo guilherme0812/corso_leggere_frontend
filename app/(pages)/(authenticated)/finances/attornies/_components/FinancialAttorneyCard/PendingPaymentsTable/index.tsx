@@ -13,7 +13,7 @@ import { MdOutlinePayments } from "react-icons/md";
 
 type ITable = {
   data: AttorneyPendingPaymentDataType[];
-  // handlePay(data: TransactionDataType): void;
+  handlePay(data: AttorneyPendingPaymentDataType): void;
   //   handleDelete: (document: string) => void;
 };
 
@@ -26,13 +26,14 @@ export const typeTranslate = {
   OTHER: "Outro",
 };
 
-export default function PendingPaymentsTable({ data }: ITable) {
+export default function PendingPaymentsTable({ data, handlePay }: ITable) {
   return (
     <div className="absolute left-0 top-0 h-full w-full overflow-y-auto">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Código</TableHead>
+            <TableHead>Processo</TableHead>
             <TableHead>Vencimento</TableHead>
             <TableHead>Status pag. cliente</TableHead>
             <TableHead>Valor pag. cliente</TableHead>
@@ -43,8 +44,8 @@ export default function PendingPaymentsTable({ data }: ITable) {
         <TableBody className="text-xs">
           {data.map((item, index) => (
             <TableRow key={index}>
-              <TableCell className="font-medium group flex items-center gap-2">
-                <div>{item.payment.code}</div>
+              <TableCell className="font-medium max-w-[200px] group flex items-center gap-2">
+                <div className="truncate">{item.payment.code}</div>
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
                     variant={"ghost"}
@@ -62,6 +63,7 @@ export default function PendingPaymentsTable({ data }: ITable) {
                 </div>
               </TableCell>
 
+              <TableCell>{item.payment.case.title}</TableCell>
               <TableCell>{moment(item.dueDate).format("DD/MM/yyyy")}</TableCell>
               <TableCell>
                 <div
@@ -87,7 +89,7 @@ export default function PendingPaymentsTable({ data }: ITable) {
               </TableCell>
               <TableCell>
                 <Tooltip content="Pagar advogado">
-                  <Button variant={"ghost"} size={"sm"}>
+                  <Button variant={"ghost"} size={"sm"} onClick={() => handlePay(item)}>
                     <MdOutlinePayments />
                   </Button>
                 </Tooltip>

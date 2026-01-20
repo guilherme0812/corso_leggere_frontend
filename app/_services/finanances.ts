@@ -386,6 +386,31 @@ export type CreateDistribution = {
   beneficiary?: BeneficiaryDataType;
 };
 
+export type PayDistributionBody = {
+  distributionId: string;
+  amount: number;
+  method: string;
+  transactionDate: string;
+};
+
+export const payDistributionClientSide = async (body: PayDistributionBody) => {
+  try {
+    const res = await apiLeggere<any>({
+      url: `/financial/distribution/pay`,
+      method: "POST",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+//
+
 export const getPayments = async (params: GetAllPaymentsParams) => {
   try {
     // const prefix = _prefix != undefined ? _prefix : await getPrefix();

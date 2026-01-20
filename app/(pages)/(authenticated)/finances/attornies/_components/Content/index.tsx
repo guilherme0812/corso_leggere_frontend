@@ -10,7 +10,6 @@ import FinancialAttorneyCard from "../FinancialAttorneyCard";
 
 function Content() {
   const [selectedAttorney, setSelectedAttorney] = useState<IAttorney>();
-
   const { data, isLoading } = useAttornies({
     filters: {},
   });

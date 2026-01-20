@@ -12,7 +12,7 @@ import {
 const ATTORNIES_QUERY_KEY = "Attornies";
 const RECEIVED_BY_CASE_KEY = "received_by_case";
 const TOATAL_RECEIVED_KEY = "total_receivd";
-const PENDING_PAYMENTS_KEY = "attorney-pending-peyments";
+export const PENDING_PAYMENTS_KEY = "attorney-pending-peyments";
 
 type UseAttorneisProps = {
   filters: any;

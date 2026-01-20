@@ -1,10 +1,12 @@
 import { useAttorneyPendingPayments, useAttorneyReceivedByCase, useAttorneyTotalReceived } from "@/app/_hooks/attorney";
-import { IAttorney } from "@/app/_services/attorney";
+import { AttorneyPendingPaymentDataType, IAttorney } from "@/app/_services/attorney";
 import { numberFormat } from "@/app/_utils";
 import { LucideBarChart3 } from "lucide-react";
 import { LuArrowLeft, LuArrowUpRight, LuCreditCard, LuDollarSign } from "react-icons/lu";
 import ReceivedByCaseTable from "./ReceivedByCaseTable";
 import PendingPaymentsTable from "./PendingPaymentsTable";
+import { useState } from "react";
+import AttorneyPaymentDistribution from "../AttorneyPaymentDistribution";
 
 interface FinancialAttorneyCardProps {
   data: IAttorney;
@@ -12,6 +14,8 @@ interface FinancialAttorneyCardProps {
 }
 
 function FinancialAttorneyCard({ data, handleBack }: FinancialAttorneyCardProps) {
+  const [selectedDistribution, setSelectedDistribution] = useState<AttorneyPendingPaymentDataType>();
+
   const { data: cases } = useAttorneyReceivedByCase({
     filters: {
       attorneyId: data.id,
@@ -30,6 +34,10 @@ function FinancialAttorneyCard({ data, handleBack }: FinancialAttorneyCardProps)
     },
     initialData: [],
   });
+
+  const handleCloseDistributionModal = () => {
+    setSelectedDistribution(undefined);
+  };
 
   return (
     <div>
@@ -135,9 +143,13 @@ function FinancialAttorneyCard({ data, handleBack }: FinancialAttorneyCardProps)
       <div>
         <h3 className="font-semibold text-gray-500 text-sm mb-2 uppercase">Pagamentos pendentes</h3>
         <div className="relative  h-[50vh]">
-          <PendingPaymentsTable data={pendingPayments || []} />
+          <PendingPaymentsTable data={pendingPayments || []} handlePay={setSelectedDistribution} />
         </div>
       </div>
+
+      {selectedDistribution ? (
+        <AttorneyPaymentDistribution data={selectedDistribution} handleClose={handleCloseDistributionModal} />
+      ) : null}
     </div>
   );
 }
