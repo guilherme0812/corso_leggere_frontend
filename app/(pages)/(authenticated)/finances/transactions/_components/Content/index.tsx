@@ -1,7 +1,7 @@
 "use client";
 
 import { GetTransactionsParams } from "@/app/_services/finanances";
-import ClientPaymentsTable from "../TransactionTable";
+import TransactionTable from "../TransactionTable";
 import Header from "../Header";
 import { useTransactions } from "@/app/_hooks/finances";
 import { useState } from "react";
@@ -50,7 +50,7 @@ function Content() {
             <Skeleton className="h-[30px] mb-1 w-full bg-gray-200" />
           </>
         ) : (
-          <ClientPaymentsTable
+          <TransactionTable
             data={data || []}
             // handlePay={setPaymentToPay}
           />

@@ -2,8 +2,13 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/Button";
-import { GetAllPaymentDataType, PayPaymentDataType } from "@/app/_services/finanances";
-import { usePaymentInstallments, usePayPayment } from "@/app/_hooks/finances";
+import {
+  GetAllPaymentDataType,
+  PayPaymentDataType,
+  PayTransactionDTO,
+  TransactionDataType,
+} from "@/app/_services/finanances";
+import { usePaymentInstallments, usePayPayment, usePayTransaction } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
@@ -14,37 +19,47 @@ import { useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { Input } from "@/app/_components/ui/Input";
 import { Label } from "@/app/_components/ui/Label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/_components/ui/Select";
 import { DatePicker } from "@/app/_components/ui/DatePicker";
-import { typeTranslate } from "@/app/(pages)/(authenticated)/finances/transactions/_components/TransactionTable";
-import {
-  statusBgColor,
-  statusTranslate,
-} from "@/app/(pages)/(authenticated)/finances/payments/_components/ClientPaymentsTab/ClientPaymentsTable";
-import Skeleton from "@/app/_components/ui/Skeleton";
 
 type ModalType = {
-  data: GetAllPaymentDataType;
+  data: TransactionDataType;
   handleClose(): void;
 };
 
-function PayPaymentModal({ data, handleClose }: ModalType) {
+const statusBgColor = {
+  PENDING: "bg-yellow-200",
+  COMPLETED: "bg-green-200",
+  FAILED: "bg-red-200",
+  CANCELLED: "bg-yellow-200",
+  REVERSED: "bg-yellow-200",
+};
+
+export const typeTranslate = {
+  INCOME: "Entrada",
+  EXPENSE: "Saída",
+  TRANSFER: "Transferência",
+  REFUND: "Estorno",
+  ADJUSTMENT: "Ajuste manual",
+};
+
+export const statusTranslate = {
+  PENDING: "Pendente",
+  COMPLETED: "Concluída",
+  FAILED: "Falhou",
+  CANCELLED: "Cancelado",
+  REVERSED: "Estornada",
+};
+
+export default function TransactionInfoModal({ data, handleClose }: ModalType) {
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false);
   const [payModalIsOpen, setPayModalIsOpen] = useState(false);
-  const [payPaymentBody, setPayPaymentBody] = useState<PayPaymentDataType>({
-    amount: data.remainingAmount,
-    method: "",
-    paymentId: data.id,
+  const [paytransactionBody, setPayTransactionBody] = useState<PayTransactionDTO>({
+    amount: 0,
+    transactionId: data.id,
     transactionDate: new Date().toISOString().split("T")[0],
   });
 
-  const { mutateAsync: payPayment, isPending } = usePayPayment();
-  const { data: installments, isFetching: installmentsIsLoading } = usePaymentInstallments({
-    filters: {
-      parentPaymentId: data.parentPaymentId as string,
-    },
-    enabled: data.parentPaymentId ? true : false,
-  });
+  const { mutateAsync: payTransaction, isPending } = usePayTransaction();
 
   const SplitTypeTranslate = {
     OFFICE_FEE: "Escritorio",
@@ -57,13 +72,13 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
   const handleClickPay = async () => {
     try {
       if (data.id) {
-        const res = await payPayment({
-          ...payPaymentBody,
+        const res = await payTransaction({
+          ...paytransactionBody,
         });
 
         if (res) {
           enqueueSnackbar({
-            message: "Pagamento pago",
+            message: "Transação paga com sucesso",
             variant: "success",
           });
           handleClose();
@@ -138,15 +153,20 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
           <DialogHeader>
             <DialogTitle>informações sobre o pagamento</DialogTitle>
             <DialogDescription>
-              {data.status != "PAID"
+              {/* {data.status != "PAID"
                 ? "Confirme para efeituar o pagamento e a geração das proximas transaçoes"
-                : "Veja todas as informações sobre este pagamento"}
+                : "Veja todas as informações sobre este pagamento"} */}
             </DialogDescription>
           </DialogHeader>
 
           <div>
             <div className="flex flex-col justify-center items-center my-8">
-              <div className="font-semibold text-3xl text-center">R${numberFormat(data.totalAmount)}</div>
+              <div className="font-semibold text-3xl text-center">
+                {numberFormat(data.amount, "pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </div>
               <div
                 className={`${
                   statusBgColor[data.status]
@@ -157,33 +177,24 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
             </div>
 
             <div className="border rounded p-4 flex flex-col text-sm gap-2 mb-4">
-              {/* {data.paidAt ? (
+              <div className="flex justify-between">
+                <div className="font-semibold">Tipo</div>
+                <div>{data.type}</div>
+              </div>
+
+              {data.effectiveDate ? (
                 <div className="flex justify-between">
                   <div className="font-semibold">Data de pagamento</div>
-                  <div>{data.paidAt ? moment(data.paidAt).format("DD/MM/YYYY") : null}</div>
+                  <div>{data.effectiveDate ? moment(data.effectiveDate).format("DD/MM/YYYY") : null}</div>
                 </div>
-              ) : null} */}
+              ) : null}
 
-              {data.dueDate ? (
+              {data.transactionDate ? (
                 <div className="flex justify-between">
                   <div className="font-semibold">Data de vencimento</div>
-                  <div>{data.dueDate ? moment(data.dueDate).format("DD/MM/YYYY") : null}</div>
+                  <div>{data.transactionDate ? moment(data.transactionDate).format("DD/MM/YYYY") : null}</div>
                 </div>
               ) : null}
-
-              {data.parentPaymentId ? (
-                <div className="flex justify-between">
-                  <div className="font-semibold">Parcela</div>
-                  <div>
-                    {data.installmentNumber} de {data.installmentTotal}
-                  </div>
-                </div>
-              ) : null}
-
-              {/* <div className="flex justify-between items-center">
-                <div className="font-semibold">Método de pagamento</div>
-                <div>{paymentMethodTranslate[data.]}</div>
-              </div> */}
 
               <div className="flex justify-between items-center w-full">
                 <div className="font-semibold flex-shrink-0">Código do pagamento</div>
@@ -209,46 +220,17 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
 
               <hr className="border-t border-gray-300" />
 
-              <div className="">
-                <div className="font-semibold">Informações sobre o processo</div>
+              <div className="flex items-center gap-4 justify-between">
+                <div className="font-semibold flex-shrink-0">Descrição</div>
+                <div className="text-xs">{data.description}</div>
               </div>
 
-              <div className="flex justify-between text-xs">
-                <div className="">Descrição</div>
-                <div>{data.case?.title}</div>
-              </div>
-              <div className="flex justify-between text-xs">
-                <div className="">Número do processo</div>
-                <div>{data.case?.processNumber}</div>
-              </div>
-              {/* <div className="flex justify-between text-xs">
-                <div className="">Nome cliente/Responsável pelo pagamento</div>
-                <div>
-                  {data.case?.client.firstName} {data.case?.client.lastName}
-                </div>
-              </div> */}
-
-              <hr className="border-t border-gray-300" />
-
-              <div className="">
-                <div className="font-semibold">Divisão financeira</div>
+              <div className="flex items-center gap-4 justify-between">
+                <div className="font-semibold flex-shrink-0">Método de pagamento</div>
+                <div className="text-xs">{data.method}</div>
               </div>
 
-              {data.distributions?.map((item, key) => (
-                <div className="flex justify-between text-xs" key={key}>
-                  <div className="">
-                    {SplitTypeTranslate[item.type]}: {item.beneficiary?.name}
-                  </div>
-                  <div>
-                    {numberFormat(item.calculatedAmount, "pt-br", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </div>
-                </div>
-              ))}
-
-              {data?.transactions?.length ? (
+              {/* {data?.transactions?.length ? (
                 <>
                   <hr className="border-t border-gray-300" />
 
@@ -269,59 +251,10 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                     </div>
                   ))}
                 </>
-              ) : null}
-
-              {installments?.length ? (
-                <>
-                  <hr className="border-t border-gray-300" />
-
-                  <div className="">
-                    <div className="font-semibold">Parcelas</div>
-                  </div>
-
-                  {installments?.map((item, key) => (
-                    <div className="flex justify-between text-xs" key={key}>
-                      <div className="flex items-center gap-2">
-                        <div>
-                          Parcela {item.installmentNumber} de {item.installmentTotal}{" "}
-                          {item.id == data.id ? "(Atual em exibiçao)" : null}
-                        </div>
-                        -
-                        <div>
-                          {numberFormat(item.totalAmount, "pt-br", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <div>{moment(item.dueDate).format("DD/MM/yyyy")}</div>
-
-                        <div
-                          className={`${
-                            statusBgColor[item.status]
-                          } p-1 px-2 text-xs flex justify-center font-medium min-w-[50px] rounded`}
-                        >
-                          {statusTranslate[item.status]}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </>
-              ) : null}
-
-              {installmentsIsLoading ? (
-                <>
-                  <Skeleton className="w-full h-5 mb-2 bg-gray-200" />
-                  <Skeleton className="w-full h-5 mb-2 bg-gray-200" />
-                  <Skeleton className="w-full h-5 mb-2 bg-gray-200" />
-                  <Skeleton className="w-full h-5 mb-2 bg-gray-200" />
-                </>
-              ) : null}
+              ) : null} */}
             </div>
 
-            {data.status != "PAID" ? (
+            {/* {data.status != "PAID" ? (
               <div className="mt-4">
                 <Button className="w-full" onClick={() => setPayModalIsOpen(true)}>
                   {!isPending ? (
@@ -336,7 +269,7 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                   )}
                 </Button>
               </div>
-            ) : null}
+            ) : null} */}
 
             <Dialog open={payModalIsOpen} onOpenChange={setPayModalIsOpen}>
               <DialogContent className="max-w-screen-[400px] overflow-y-auto">
@@ -354,33 +287,10 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                     thousandSeparator="."
                     className="py-6"
                     onValueChange={({ floatValue }) =>
-                      setPayPaymentBody({ ...payPaymentBody, amount: floatValue || 0 })
+                      setPayTransactionBody({ ...paytransactionBody, amount: floatValue || 0 })
                     }
-                    value={payPaymentBody.amount}
+                    value={paytransactionBody.amount}
                   />
-                </div>
-
-                <div>
-                  <Label>Método de Pagamento</Label>
-
-                  <Select
-                    value={payPaymentBody.method || ""}
-                    onValueChange={(value) => {
-                      setPayPaymentBody({ ...payPaymentBody, method: value });
-                    }}
-                  >
-                    <SelectTrigger variant="filled" className="px-8 py-6">
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      {paymentMethods?.map((item) => (
-                        <SelectItem key={item.id} value={item.id}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 <div>
@@ -391,7 +301,10 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                     placeholder="Data em que foi pago"
                     onChange={(date) =>
                       date &&
-                      setPayPaymentBody({ ...payPaymentBody, transactionDate: date?.toISOString().split("T")[0] })
+                      setPayTransactionBody({
+                        ...paytransactionBody,
+                        transactionDate: date?.toISOString().split("T")[0],
+                      })
                     }
                   />
                 </div>
@@ -400,9 +313,7 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
                   <Button
                     type="button"
                     onClick={handleClickPay}
-                    disabled={
-                      payPaymentBody.amount && payPaymentBody.method && payPaymentBody.transactionDate ? false : true
-                    }
+                    disabled={paytransactionBody.amount && paytransactionBody.transactionDate ? false : true}
                     variant={"secondary"}
                     className="w-full py-6 bg-gradient-to-br from-emerald-500 to-emerald-600"
                   >
@@ -448,5 +359,3 @@ function PayPaymentModal({ data, handleClose }: ModalType) {
     </>
   );
 }
-
-export default PayPaymentModal;
