@@ -2,21 +2,21 @@ import { getMonthReports, getTransactions } from "@/app/_services/finanances";
 import FinanceChart from "../../../../painel/_compoenents/FinanceChart";
 import FinancesTable from "./FinancesTable";
 import { LuArrowDownRight, LuArrowUpRight, LuDollarSign, LuTrendingUp } from "react-icons/lu";
-import moment from "moment";
+// import moment from "moment";
 import { numberFormat } from "@/app/_utils";
 import { LucideBarChart3 } from "lucide-react";
-import { Button } from "@/app/_components/ui/Button";
+import ButtonsSection from "../ButtonsSection";
 
 async function FinancialOverviewTab({ companyReportData }: { companyReportData: any }) {
   const mockData = companyReportData;
 
-  const startDate = moment().subtract(12, "months").format("YYYY-MM-DD");
-  const endDate = moment().format("YYYY-MM-DD");
+  // const startDate = moment().subtract(12, "months").format("YYYY-MM-DD");
+  // const endDate = moment().format("YYYY-MM-DD");
 
-  const monthReports = await getMonthReports({
-    startDate,
-    endDate,
-  });
+  // const monthReports = await getMonthReports({
+  //   startDate,
+  //   endDate,
+  // });
 
   // const summary = await getFiancialSummary({});
   const transactions = await getTransactions({
@@ -65,12 +65,7 @@ async function FinancialOverviewTab({ companyReportData }: { companyReportData: 
       </div> */}
 
       <div className="bg-white rounded-md p-4 shadow-custom mb-4 flex justify-end gap-4">
-        <Button className="transition-all bg-gradient-to-br from-emerald-500 to-emerald-600  hover:from-emerald-500 duration-500 hover:to-emerald-700">
-          <LuArrowUpRight /> Conta a receber
-        </Button>
-        <Button className="bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700">
-          <LuArrowDownRight /> Conta a pagar
-        </Button>
+        <ButtonsSection />
       </div>
 
       <div>
@@ -153,7 +148,7 @@ async function FinancialOverviewTab({ companyReportData }: { companyReportData: 
           <h3 className="font-semibold text-gray-500 text-sm mb-2 uppercase">RESUMO FINANCEIRO DOS ULTIMOS 12 MESES</h3>
 
           <div className="flex-grow bg-white rounded-md  shadow-custom p-4">
-            <FinanceChart data={monthReports || []} />
+            <FinanceChart data={[]} />
           </div>
         </div>
 

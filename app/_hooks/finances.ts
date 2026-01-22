@@ -2,6 +2,7 @@ import {
   CashFlowDataType,
   createFinancialCategoriesClientSide,
   createPaymentClientSide,
+  createTransactionsClientSide,
   FinancialCategoryDataType,
   GetAllPaymentDataType,
   GetAllPaymentsParams,
@@ -13,6 +14,7 @@ import {
   GetTransactionsParams,
   payDistributionClientSide,
   payPaymentClientSide,
+  payTransactionsClientSide,
   removeFinancialCategoriesClientSide,
   TransactionDataType,
   updateFinancialCategoriesClientSide,
@@ -48,6 +50,8 @@ export function usePaymentInstallments({ filters, initialData, enabled = true }:
   });
 }
 
+// TRansactions
+
 const TRANSACTIONS_QUERY_KEY = "TRANSACTIONS";
 
 type UseTransactionsProps = {
@@ -63,6 +67,36 @@ export function useTransactions({ filters, initialData, enabled = true }: UseTra
     enabled,
     initialData,
     // staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+}
+
+export function useCreateTransaction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createTransactionsClientSide,
+
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: [TRANSACTIONS_QUERY_KEY],
+        exact: false,
+      });
+    },
+  });
+}
+
+export function usePayTransaction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: payTransactionsClientSide,
+
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: [TRANSACTIONS_QUERY_KEY],
+        exact: false,
+      });
+    },
   });
 }
 

@@ -232,6 +232,22 @@ export type TransactionDataType = {
   updatedAt: string;
 };
 
+export type CreateTransactionDTO = {
+  type: "INCOME" | "EXPENSE";
+  amount: number;
+  method: string;
+  description: string;
+  dueDate: string;
+  categoryId: null | string;
+  beneficiaryId: string;
+};
+
+export type PayTransactionDTO = {
+  transactionId: string;
+  amount: number;
+  transactionDate: string;
+};
+
 export const getTransactions = async (params: GetTransactionsParams) => {
   try {
     // const prefix = _prefix != undefined ? _prefix : await getPrefix();
@@ -263,6 +279,42 @@ export const getTransactionsClientSide = async (params: GetTransactionsParams) =
     return data || [];
   } catch (error: any) {
     console.log(error);
+  }
+};
+
+export const createTransactionsClientSide = async (body: CreateTransactionDTO) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<any>({
+      url: `/financial/create-transaction`,
+      method: "POST",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error();
+  }
+};
+
+export const payTransactionsClientSide = async (body: PayTransactionDTO) => {
+  try {
+    // const prefix = _prefix != undefined ? _prefix : await getPrefix();
+    const res = await apiLeggere<any>({
+      url: `/financial/transaction/pay`,
+      method: "POST",
+      data: body,
+    });
+
+    const { data } = res;
+
+    return data || [];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error();
   }
 };
 

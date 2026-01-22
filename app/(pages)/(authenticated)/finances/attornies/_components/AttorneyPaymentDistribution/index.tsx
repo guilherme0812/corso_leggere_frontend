@@ -9,6 +9,7 @@ import { usePayDistribution } from "@/app/_hooks/finances";
 import { AttorneyPendingPaymentDataType } from "@/app/_services/attorney";
 import { PayDistributionBody } from "@/app/_services/finanances";
 import { numberFormat } from "@/app/_utils";
+import { paymentMethods } from "@/app/_utils/payments";
 import moment from "moment";
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
@@ -30,45 +31,6 @@ function AttorneyPaymentDistribution({ data, handleClose }: AttorneyPaymentDistr
   });
 
   const { mutateAsync: payDistribution, isPending } = usePayDistribution();
-
-  const paymentMethods = [
-    {
-      id: "PIX",
-      label: "PIX",
-    },
-    {
-      id: "TRANSFER",
-      label: "Transferência",
-    },
-    {
-      id: "CASH",
-      label: "Dinheiro",
-    },
-    {
-      id: "BANK_TRANSFER",
-      label: "Transferencia",
-    },
-    {
-      id: "CREDIT_CARD",
-      label: "Cartao de credito",
-    },
-    {
-      id: "DEBIT_CARD",
-      label: "Cartao de debito",
-    },
-    {
-      id: "CHECK",
-      label: "Cheque",
-    },
-    {
-      id: "BANK_SLIP",
-      label: "Beleto",
-    },
-    {
-      id: "OTHER",
-      label: "Outro",
-    },
-  ];
 
   const handleClickPay = async () => {
     try {
