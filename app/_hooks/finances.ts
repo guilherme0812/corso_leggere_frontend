@@ -1,14 +1,14 @@
 import {
-  CashFlowDataType,
   createFinancialCategoriesClientSide,
   createPaymentClientSide,
   createTransactionsClientSide,
   FinancialCategoryDataType,
+  FinancialCompanyReportDataType,
   GetAllPaymentDataType,
   GetAllPaymentsParams,
-  getCashFlowClientSide,
+  GetCompanyReportParams,
+  getFiancialCompanyReportClientSide,
   getFinancialCategoriesClientSide,
-  GetMonthReportParams,
   getPaymentsClientSide,
   getTransactionsClientSide,
   GetTransactionsParams,
@@ -50,7 +50,7 @@ export function usePaymentInstallments({ filters, initialData, enabled = true }:
   });
 }
 
-// TRansactions
+// Transactions
 
 const TRANSACTIONS_QUERY_KEY = "TRANSACTIONS";
 
@@ -100,23 +100,7 @@ export function usePayTransaction() {
   });
 }
 
-const CASH_FLOW_QUERY_KEY = "cash_flow";
-
-type UseCashFlowProps = {
-  filters: GetMonthReportParams;
-  initialData?: CashFlowDataType[];
-  enabled?: boolean;
-};
-
-export function useCashFLow({ filters, initialData, enabled = true }: UseCashFlowProps) {
-  return useQuery({
-    queryKey: [CASH_FLOW_QUERY_KEY, filters],
-    queryFn: () => getCashFlowClientSide(filters),
-    enabled,
-    initialData,
-  });
-}
-
+// PAYMENT
 export function useCreatePayment() {
   const queryClient = useQueryClient();
 
@@ -218,5 +202,23 @@ export function usePayDistribution() {
         queryKey: [PENDING_PAYMENTS_KEY],
       });
     },
+  });
+}
+
+// COMPANY REPORT
+const COMPANY_REPORT_QUERY_KEY = "financial_categories";
+
+type UseFinancialComparyReportProps = {
+  initialData?: FinancialCompanyReportDataType;
+  enabled?: boolean;
+  params: GetCompanyReportParams;
+};
+
+export function useFinancialCompanyReport({ initialData, params, enabled = true }: UseFinancialComparyReportProps) {
+  return useQuery({
+    queryKey: [COMPANY_REPORT_QUERY_KEY],
+    queryFn: () => getFiancialCompanyReportClientSide(params),
+    enabled,
+    initialData,
   });
 }

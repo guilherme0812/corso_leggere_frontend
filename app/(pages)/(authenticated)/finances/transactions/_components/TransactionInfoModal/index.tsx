@@ -3,23 +3,24 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/Button";
 import {
-  GetAllPaymentDataType,
-  PayPaymentDataType,
   PayTransactionDTO,
   TransactionDataType,
+  TransactionStatusEnum,
+  TransactionTypeEnum,
 } from "@/app/_services/finanances";
-import { usePaymentInstallments, usePayPayment, usePayTransaction } from "@/app/_hooks/finances";
+import { usePayTransaction } from "@/app/_hooks/finances";
 import { enqueueSnackbar } from "notistack";
 import { numberFormat } from "@/app/_utils";
 import moment from "moment";
-import { LuCopy, LuDollarSign } from "react-icons/lu";
-import { Spinner } from "@/app/_components/ui/Spinner";
+import { LuArrowDownRight, LuArrowUpRight, LuCopy, LuDollarSign } from "react-icons/lu";
 import ConfirmDialog from "@/app/_components/ui/ConfirmDialog";
 import { useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { Input } from "@/app/_components/ui/Input";
 import { Label } from "@/app/_components/ui/Label";
 import { DatePicker } from "@/app/_components/ui/DatePicker";
+import { cn } from "@/app/_lib";
+import { Spinner } from "@/app/_components/ui/Spinner";
 
 type ModalType = {
   data: TransactionDataType;
@@ -54,20 +55,12 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false);
   const [payModalIsOpen, setPayModalIsOpen] = useState(false);
   const [paytransactionBody, setPayTransactionBody] = useState<PayTransactionDTO>({
-    amount: 0,
+    amount: data.amount,
     transactionId: data.id,
     transactionDate: new Date().toISOString().split("T")[0],
   });
 
   const { mutateAsync: payTransaction, isPending } = usePayTransaction();
-
-  const SplitTypeTranslate = {
-    OFFICE_FEE: "Escritorio",
-    ATTORNEY_FEE: "Advogado",
-    REFERRAL_FEE: "Indicação",
-    PARTNER_FEE: "Parceiro",
-    EXPENSE: "Despesa/custo",
-  };
 
   const handleClickPay = async () => {
     try {
@@ -107,45 +100,6 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
     // }
   };
 
-  const paymentMethods = [
-    {
-      id: "PIX",
-      label: "PIX",
-    },
-    {
-      id: "TRANSFER",
-      label: "Transferência",
-    },
-    {
-      id: "CASH",
-      label: "Dinheiro",
-    },
-    {
-      id: "BANK_TRANSFER",
-      label: "Transferencia",
-    },
-    {
-      id: "CREDIT_CARD",
-      label: "Cartao de credito",
-    },
-    {
-      id: "DEBIT_CARD",
-      label: "Cartao de debito",
-    },
-    {
-      id: "CHECK",
-      label: "Cheque",
-    },
-    {
-      id: "BANK_SLIP",
-      label: "Beleto",
-    },
-    {
-      id: "OTHER",
-      label: "Outro",
-    },
-  ];
-
   return (
     <>
       <Dialog open onOpenChange={handleClose}>
@@ -161,11 +115,21 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
 
           <div>
             <div className="flex flex-col justify-center items-center my-8">
-              <div className="font-semibold text-3xl text-center">
-                {numberFormat(data.amount, "pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
+              <div className="flex items-center gap-2 translate-x-[-1.5rem]">
+                <div
+                  className={cn(
+                    "w-12 h-12 rounded-md flex-shrink-0 flex justify-center items-center text-xl",
+                    data.type == TransactionTypeEnum.INCOME ? "bg-green-200" : "bg-red-200",
+                  )}
+                >
+                  {data.type == TransactionTypeEnum.INCOME ? <LuArrowUpRight /> : <LuArrowDownRight />}
+                </div>
+                <div className="font-semibold text-3xl text-center">
+                  {numberFormat(data.amount, "pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </div>
               </div>
               <div
                 className={`${
@@ -179,7 +143,7 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
             <div className="border rounded p-4 flex flex-col text-sm gap-2 mb-4">
               <div className="flex justify-between">
                 <div className="font-semibold">Tipo</div>
-                <div>{data.type}</div>
+                <div>{data.type == TransactionTypeEnum.INCOME ? "A receber" : "A pagar"}</div>
               </div>
 
               {data.effectiveDate ? (
@@ -230,6 +194,27 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
                 <div className="text-xs">{data.method}</div>
               </div>
 
+              {data.beneficiary && (
+                <div className="flex items-center gap-4 justify-between">
+                  <div className="font-semibold flex-shrink-0">Beneficiario</div>
+                  <div className="text-xs">{data?.beneficiary?.name}</div>
+                </div>
+              )}
+
+              {data?.case && (
+                <div className="flex items-center gap-4 justify-between">
+                  <div className="font-semibold flex-shrink-0">Processo</div>
+                  <div className="text-xs">{data?.case?.title}</div>
+                </div>
+              )}
+
+              {data.notes && (
+                <div className="">
+                  <div className="font-semibold flex-shrink-0">Anotação</div>
+                  <div className="text-xs">{data.notes}</div>
+                </div>
+              )}
+
               {/* {data?.transactions?.length ? (
                 <>
                   <hr className="border-t border-gray-300" />
@@ -254,7 +239,7 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
               ) : null} */}
             </div>
 
-            {/* {data.status != "PAID" ? (
+            {data.status != TransactionStatusEnum.COMPLETED ? (
               <div className="mt-4">
                 <Button className="w-full" onClick={() => setPayModalIsOpen(true)}>
                   {!isPending ? (
@@ -269,7 +254,7 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
                   )}
                 </Button>
               </div>
-            ) : null} */}
+            ) : null}
 
             <Dialog open={payModalIsOpen} onOpenChange={setPayModalIsOpen}>
               <DialogContent className="max-w-screen-[400px] overflow-y-auto">
@@ -286,10 +271,8 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
                     decimalSeparator=","
                     thousandSeparator="."
                     className="py-6"
-                    onValueChange={({ floatValue }) =>
-                      setPayTransactionBody({ ...paytransactionBody, amount: floatValue || 0 })
-                    }
                     value={paytransactionBody.amount}
+                    disabled
                   />
                 </div>
 
@@ -317,8 +300,16 @@ export default function TransactionInfoModal({ data, handleClose }: ModalType) {
                     variant={"secondary"}
                     className="w-full py-6 bg-gradient-to-br from-emerald-500 to-emerald-600"
                   >
-                    <LuDollarSign />
-                    Definir como pago
+                    {!isPending ? (
+                      <>
+                        <LuDollarSign />
+                        Definir como pago
+                      </>
+                    ) : (
+                      <>
+                        <Spinner /> Carregando
+                      </>
+                    )}
                   </Button>
                 </div>
               </DialogContent>

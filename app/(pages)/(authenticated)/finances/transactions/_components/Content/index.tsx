@@ -6,8 +6,7 @@ import Header from "../Header";
 import { useTransactions } from "@/app/_hooks/finances";
 import { useState } from "react";
 import Skeleton from "@/app/_components/ui/Skeleton";
-import { LuPlus, LuUsers } from "react-icons/lu";
-import { Button } from "@/app/_components/ui/Button";
+import { LuUsers } from "react-icons/lu";
 
 function Content() {
   // const [openModal, setOpenModal] = useState(false);
@@ -26,14 +25,6 @@ function Content() {
           <LuUsers className="size-5" />
           <span className="text-base font-semibold">Transações</span>
         </div>
-
-        <Button
-          variant={"outline"}
-          // onClick={() => setOpenModal(true)}
-        >
-          <LuPlus />
-          Nova Transação
-        </Button>
       </div>
 
       <Header {...{ filters, setFilters, refetch }} />

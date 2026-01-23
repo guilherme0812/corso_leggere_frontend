@@ -8,6 +8,7 @@ import { useState } from "react";
 import { LuArrowDownRight, LuArrowUpRight, LuCopy } from "react-icons/lu";
 import { MdOutlinePayments } from "react-icons/md";
 import TransactionInfoModal from "../TransactionInfoModal";
+import { translatePaymentMethod } from "@/app/_utils/payments";
 type ITable = {
   data: TransactionDataType[];
   // handlePay(data: TransactionDataType): void;
@@ -106,7 +107,7 @@ export default function TransactionTable({ data }: ITable) {
                   })}
                 </TableCell>
 
-                <TableCell>{item.method}</TableCell>
+                <TableCell>{translatePaymentMethod[item.method]}</TableCell>
 
                 <TableCell>
                   <Tooltip content="Ver mais informações / Registrar pagamento">

@@ -41,7 +41,7 @@ export default function CreateTransactionModal({ handleClose, type }: CreateTran
     amount: 0,
     method: "",
     description: "",
-    dueDate: "",
+    dueDate: new Date().toISOString().split("T")[0],
     categoryId: null,
     beneficiaryId: "",
   };
@@ -94,6 +94,7 @@ export default function CreateTransactionModal({ handleClose, type }: CreateTran
 
         <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
           {({ errors, touched, setFieldValue, values, isSubmitting }) => {
+            console.log(errors);
             return (
               <Form className="grid grid-cols-12 gap-4">
                 <div className="col-span-12">

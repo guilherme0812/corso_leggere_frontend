@@ -1,38 +1,17 @@
-export const paymentMethods = [
-  {
-    id: "PIX",
-    label: "PIX",
-  },
-  {
-    id: "TRANSFER",
-    label: "Transferência",
-  },
-  {
-    id: "CASH",
-    label: "Dinheiro",
-  },
-  {
-    id: "BANK_TRANSFER",
-    label: "Transferencia",
-  },
-  {
-    id: "CREDIT_CARD",
-    label: "Cartao de credito",
-  },
-  {
-    id: "DEBIT_CARD",
-    label: "Cartao de debito",
-  },
-  {
-    id: "CHECK",
-    label: "Cheque",
-  },
-  {
-    id: "BANK_SLIP",
-    label: "Beleto",
-  },
-  {
-    id: "OTHER",
-    label: "Outro",
-  },
-];
+import { PaymentMethod } from "@/app/_services/finanances";
+
+export const translatePaymentMethod = {
+  [PaymentMethod.PIX]: "PIX",
+  [PaymentMethod.BANK_TRANSFER]: "Depósito",
+  [PaymentMethod.CASH]: "Dinheiro",
+  [PaymentMethod.CREDIT_CARD]: "Cartão de crédito",
+  [PaymentMethod.DEBIT_CARD]: "Cartão de débito",
+  [PaymentMethod.CHECK]: "Cheque",
+  [PaymentMethod.BANK_SLIP]: "Boleto",
+  [PaymentMethod.OTHER]: "Outro",
+};
+
+export const paymentMethods = Object.entries(translatePaymentMethod).map(([key, value]) => ({
+  id: key,
+  lable: value,
+}));
