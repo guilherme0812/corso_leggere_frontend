@@ -37,7 +37,7 @@ export default function IncomeByCaseChart({ data }: { data: Pick<FinancialCompan
   return (
     <div className="w-full h-full text-xs flex flex-col justify-between">
       <div className="w-full h-full text-xs">
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={"100%"}>
           <BarChart
             data={
               incomeByCase.map((item, index) => {

@@ -2,26 +2,32 @@
 
 import FinancesTable from "./FinancesTable";
 import { LuArrowDownRight, LuArrowUpRight, LuDollarSign, LuTrendingUp } from "react-icons/lu";
-// import moment from "moment";
 import { numberFormat } from "@/app/_utils";
 import { LucideBarChart3 } from "lucide-react";
-import ButtonsSection from "../ButtonsSection";
 import { useFinancialCompanyReport, useTransactions } from "@/app/_hooks/finances";
 import moment from "moment";
 import ExpenseByBeneficiaryChart from "../ExpenseByBeneficiaryChart";
 import IncomeByCaseChart from "../IncomeByCaseChart";
 import Skeleton from "@/app/_components/ui/Skeleton";
+import Header from "../Header";
+import { useState } from "react";
 
 function FinancialOverviewTab() {
-  const startDate = moment().subtract(12, "months").format("YYYY-MM-DD");
-  const endDate = moment().format("YYYY-MM-DD");
+  const [startDate, setStartDate] = useState<Date>(new Date(moment().subtract(12, "months").format("YYYY-MM-DD")));
+  const [endDate, setEndDate] = useState<Date>(new Date(moment().format("YYYY-MM-DD")));
+
   const { data: companyReportData, isFetching: companyReportIsLoading } = useFinancialCompanyReport({
-    params: { startDate, endDate },
+    params: { startDate: startDate.toISOString().split("T")[0], endDate: endDate.toISOString().split("T")[0] },
   });
   const { data: transactions, isFetching: transactionsIsLoading } = useTransactions({
     filters: { limit: 5 },
     initialData: [],
   });
+
+  const handleChangeParams = (startDate: Date, endDate: Date) => {
+    setStartDate(startDate);
+    setEndDate(endDate);
+  };
 
   return (
     <>
@@ -32,13 +38,13 @@ function FinancialOverviewTab() {
         </div>
       </div>
 
-      <div className="bg-white rounded-md p-4 shadow-custom mb-4 flex justify-end gap-4">
-        {!companyReportIsLoading ? (
-          <ButtonsSection />
-        ) : (
-          <Skeleton className="h-[40px] w-[250px] bg-gray-300 rounded-md" />
-        )}
-      </div>
+      {!companyReportIsLoading ? (
+        <div className="bg-white rounded-md p-4 shadow-custom mb-4">
+          <Header handleChangeParams={handleChangeParams} />
+        </div>
+      ) : (
+        <Skeleton className="h-[72px] w-full bg-gray-300 rounded-md mb-4" />
+      )}
 
       <div>
         <h3 className="font-semibold text-gray-500 text-sm mb-2 uppercase">Resumo das movimentações financeiras</h3>
@@ -126,7 +132,7 @@ function FinancialOverviewTab() {
 
       {!transactionsIsLoading || !companyReportIsLoading ? (
         <div className="grid grid-cols-11 gap-4">
-          <div className="col-span-12 md:col-span-3 min-h-[45vh] flex flex-col">
+          <div className="col-span-12 md:col-span-3 h-[45h] flex flex-col">
             <h3 className="font-semibold text-gray-500 text-sm mb-2 uppercase">Receita por processo</h3>
 
             <div className="flex-grow bg-white rounded-md  shadow-custom p-4">
@@ -134,7 +140,7 @@ function FinancialOverviewTab() {
             </div>
           </div>
 
-          <div className="col-span-12 md:col-span-3 min-h-[45vh] flex flex-col">
+          <div className="col-span-12 md:col-span-3 h-[45vh] flex flex-col">
             <h3 className="font-semibold text-gray-500 text-sm mb-2 uppercase">despesas por Beneficiario</h3>
 
             <div className="flex-grow bg-white rounded-md  shadow-custom p-4">
@@ -142,7 +148,7 @@ function FinancialOverviewTab() {
             </div>
           </div>
 
-          <div className="col-span-12 md:col-span-5 min-h-[40vh] flex flex-col">
+          <div className="col-span-12 md:col-span-5 h-[45vh] flex flex-col">
             <h3 className="font-semibold text-gray-500 text-sm mb-2 uppercase">As últimas movimentações financeiras</h3>
 
             <div className="flex-grow bg-white rounded-md  shadow-custom">

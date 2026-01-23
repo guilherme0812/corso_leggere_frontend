@@ -216,7 +216,7 @@ type UseFinancialComparyReportProps = {
 
 export function useFinancialCompanyReport({ initialData, params, enabled = true }: UseFinancialComparyReportProps) {
   return useQuery({
-    queryKey: [COMPANY_REPORT_QUERY_KEY],
+    queryKey: [COMPANY_REPORT_QUERY_KEY, params],
     queryFn: () => getFiancialCompanyReportClientSide(params),
     enabled,
     initialData,
