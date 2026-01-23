@@ -13,5 +13,5 @@ export const translatePaymentMethod = {
 
 export const paymentMethods = Object.entries(translatePaymentMethod).map(([key, value]) => ({
   id: key,
-  lable: value,
+  label: value,
 }));
