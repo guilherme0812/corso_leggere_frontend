@@ -4,6 +4,9 @@ import GithubProvider from "next-auth/providers/github";
 import { apiLeggere } from "@/app/_services/api";
 import { login } from "@/app/_services/api/login";
 
+// No topo do seu arquivo authOptions
+console.log("Variável SECRET carregada?", !!process.env.NEXTAUTH_SECRET);
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -108,7 +111,7 @@ export const authOptions: NextAuthOptions = {
 
     maxAge: 60 * 60 * 24, // 24 horas
   },
-  secret: process.env.NEXTAUTH_SECRET || "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
     newUser: "/register",
