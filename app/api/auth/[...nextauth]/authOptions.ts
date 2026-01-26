@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
 
     maxAge: 60 * 60 * 24, // 24 horas
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   pages: {
     signIn: "/login",
     newUser: "/register",
